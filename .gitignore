@@ -1,0 +1,16 @@
+#Project
+.idea
+*.iml
+
+#Backend
+backend/HELP.md
+backend/target/
+backend/!.mvn/wrapper/maven-wrapper.jar
+backend/!**/src/main/**/target/
+backend/!**/src/test/**/target/
+
+#Frontend
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+frontend/*.local
