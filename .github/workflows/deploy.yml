@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - uses: actions/download-artifact@v4
         with:
@@ -82,7 +82,7 @@ jobs:
     needs: push-to-docker-hub
     environment:
       name: MedAxis # Capstone Project name
-      url: https://med-axis.de/ # Link to deployment
+      url: https://medaxis.onrender.com/ # Link to deployment
     steps:
       - name: Trigger Render.com Deployment
         run: |
