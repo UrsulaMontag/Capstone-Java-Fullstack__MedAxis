@@ -82,7 +82,7 @@ jobs:
     needs: push-to-docker-hub
     environment:
       name: MedAxis # Capstone Project name
-      url: https://www.medaxis.com # Link to deployment
+      url: https://www.medaxis.com/ # Link to deployment
     steps:
       - name: Trigger Render.com Deployment
         run: |
