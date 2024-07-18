@@ -15,7 +15,7 @@ public class PatientController {
     private final PatientService patientService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
+    @PostMapping("/add")
     public Patient cteatePatient(@RequestBody PatientPostDto newPatient) {
         return patientService.createPatient(newPatient);
     }
