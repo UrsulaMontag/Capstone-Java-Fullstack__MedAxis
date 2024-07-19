@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class GlobalExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -26,7 +26,7 @@ public class GlobalExceptionHandlerTest {
     private PatientService patientService;
 
     @Test
-    public void testHandleNullPointerException() throws Exception {
+    void testHandleNullPointerException() throws Exception {
         Mockito.when(patientService.createPatient(Mockito.any(PatientPostDto.class))).thenThrow(new NullPointerException("This is a NullPointerException"));
         mockMvc.perform(MockMvcRequestBuilders.post("/api/patients/add")
                         .contentType(MediaType.APPLICATION_JSON)
