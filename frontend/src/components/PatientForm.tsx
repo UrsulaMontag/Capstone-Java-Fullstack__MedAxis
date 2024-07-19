@@ -1,6 +1,8 @@
 import usePatientStore from "../stores/usePatientStore.ts";
 import {PatientToAdd} from "../models/Patient.ts";
 import {ChangeEvent, FormEvent, useState} from "react";
+import PatientFormStyled from "../styles/PatientForm.styled.tsx";
+import Button from "../styles/Button.styled.tsx";
 
 export default function PatientForm() {
     const createPatient: (newPatient: PatientToAdd) => void = usePatientStore((state) => state.createPatient);
@@ -19,7 +21,7 @@ export default function PatientForm() {
     }
 
     return (
-        <form onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
+        <PatientFormStyled onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
             <label>Firstname: </label>
             <input required type="text" value={patientInput.firstname}
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -35,8 +37,8 @@ export default function PatientForm() {
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
                        setPatientInput({...patientInput, dateOfBirth: event.target.value});
                    }}/>
-            <button>Register</button>
-            <button>Cancel</button>
-        </form>
+            <Button variant="ok">Register</Button>
+            <Button variant="normal">Cancel</Button>
+        </PatientFormStyled>
     )
 }
