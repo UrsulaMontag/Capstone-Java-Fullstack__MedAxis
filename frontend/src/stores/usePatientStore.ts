@@ -1,38 +1,31 @@
-import {Patient} from "../models/Patient.ts";
-import {createStore} from "zustand";
+import {Patient, PatientToAdd} from "../models/Patient.ts";
+import {create} from "zustand";
 import axios from "axios";
 
 
 interface PatientState {
     patients: Patient[];
     fetchPatients: () => void;
-    createPatient: (patient: Patient) => void;
+    createPatient: (newPatient: PatientToAdd) => void;
 }
 
-const usePatientStore = createStore<PatientState>()((set, get) => ({
+const usePatientStore = create<PatientState>()((set, get) => ({
     patients: [],
-    fetchPatients: async () => {
-        try {
-            const response = await axios.get<Patient[]>('/api/patients');
-            set({patients: response.data});
-        } catch (error) {
-            console.error('Error fetching patients', error);
-        }
+    fetchPatients: () => {
+        axios.get<Patient[]>('/api/patients')
+            .then(response => {
+                set({patients: response.data})
+            })
+            .catch(error => console.error("Error fetching todos", error))
     },
-    createPatient: async (newPatient: Patient) => {
-        try {
-            const response = await axios.post<Patient>('/api/patients/add', {
-                firstname: newPatient.firstname,
-                lastname: newPatient.lastname,
-                dateOfBirth: newPatient.dateOfBirth
-            });
-            set((state) => ({
-                patients: [...state.patients, response.data]
-            }));
-            get().fetchPatients();
-        } catch (error) {
-            console.error('Error creating new patient', error);
-        }
+    createPatient: (newPatient: PatientToAdd) => {
+        axios.post<Patient>('/api/patients/add', newPatient)
+            .then(response => {
+                set((state) => ({
+                    patients: [...state.patients, response.data]
+                }));
+                get().fetchPatients();
+            })
     },
 }));
 export default usePatientStore;
