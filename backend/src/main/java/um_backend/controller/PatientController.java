@@ -8,7 +8,7 @@ import um_backend.models.dto.PatientPostDto;
 import um_backend.services.PatientService;
 
 @RestController
-@RequestMapping("api/patients")
+@RequestMapping("/api/patients")
 @RequiredArgsConstructor
 public class PatientController {
 

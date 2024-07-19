@@ -9,7 +9,7 @@ interface PatientState {
     createPatient: (newPatient: PatientToAdd) => void;
 }
 
-const usePatientStore = create<PatientState>()((set, get) => ({
+const usePatientStore = create<PatientState>()((set) => ({
     patients: [],
     fetchPatients: () => {
         axios.get<Patient[]>('/api/patients')
@@ -24,7 +24,7 @@ const usePatientStore = create<PatientState>()((set, get) => ({
                 set((state) => ({
                     patients: [...state.patients, response.data]
                 }));
-                get().fetchPatients();
+                //get().fetchPatients();
             })
     },
 }));

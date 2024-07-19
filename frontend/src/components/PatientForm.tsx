@@ -14,24 +14,27 @@ export default function PatientForm() {
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         createPatient(patientInput);
-        setPatientInput(initialInputState);
-        alert("")
+        //setPatientInput(initialInputState);
+        alert(`New patient has been added successfully.`);
     }
 
     return (
         <form onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
             <label>Firstname: </label>
-            <input type="text" value={patientInput.firstname} onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setPatientInput({...patientInput, firstname: event.target.value});
-            }}/>
+            <input required type="text" value={patientInput.firstname}
+                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                       setPatientInput({...patientInput, firstname: event.target.value});
+                   }}/>
             <label>Lastname: </label>
-            <input type="text" value={patientInput.lastname} onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setPatientInput({...patientInput, lastname: event.target.value});
-            }}/>
+            <input required type="text" value={patientInput.lastname}
+                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                       setPatientInput({...patientInput, lastname: event.target.value});
+                   }}/>
             <label>Date of Birth: </label>
-            <input type="text" value={patientInput.dateOfBirth} onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                setPatientInput({...patientInput, dateOfBirth: event.target.value});
-            }}/>
+            <input required type="text" value={patientInput.dateOfBirth}
+                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                       setPatientInput({...patientInput, dateOfBirth: event.target.value});
+                   }}/>
             <button>Register</button>
             <button>Cancel</button>
         </form>
