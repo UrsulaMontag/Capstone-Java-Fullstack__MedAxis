@@ -11,26 +11,26 @@ import um_backend.services.PatientService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/patients")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class PatientController {
 
     private final PatientService patientService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping
+    @GetMapping("/patients")
     public List<Patient> getAllPatients() {
         return patientService.getAllPatients();
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{id}")
+    @GetMapping("/patients/{id}")
     public Patient getPatientById(@PathVariable String id) throws InvalidIdException {
         return patientService.getPatientById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/add")
+    @PostMapping("/patients/add")
     public Patient cteatePatient(@RequestBody PatientPostDto newPatientDto) {
         return patientService.createPatient(newPatientDto);
     }
