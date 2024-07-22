@@ -12,17 +12,9 @@ export const HeaderContainer = styled.header`
     width: 100vw;
     margin-bottom: 3.6rem;
 
-    h1 {
-        color: aqua;
-        font-style: italic;
-        margin-top: 4.8rem;
-    }
 
     @media (min-width: 768px) {
         justify-content: space-between;
-        h1 {
-            margin: 0;
-        }
     }
 `;
 export const HeaderSection = styled.section`

@@ -26,7 +26,10 @@ export default function NavBar() {
                 </HamburgerMenu>
                 <NavList $shownav={showNav}>
                     <NavItem>
-                        <StyledLink to="/patients" onClick={handleLinkClick}>Home</StyledLink>
+                        <StyledLink to="/" onClick={handleLinkClick}>Home</StyledLink>
+                    </NavItem>
+                    <NavItem>
+                        <StyledLink to="/patients" onClick={handleLinkClick}>Patients</StyledLink>
                     </NavItem>
                 </NavList>
             </NavContainer>
