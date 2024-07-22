@@ -6,6 +6,7 @@ import axios from "axios";
 interface PatientState {
     patients: Patient[];
     fetchPatients: () => void;
+    getPatientById: (id: string) => void;
     createPatient: (newPatient: PatientToAdd) => void;
 }
 
@@ -14,9 +15,18 @@ const usePatientStore = create<PatientState>()((set) => ({
     fetchPatients: () => {
         axios.get<Patient[]>('/api/patients')
             .then(response => {
-                set({patients: response.data})
+                set(({patients: response.data}))
             })
-            .catch(error => console.error("Error fetching todos", error))
+            .catch(error => console.error("Error getting patients", error))
+    },
+    getPatientById: (id: string) => {
+        axios.get(`/api/patients/${id}`)
+            .then(response => {
+                set(state => ({
+                    patients: [...state.patients, response.data]
+                }))
+            })
+            .catch(error => console.error("Error getting patient by id: " + id, error))
     },
     createPatient: (newPatient: PatientToAdd) => {
         axios.post<Patient>('/api/patients/add', newPatient)
