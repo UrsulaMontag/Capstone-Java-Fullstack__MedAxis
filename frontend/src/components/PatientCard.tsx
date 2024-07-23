@@ -1,8 +1,10 @@
 import {Patient} from "../models/Patient.ts";
-import {CardActionContainer, CardActionLink, CardContainer, NumberEntry} from "../styles/PatientCard.styled.ts";
-import {useLocation} from "react-router-dom";
+import {CardActionContainer, CardContainer, NumberEntry} from "../styles/PatientCard.styled.ts";
+import {useLocation, useNavigate} from "react-router-dom";
 import Typography from "../styles/Typography.tsx";
 import {MainContent} from "../styles/MainContent.ts";
+import usePatientStore from "../stores/usePatientStore.ts";
+import Button from "../styles/Button.styled.tsx";
 
 type PatientCardProps = {
     patient: Patient;
@@ -12,11 +14,20 @@ type PatientCardProps = {
 
 export default function PatientCard(props: Readonly<PatientCardProps>) {
     const location = useLocation();
-
+    const navigate = useNavigate();
+    const deletePatient: (id: string) => void = usePatientStore(state => state.deletePatient);
     const formatDate = (dateString: string) => {
         const options: Intl.DateTimeFormatOptions = {year: 'numeric', month: 'numeric', day: 'numeric'};
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
+
+    const handleDelete = () => {
+        deletePatient(props.patient.id);
+        navigate("/patients");
+    }
+    const handleNavigation = (path: string) => {
+        navigate(path);
+    }
     return (
         <MainContent>
             <CardContainer details={props.detailed}>
@@ -36,19 +47,19 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
 
                 <CardActionContainer details={props.detailed}>
                     {location.pathname !== `/patients/${props.patient.id}` && (
-                        <CardActionLink to={`/patients/${props.patient.id}`}>
+                        <Button variant="normal" onClick={() => handleNavigation(`/patients/${props.patient.id}`)}>
                             <img alt="details-button" src={"/monitoring.png"} title="details"/>
-                        </CardActionLink>
+                        </Button>
                     )}
                     {location.pathname !== `/patients/edit/${props.patient.id}` && (
-                        <CardActionLink to={`/patients/edit/${props.patient.id}`}>
+                        <Button variant="normal" onClick={() => handleNavigation(`/patients/edit/${props.patient.id}`)}>
                             <img alt="edit-button" src={"/edit.png"} title="edit"/>
-                        </CardActionLink>
+                        </Button>
                     )}
                     {location.pathname !== `/patients` && (
-                        <CardActionLink to={`/patients/edit/${props.patient.id}`}>
+                        <Button variant="delete" onClick={handleDelete}>
                             <img alt="delete-button" src={"/trash.png"} title="delete"/>
-                        </CardActionLink>
+                        </Button>
                     )}
                 </CardActionContainer>
             </CardContainer></MainContent>
