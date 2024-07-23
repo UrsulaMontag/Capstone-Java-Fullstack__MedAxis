@@ -8,6 +8,8 @@ interface PatientState {
     fetchPatients: () => void;
     getPatientById: (id: string) => void;
     createPatient: (newPatient: PatientToAdd) => void;
+    updatePatient: (id: string, newPatient: PatientToAdd) => void;
+    deletePatient: (id: string) => void;
 }
 
 const usePatientStore = create<PatientState>()((set) => ({
@@ -34,8 +36,23 @@ const usePatientStore = create<PatientState>()((set) => ({
                 set((state) => ({
                     patients: [...state.patients, response.data]
                 }));
-                //get().fetchPatients();
             })
     },
+    updatePatient: (id: string, newPatient: PatientToAdd) => {
+        axios.put(`/api/patients/edit/${id}`, newPatient)
+            .then(response => {
+                set((state) => ({
+                    patients: state.patients.map(patient => patient.id === id ? response.data : patient)
+                }));
+            })
+            .catch(error => console.error("Error updating patient", error))
+    },
+    deletePatient: (id: string) => {
+        axios.delete(`/api/patients/${id}`)
+            .then(() => {
+                alert("Patient Deleted");
+            })
+            .catch(error => console.error("Error deleting patient", error))
+    }
 }));
 export default usePatientStore;
