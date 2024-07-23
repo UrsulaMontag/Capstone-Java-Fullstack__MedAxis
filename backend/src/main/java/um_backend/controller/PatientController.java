@@ -34,4 +34,16 @@ public class PatientController {
     public Patient cteatePatient(@RequestBody PatientPostDto newPatientDto) {
         return patientService.createPatient(newPatientDto);
     }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/patients/edit/{id}")
+    public Patient updatePatient(@PathVariable String id, @RequestBody PatientPostDto updatedPatientDto) throws InvalidIdException {
+        return patientService.updatePatientById(id, updatedPatientDto);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/patients/{id}")
+    public void deletePatient(@PathVariable String id) throws InvalidIdException {
+        patientService.deletePatientById(id);
+    }
 }

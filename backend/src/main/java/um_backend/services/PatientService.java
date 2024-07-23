@@ -28,4 +28,15 @@ public class PatientService {
         Patient newPatient = new Patient(utilService.generateId(), patient.firstname(), patient.lastname(), patient.dateOfBirth());
         return patientRepository.save(newPatient);
     }
+
+    public Patient updatePatientById(String id, PatientPostDto patient) throws InvalidIdException {
+        Patient currentPatient = patientRepository.findById(id).orElseThrow(() -> new InvalidIdException("Patient with id " + id + "not found!"));
+        Patient updatedPatient = currentPatient.withFirstname(patient.firstname()).withLastname(patient.lastname()).withDateOfBirth(patient.dateOfBirth());
+        return patientRepository.save(updatedPatient);
+    }
+
+    public void deletePatientById(String id) throws InvalidIdException {
+        if (patientRepository.existsById(id)) patientRepository.deleteById(id);
+        else throw new InvalidIdException("Patient with id " + id + " not found!");
+    }
 }
