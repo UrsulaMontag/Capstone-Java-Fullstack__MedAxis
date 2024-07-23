@@ -1,10 +1,11 @@
 :root {
     --color-light: rgba(255, 255, 255, 0.87);
-    --accent-color-mainblue: aqua;
-    --color-dark: #001540;
+    --accent-color-mainblue: #1BA1BF;
+    --color-dark: #050626;
     --accent-color-light: antiquewhite;
     --accent-color-green: #5EA653;
-    --accent-color-grey: #6F6E73;
+    --accent-color-grey: #B4CBD9;
+    --accent-color-grey__light: #B4CBD9;
     --accent-color-red: rgb(255, 99, 134);
     --accent-color-blue: #646cff;
 }
