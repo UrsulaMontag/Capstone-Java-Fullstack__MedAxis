@@ -45,6 +45,9 @@ const BaseText = styled.p`
     color: var(--color-dark);
     font-size: 1.6rem;
     font-weight: 400;
+    @media (max-width: 480px) {
+        font-size: 1.4rem;
+    }
 `
 const StyledH1 = styled.h1`
     color: var(--accent-color-mainblue);
@@ -60,7 +63,10 @@ const StyledH2 = styled.h2`
 `;
 const StyledH3 = styled.h3`
     font-size: 1.6rem;
-    font-weight: 600;
+    font-weight: 550;
+    @media (max-width: 480px) {
+        font-size: 1.4rem;
+    }
 `;
 const StyledInfoText = styled.p`
     color: var(--accent-color-grey);

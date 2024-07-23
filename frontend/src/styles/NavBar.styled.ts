@@ -27,6 +27,7 @@ export const NavList = styled.ul<{ $shownav: boolean }>`
     @media (min-width: 768px) {
         display: flex;
         flex-direction: row;
+        gap: 1rem;
         padding-top: 0;
         height: auto;
         width: auto;
@@ -36,7 +37,6 @@ export const NavList = styled.ul<{ $shownav: boolean }>`
 `;
 
 export const NavItem = styled.li`
-    padding: 1rem;
 `;
 
 export const HamburgerMenu = styled.div<{ $shownav: boolean }>`
@@ -48,7 +48,6 @@ export const HamburgerMenu = styled.div<{ $shownav: boolean }>`
     right: 1rem;
     z-index: 300;
     cursor: pointer;
-    color: antiquewhite;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -59,7 +58,7 @@ export const HamburgerMenu = styled.div<{ $shownav: boolean }>`
         display: block;
         height: 2px;
         width: 100%;
-        background-color: black;
+        background-color: var(--color-light);
         border-radius: 9px;
         transition: all 0.4s ease-in-out;
     }
