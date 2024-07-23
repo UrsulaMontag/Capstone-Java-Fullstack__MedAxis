@@ -37,4 +37,19 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.apiPath").exists());
     }
+
+    @Test
+    public void testHandleIdNotFoundException() throws Exception {
+        // Wenn der Service mit der Fake-Datenbank (Mockito) aufgerufen wird und ein Item vom Typ DtoItem hinzugefügt
+        // wird eine Exception geworfen
+        Mockito.when(patientService.getPatientById(Mockito.any(String.class))).thenThrow(new InvalidIdException("This is a InvalidIdException"));
+
+        // Fake-Post auf route /api/add
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/patients/123"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorMsg").value("This is a InvalidIdException"))
+                .andExpect(jsonPath("$.errorCode").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.apiPath").exists());
+    }
 }

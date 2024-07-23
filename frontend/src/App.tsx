@@ -3,6 +3,8 @@ import Dashboard from "./routes/Dashboard.tsx";
 import GlobalStyle from "./styles/GlobalStyle.styled.ts";
 import CreatePatient from "./routes/CreatePatient.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
+import PatientList from "./routes/PatientList.tsx";
+import PatientDetail from "./routes/PatientDetail.tsx";
 
 function App() {
     const router = createBrowserRouter([
@@ -12,8 +14,16 @@ function App() {
             children:
                 [
                     {
-                        path: '/patients',
+                        path: '/',
                         element: <Dashboard/>,
+                    },
+                    {
+                        path: '/patients',
+                        element: <PatientList/>,
+                    },
+                    {
+                        path: '/patients/:id',
+                        element: <PatientDetail/>,
                     },
                     {
                         path: '/patients/add',

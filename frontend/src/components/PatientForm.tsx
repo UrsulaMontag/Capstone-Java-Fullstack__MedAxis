@@ -16,7 +16,7 @@ export default function PatientForm() {
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         createPatient(patientInput);
-        //setPatientInput(initialInputState);
+        setPatientInput(initialInputState);
         alert(`New patient has been added successfully.`);
     }
 

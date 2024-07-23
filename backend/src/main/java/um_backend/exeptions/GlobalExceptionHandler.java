@@ -22,4 +22,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidIdException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponseDTO handleNoSuchElementException(InvalidIdException exception, WebRequest webRequest) {
+        return new ErrorResponseDTO(
+                webRequest.getDescription(false),
+                HttpStatus.NOT_FOUND,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+    }
+
 }
