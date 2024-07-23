@@ -4,6 +4,7 @@ import GlobalStyle from "./styles/GlobalStyle.styled.ts";
 import CreatePatient from "./routes/CreatePatient.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
 import PatientList from "./routes/PatientList.tsx";
+import PatientDetail from "./routes/PatientDetail.tsx";
 
 function App() {
     const router = createBrowserRouter([
@@ -22,7 +23,7 @@ function App() {
                     },
                     {
                         path: '/patients/:id',
-                        element: <CreatePatient/>,
+                        element: <PatientDetail/>,
                     },
                     {
                         path: '/patients/add',
