@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.Patient;
-import um_backend.models.dto.PatientPostDto;
+import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.repository.PatientRepository;
 
 import java.time.LocalDate;
@@ -73,7 +73,7 @@ class PatientServiceTest {
 
     @Test
     void createPatient_returnsPatient_whenPatientIsCreated() {
-        PatientPostDto newPatient = new PatientPostDto(
+        PatientPersonalDTO newPatient = new PatientPersonalDTO(
                 testPatientList.getFirst().firstname(), testPatientList.getFirst().lastname(), testPatientList.getFirst().dateOfBirth());
         Patient expectedPatient = testPatientList.getFirst();
 
@@ -86,7 +86,7 @@ class PatientServiceTest {
 
     @Test
     void createPatient_shouldThrowException_WhenWentWrong() {
-        PatientPostDto newPatient = new PatientPostDto(
+        PatientPersonalDTO newPatient = new PatientPersonalDTO(
                 testPatientList.getFirst().firstname(), testPatientList.getFirst().lastname(), testPatientList.getFirst().dateOfBirth());
         when(mockPatientRepository.save(any(Patient.class))).thenThrow(new NullPointerException("Error message"));
         try {
@@ -101,7 +101,7 @@ class PatientServiceTest {
     @Test
     void updatePatient_returnsPatient_whenPatientIsUpdated() throws InvalidIdException {
         when(mockPatientRepository.findById("2")).thenReturn(Optional.of(testPatientList.get(1)));
-        Patient actualPatient = patientService.updatePatientById("2", new PatientPostDto("Erika", "Müller", LocalDate.of(1986, 5, 4)));
+        Patient actualPatient = patientService.updatePatientById("2", new PatientPersonalDTO("Erika", "Müller", LocalDate.of(1986, 5, 4)));
         when(mockPatientRepository.save(any(Patient.class))).thenReturn(actualPatient);
         verify(mockPatientRepository).findById("2");
         verify(mockPatientRepository).save(any(Patient.class));
@@ -111,7 +111,7 @@ class PatientServiceTest {
     @Test
     void updatePatient_throwsException_whenPatientNotFound() {
         when(mockPatientRepository.findById(any(String.class))).thenReturn(Optional.empty());
-        assertThrows(InvalidIdException.class, () -> patientService.updatePatientById("2", new PatientPostDto("Erika", "Müller", LocalDate.of(1986, 5, 4))));
+        assertThrows(InvalidIdException.class, () -> patientService.updatePatientById("2", new PatientPersonalDTO("Erika", "Müller", LocalDate.of(1986, 5, 4))));
         verify(mockPatientRepository).findById("2");
     }
 

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @With
 @Document("patients")
-public record PatientPostDto(
+public record PatientPersonalDTO(
         String firstname,
         String lastname,
         LocalDate dateOfBirth
