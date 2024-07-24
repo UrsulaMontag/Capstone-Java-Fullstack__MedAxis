@@ -93,4 +93,36 @@ class PatientControllerTest {
                         """))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists());
     }
+
+    @Test
+    void updatePatient_returnsUpdatedPatient() throws Exception {
+        patientRepository.saveAll(List.of(
+                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4)))
+        ));
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/patients/edit/2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                "firstname": "Erika",
+                                "lastname": "Müller",
+                                "dateOfBirth": "1986-05-04"
+                                }
+                                """))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().json("""
+                        {
+                        "id": "2",
+                        "firstname": "Erika",
+                        "lastname": "Müller",
+                        "dateOfBirth": "1986-05-04"
+                        }
+                        """));
+    }
+
+    @Test
+    void deletePatientById_deletesPatient_ByGivenId() throws Exception {
+        patientRepository.save((new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4))));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/patients/2"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }

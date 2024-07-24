@@ -1,18 +1,19 @@
 import styled from "styled-components";
-import {Link} from "react-router-dom";
-
 
 export const CardContainer = styled.article<{ details: boolean }>`
     width: ${props => props.details ? '90%' : '100%'};
     display: grid;
     grid-template-columns: ${props => props.details ? '1fr 3fr' : '10% 1fr 0.8fr 10%'};
-    padding: 1.6rem 0;
+    padding: ${props => props.details ? '1.6rem' : '1.2rem 1.6rem 1.2rem 0'};
+    gap: ${props => props.details ? '1.2rem' : 'none'};
+
     border: 1px solid var(--accent-color-grey);
     border-radius: 8px;
     margin-bottom: .8rem;
     align-items: center;
     @media (max-width: 480px) {
-        grid-template-columns: ${props => props.details ? '1fr 3fr' : '14% 0.8fr 0.8fr 10%'};
+        grid-template-columns: ${props => props.details ? '1fr 4fr' : '14% 0.8fr 0.8fr 10%'};
+        padding: ${props => props.details ? '1rem' : '1.2rem 1.6rem .4rem 0'};
     }
 `;
 
@@ -35,33 +36,6 @@ export const CardActionContainer = styled.div<{ details: boolean }>`
     grid-column: ${props => props.details ? 'span 2' : 'auto'};
     margin-top: ${props => props.details ? '16px' : '0'};
     @media (max-width: 600px) {
-        gap: 2px
+        gap: 2px;
     }
 `
-
-export const CardActionLink = styled(Link)`
-    border-radius: 8px;
-    padding: .3rem .6rem;
-    font-size: 1.4rem;
-    width: fit-content;
-
-    cursor: pointer;
-    transition: border-color 0.25s;
-    background-color: var(--accent-color-grey);
-    text-decoration: none;
-    color: var(--color-dark);
-    @media (max-width: 480px) {
-        font-size: 1.2rem;
-        padding: .1rem .3rem;
-
-    }
-
-    &:hover {
-        border-color: var(--accent-color-blue);
-    }
-
-    &:focus,
-    &:focus-visible {
-        outline: 4px auto -webkit-focus-ring-color;
-    }
-`;

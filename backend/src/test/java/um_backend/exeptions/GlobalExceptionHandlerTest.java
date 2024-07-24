@@ -9,7 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import um_backend.models.dto.PatientPostDto;
+import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.services.PatientService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,7 +27,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void testHandleNullPointerException() throws Exception {
-        Mockito.when(patientService.createPatient(Mockito.any(PatientPostDto.class))).thenThrow(new NullPointerException("This is a NullPointerException"));
+        Mockito.when(patientService.createPatient(Mockito.any(PatientPersonalDTO.class))).thenThrow(new NullPointerException("This is a NullPointerException"));
         mockMvc.perform(MockMvcRequestBuilders.post("/api/patients/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"firstname\":\"testpatient\"}"))

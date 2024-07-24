@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.Patient;
-import um_backend.models.dto.PatientPostDto;
+import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.repository.PatientRepository;
 
 import java.util.List;
@@ -24,8 +24,19 @@ public class PatientService {
         return patientRepository.findById(id).orElseThrow(() -> new InvalidIdException("Patient with id " + id + "not found!"));
     }
 
-    public Patient createPatient(PatientPostDto patient) {
+    public Patient createPatient(PatientPersonalDTO patient) {
         Patient newPatient = new Patient(utilService.generateId(), patient.firstname(), patient.lastname(), patient.dateOfBirth());
         return patientRepository.save(newPatient);
+    }
+
+    public Patient updatePatientById(String id, PatientPersonalDTO patient) throws InvalidIdException {
+        Patient currentPatient = patientRepository.findById(id).orElseThrow(() -> new InvalidIdException("Patient with id " + id + "not found!"));
+        Patient updatedPatient = currentPatient.withFirstname(patient.firstname()).withLastname(patient.lastname()).withDateOfBirth(patient.dateOfBirth());
+        return patientRepository.save(updatedPatient);
+    }
+
+    public void deletePatientById(String id) throws InvalidIdException {
+        if (patientRepository.existsById(id)) patientRepository.deleteById(id);
+        else throw new InvalidIdException("Patient with id " + id + " not found!");
     }
 }

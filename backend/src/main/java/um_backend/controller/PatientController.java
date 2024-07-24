@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.Patient;
-import um_backend.models.dto.PatientPostDto;
+import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.services.PatientService;
 
 import java.util.List;
@@ -31,7 +31,19 @@ public class PatientController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/patients/add")
-    public Patient cteatePatient(@RequestBody PatientPostDto newPatientDto) {
+    public Patient cteatePatient(@RequestBody PatientPersonalDTO newPatientDto) {
         return patientService.createPatient(newPatientDto);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/patients/edit/{id}")
+    public Patient updatePatient(@PathVariable String id, @RequestBody PatientPersonalDTO updatedPatientDto) throws InvalidIdException {
+        return patientService.updatePatientById(id, updatedPatientDto);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/patients/{id}")
+    public void deletePatient(@PathVariable String id) throws InvalidIdException {
+        patientService.deletePatientById(id);
     }
 }

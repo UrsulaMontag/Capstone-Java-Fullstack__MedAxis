@@ -15,6 +15,7 @@ export const HeaderContainer = styled.header`
     z-index: 1;
     @media (max-width: 480px) {
         margin-bottom: .6rem;
+        padding-left: 0.2rem;
     }
 `;
 export const HeaderSection = styled.section`

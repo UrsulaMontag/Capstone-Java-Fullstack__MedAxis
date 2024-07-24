@@ -1,7 +1,7 @@
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import Dashboard from "./routes/Dashboard.tsx";
 import GlobalStyle from "./styles/GlobalStyle.styled.ts";
-import CreatePatient from "./routes/CreatePatient.tsx";
+import WritePatient from "./routes/WritePatient.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
 import PatientList from "./routes/PatientList.tsx";
 import PatientDetail from "./routes/PatientDetail.tsx";
@@ -27,7 +27,11 @@ function App() {
                     },
                     {
                         path: '/patients/add',
-                        element: <CreatePatient/>,
+                        element: <WritePatient/>,
+                    },
+                    {
+                        path: '/patients/edit/:id',
+                        element: <WritePatient/>,
                     }
                 ]
         }
