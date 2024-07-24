@@ -60,7 +60,7 @@ export default function PatientForm() {
                        setPatientInput({...patientInput, lastname: event.target.value});
                    }}/>
             <label>Birthdate:</label>
-            <input required type="text" value={patientInput.dateOfBirth}
+            <input required type="date" value={patientInput.dateOfBirth}
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
                        setPatientInput({...patientInput, dateOfBirth: event.target.value});
                    }}/>
