@@ -11,10 +11,8 @@ export const HeaderContainer = styled.header`
     padding: 1.6rem 0 1.6rem 1.6rem;
     background-color: var(--color-dark);
     width: 100vw;
-    margin-bottom: 1.6rem;
-    z-index: 1;
+    z-index: 3;
     @media (max-width: 480px) {
-        margin-bottom: .6rem;
         padding-left: 0.2rem;
     }
 `;

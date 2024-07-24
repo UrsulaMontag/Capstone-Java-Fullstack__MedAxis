@@ -51,14 +51,14 @@ const BaseText = styled.p`
 `
 const StyledH1 = styled.h1`
     color: var(--accent-color-mainblue);
-    font-style: italic;
+    font-size: 2.8rem;
     margin-top: 4.8rem;
     @media (min-width: 768px) {
         margin: 0;
     }
 `;
 const StyledH2 = styled.h2`
-    color: var(--accent-color-mainblue);
+    color: var(--color-dark);
     font-size: 2.2rem;
 `;
 const StyledH3 = styled.h3`

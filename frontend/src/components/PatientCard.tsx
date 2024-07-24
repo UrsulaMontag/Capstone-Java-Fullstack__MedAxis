@@ -2,7 +2,6 @@ import {Patient} from "../models/Patient.ts";
 import {CardActionContainer, CardContainer, NumberEntry} from "../styles/PatientCard.styled.ts";
 import {useLocation, useNavigate} from "react-router-dom";
 import Typography from "../styles/Typography.tsx";
-import {MainContent} from "../styles/MainContent.ts";
 import usePatientStore from "../stores/usePatientStore.ts";
 import Button from "../styles/Button.styled.tsx";
 
@@ -29,40 +28,39 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
         navigate(path);
     }
     return (
-        <MainContent>
-            <CardContainer details={props.detailed}>
-                {props.detailed
-                    ? (<>
-                        <Typography variant="h3">Name: </Typography>
-                        <Typography variant="base">{props.patient.lastname} {props.patient.firstname}</Typography>
-                        <Typography variant="h3">Birthdate: </Typography>
-                        <Typography variant="base">{formatDate(props.patient.dateOfBirth)}</Typography>
-                    </>)
-                    : (<>
-                        <NumberEntry>{props.listNr}</NumberEntry>
-                        <Typography variant="base">{props.patient.lastname} {props.patient.firstname}</Typography>
-                        <Typography variant="base">{formatDate(props.patient.dateOfBirth)}</Typography>
-                    </>)
-                }
+        <CardContainer details={props.detailed}>
+            {props.detailed
+                ? (<>
+                    <Typography variant="h3">Name: </Typography>
+                    <Typography variant="base">{props.patient.lastname} {props.patient.firstname}</Typography>
+                    <Typography variant="h3">Birthdate: </Typography>
+                    <Typography variant="base">{formatDate(props.patient.dateOfBirth)}</Typography>
+                </>)
+                : (<>
+                    <NumberEntry>{props.listNr}</NumberEntry>
+                    <Typography variant="base">{props.patient.lastname} {props.patient.firstname}</Typography>
+                    <Typography variant="base">{formatDate(props.patient.dateOfBirth)}</Typography>
+                </>)
+            }
 
-                <CardActionContainer details={props.detailed}>
-                    {location.pathname !== `/patients/${props.patient.id}` && (
-                        <Button variant="normal" onClick={() => handleNavigation(`/patients/${props.patient.id}`)}>
-                            <img alt="details-button" src={"/monitoring.png"} title="details"/>
-                        </Button>
-                    )}
-                    {location.pathname !== `/patients/edit/${props.patient.id}` && (
-                        <Button variant="normal" onClick={() => handleNavigation(`/patients/edit/${props.patient.id}`)}>
-                            <img alt="edit-button" src={"/edit.png"} title="edit"/>
-                        </Button>
-                    )}
-                    {location.pathname !== `/patients` && (
-                        <Button variant="delete" onClick={handleDelete}>
-                            <img alt="delete-button" src={"/trash.png"} title="delete"/>
-                        </Button>
-                    )}
-                </CardActionContainer>
-            </CardContainer></MainContent>
+            <CardActionContainer details={props.detailed}>
+                {location.pathname !== `/patients/${props.patient.id}` && (
+                    <Button variant="normal" onClick={() => handleNavigation(`/patients/${props.patient.id}`)}>
+                        <img alt="details-button" src={"/monitoring.png"} title="details"/>
+                    </Button>
+                )}
+                {location.pathname !== `/patients/edit/${props.patient.id}` && (
+                    <Button variant="normal" onClick={() => handleNavigation(`/patients/edit/${props.patient.id}`)}>
+                        <img alt="edit-button" src={"/edit.png"} title="edit"/>
+                    </Button>
+                )}
+                {location.pathname !== `/patients` && (
+                    <Button variant="delete" onClick={handleDelete}>
+                        <img alt="delete-button" src={"/trash.png"} title="delete"/>
+                    </Button>
+                )}
+            </CardActionContainer>
+        </CardContainer>
 
     )
 }

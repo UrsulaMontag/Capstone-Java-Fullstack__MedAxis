@@ -23,8 +23,8 @@ export default function PatientList() {
                 <div></div>
             </ListHeader>
             {patientList.map((patient, index) => (
-                <PatientListItem>
-                    <PatientCard key={patient.id} patient={patient} detailed={false} listNr={index + 1}/>
+                <PatientListItem key={patient.id}>
+                    <PatientCard patient={patient} detailed={false} listNr={index + 1}/>
                 </PatientListItem>
 
             ))}

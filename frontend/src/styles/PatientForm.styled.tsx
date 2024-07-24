@@ -41,9 +41,7 @@ const PatientForm = styled.form`
         grid-column: 2;
         display: flex;
         justify-content: flex-end;
-        align-items: center;
         gap: 1.6rem;
-
         @media (max-width: 600px) {
             gap: 2px;
             padding-right: 3.6rem;
