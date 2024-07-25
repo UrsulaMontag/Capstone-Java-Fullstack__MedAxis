@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import um_backend.models.ContactInformation;
 import um_backend.models.Patient;
 import um_backend.repository.PatientRepository;
 
@@ -29,9 +30,9 @@ class PatientControllerTest {
     @Test
     void getAllPatients_returnsListOfAllRegisteredPatients() throws Exception {
         patientRepository.saveAll(List.of(
-                (new Patient("1", "Max", "Mustermann", LocalDate.of(2001, 4, 12))),
-                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4))),
-                (new Patient("3", "Gerlinde", "Häberle", LocalDate.of(1998, 4, 16)))
+                (new Patient("1", "Max", "Mustermann", LocalDate.of(2001, 4, 12), "1234567", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt"))),
+                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt"))),
+                (new Patient("3", "Gerlinde", "Häberle", LocalDate.of(1998, 4, 16), "234564567", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
         ));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/patients"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -62,7 +63,7 @@ class PatientControllerTest {
     @Test
     void getPatientById_returnsPatient_foundByGivenId() throws Exception {
         patientRepository.saveAll(List.of(
-                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4)))
+                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
         ));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/patients/2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -97,7 +98,7 @@ class PatientControllerTest {
     @Test
     void updatePatient_returnsUpdatedPatient() throws Exception {
         patientRepository.saveAll(List.of(
-                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4)))
+                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
         ));
         mockMvc.perform(MockMvcRequestBuilders.put("/api/patients/edit/2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +122,8 @@ class PatientControllerTest {
 
     @Test
     void deletePatientById_deletesPatient_ByGivenId() throws Exception {
-        patientRepository.save((new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4))));
+        patientRepository.save((new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
+        );
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/patients/2"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }

@@ -25,7 +25,7 @@ public class PatientService {
     }
 
     public Patient createPatient(PatientPersonalDTO patient) {
-        Patient newPatient = new Patient(utilService.generateId(), patient.firstname(), patient.lastname(), patient.dateOfBirth());
+        Patient newPatient = new Patient(utilService.generateId(), patient.firstname(), patient.lastname(), patient.dateOfBirth(), patient.insuranceNr(), patient.contact());
         return patientRepository.save(newPatient);
     }
 

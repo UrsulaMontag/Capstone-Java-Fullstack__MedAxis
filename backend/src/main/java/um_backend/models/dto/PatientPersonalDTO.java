@@ -1,6 +1,7 @@
 package um_backend.models.dto;
 
 import lombok.With;
+import um_backend.models.ContactInformation;
 
 import java.time.LocalDate;
 
@@ -8,6 +9,8 @@ import java.time.LocalDate;
 public record PatientPersonalDTO(
         String firstname,
         String lastname,
-        LocalDate dateOfBirth
+        LocalDate dateOfBirth,
+        String insuranceNr,
+        ContactInformation contact
 ) {
 }

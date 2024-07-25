@@ -14,6 +14,8 @@ public record Patient(
         String id,
         String firstname,
         String lastname,
-        LocalDate dateOfBirth
+        LocalDate dateOfBirth,
+        String insuranceNr,
+        ContactInformation contactInformation
 ) {
 }
