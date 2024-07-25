@@ -19,13 +19,13 @@ export default function Button(props: Readonly<ButtonProps>) {
             )
         case "ok":
             return (
-                <OkButton{...props.rest} as={props.component}>
+                <OkButton{...props.rest} as={props.component} onClick={props.onClick}>
                     {props.children}
                 </OkButton>
             )
         case "delete":
             return (
-                <DeleteButton {...props.rest} as={props.component}>
+                <DeleteButton {...props.rest} as={props.component} onClick={props.onClick}>
                     {props.children}
                 </DeleteButton>
             )
