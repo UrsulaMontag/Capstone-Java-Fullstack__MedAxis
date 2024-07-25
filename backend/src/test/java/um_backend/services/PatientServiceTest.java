@@ -59,7 +59,7 @@ class PatientServiceTest {
 
     @Test
     void getPatientById_returnsPatient_withGivenId() throws InvalidIdException {
-        when(mockPatientRepository.findById("2")).thenReturn(Optional.of(testPatientList.get(1)));
+        when(mockPatientRepository.findById("2")).thenReturn(Optional.ofNullable(testPatientList.get(1)));
         Patient actual = patientService.getPatientById("2");
         verify(mockPatientRepository).findById("2");
         assertEquals(testPatientList.get(1), actual);

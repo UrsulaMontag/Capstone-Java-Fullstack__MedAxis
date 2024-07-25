@@ -30,7 +30,7 @@ class PatientControllerTest {
     @Test
     void getAllPatients_returnsListOfAllRegisteredPatients() throws Exception {
         patientRepository.saveAll(List.of(
-                (new Patient("1", "Max", "Mustermann", LocalDate.of(2001, 4, 12), "1234567", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt"))),
+                (new Patient("1", "Max", "Mustermann", LocalDate.of(2001, 4, 12), "1234567", new ContactInformation("Sesamstraße 56", "68593 Teststadt"))),
                 (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt"))),
                 (new Patient("3", "Gerlinde", "Häberle", LocalDate.of(1998, 4, 16), "234564567", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
         ));
@@ -42,19 +42,35 @@ class PatientControllerTest {
                                 "id": "1",
                                 "firstname": "Max",
                                 "lastname": "Mustermann",
-                                "dateOfBirth": "2001-04-12"
+                                "dateOfBirth": "2001-04-12",
+                                "insuranceNr": "1234567",
+                                "contactInformation": { "address":"Sesamstraße 56",
+                                                        "town":"68593 Teststadt"
+                                                      }
                                 },
                                 {
                                 "id": "2",
                                 "firstname": "Erika",
                                 "lastname": "Musterfrau",
-                                "dateOfBirth": "1986-05-04"
+                                "dateOfBirth": "1986-05-04",
+                                "insuranceNr": "12335467",
+                                "contactInformation": { "phoneNr": "0153476539",
+                                                        "email":"test@email.com",
+                                                        "address":"Sesamstraße 56",
+                                                        "town":"68593 Teststadt"
+                                                      }
                                 },
                                 {
                                 "id": "3",
                                 "firstname": "Gerlinde",
                                 "lastname": "Häberle",
-                                "dateOfBirth": "1998-04-16"
+                                "dateOfBirth": "1998-04-16",
+                                "insuranceNr": "234564567",
+                                "contactInformation": { "phoneNr": "0153476539",
+                                                        "email":"test@email.com",
+                                                        "address":"Sesamstraße 56",
+                                                        "town":"68593 Teststadt"
+                                                      }
                                 }
                             ]
                         """));

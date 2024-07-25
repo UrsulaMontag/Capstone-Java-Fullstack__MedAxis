@@ -9,4 +9,7 @@ public record ContactInformation(
         String address,
         String town
 ) {
+    public ContactInformation(String address, String town) {
+        this(null, null, address, town);
+    }
 }
