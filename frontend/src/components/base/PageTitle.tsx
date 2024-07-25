@@ -1,7 +1,7 @@
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import Typography from "../styles/Typography.tsx";
-import {PageTitleContainer} from "../styles/PageTitle.styled.ts";
-import Button from "../styles/Button.styled.tsx";
+import Typography from "../../styles/Typography.tsx";
+import {PageTitleContainer} from "../../styles/PageTitle.styled.ts";
+import Button from "../../styles/Button.styled.tsx";
 
 export default function PageTitle() {
     const location = useLocation();

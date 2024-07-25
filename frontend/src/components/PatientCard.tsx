@@ -16,8 +16,8 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
     const navigate = useNavigate();
     const deletePatient: (id: string) => void = usePatientStore(state => state.deletePatient);
     const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = {year: 'numeric', month: 'numeric', day: 'numeric'};
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        const options: Intl.DateTimeFormatOptions = {year: 'numeric', month: '2-digit', day: '2-digit'};
+        return new Date(dateString).toLocaleDateString('en-US', options);
     };
 
     const handleDelete = () => {
