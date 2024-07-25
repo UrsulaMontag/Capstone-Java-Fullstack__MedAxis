@@ -9,6 +9,7 @@ const GlobalStyle = createGlobalStyle`
     }
 
     body {
+        position: relative;
         font-family: Roboto, sans-serif;
         font-size: 1.6rem;
         min-width: 320px;
@@ -18,15 +19,6 @@ const GlobalStyle = createGlobalStyle`
         background-color: var(--color-light);
 
     }
-    
-    @media only screen and (min-width: 768px) {
-        body {
-            display: flex;
-            justify-content: center;
-        }
-    }
-
-
 `;
 
 export default GlobalStyle;

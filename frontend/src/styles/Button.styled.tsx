@@ -13,19 +13,19 @@ export default function Button(props: Readonly<ButtonProps>) {
     switch (props.variant) {
         case "normal":
             return (
-                <BaseButton as={props.component} {...props.rest} onClick={() => props.onClick}>
+                <BaseButton as={props.component} {...props.rest} onClick={props.onClick}>
                     {props.children}
                 </BaseButton>
             )
         case "ok":
             return (
-                <OkButton{...props.rest} as={props.component}>
+                <OkButton{...props.rest} as={props.component} onClick={props.onClick}>
                     {props.children}
                 </OkButton>
             )
         case "delete":
             return (
-                <DeleteButton {...props.rest} as={props.component}>
+                <DeleteButton {...props.rest} as={props.component} onClick={props.onClick}>
                     {props.children}
                 </DeleteButton>
             )

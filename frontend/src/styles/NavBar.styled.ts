@@ -37,6 +37,7 @@ export const NavList = styled.ul<{ $shownav: boolean }>`
 `;
 
 export const NavItem = styled.li`
+    list-style: none;
 `;
 
 export const HamburgerMenu = styled.div<{ $shownav: boolean }>`

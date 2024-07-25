@@ -4,7 +4,6 @@ import {ChangeEvent, FormEvent, useState} from "react";
 import PatientFormStyled from "../styles/PatientForm.styled.tsx";
 import Button from "../styles/Button.styled.tsx";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {MainContent} from "../styles/MainContent.ts";
 
 export default function PatientForm() {
     const createPatient: (newPatient: PatientToAdd) => void = usePatientStore((state) => state.createPatient);
@@ -43,32 +42,36 @@ export default function PatientForm() {
 
     const handleCancel = (event: FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        navigate("/patients");
+        location.pathname === "/patients/add" ?
+            navigate("/patients")
+            : navigate("/patients/" + id);
     }
 
     return (
-        <MainContent>
-            <PatientFormStyled onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
-                <label>Firstname:</label>
-                <input required type="text" value={patientInput.firstname}
-                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                           setPatientInput({...patientInput, firstname: event.target.value});
-                       }}/>
-                <label>Lastname:</label>
-                <input required type="text" value={patientInput.lastname}
-                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                           setPatientInput({...patientInput, lastname: event.target.value});
-                       }}/>
-                <label>Birthdate:</label>
-                <input required type="text" value={patientInput.dateOfBirth}
-                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                           setPatientInput({...patientInput, dateOfBirth: event.target.value});
-                       }}/>
-                <div>
-                    <Button variant="ok">{location.pathname === "/patients/edit/" + id ? "Update" : "Register"}</Button>
-                    <Button variant="normal" onClick={handleCancel}>Cancel</Button>
-                </div>
-            </PatientFormStyled>
-        </MainContent>
+        <PatientFormStyled onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
+            <label>Firstname:</label>
+            <input required type="text" value={patientInput.firstname}
+                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                       setPatientInput({...patientInput, firstname: event.target.value});
+                   }}/>
+            <label>Lastname:</label>
+            <input required type="text" value={patientInput.lastname}
+                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                       setPatientInput({...patientInput, lastname: event.target.value});
+                   }}/>
+            <label>Birthdate:</label>
+            <input required type="date" value={patientInput.dateOfBirth}
+                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                       setPatientInput({...patientInput, dateOfBirth: event.target.value});
+                   }}/>
+            <div>
+                <Button variant="ok"><img alt="ok-button save"
+                                          src={"/ok.png"}
+                                          title="Enter edit"/></Button>
+                <Button variant="normal" onClick={handleCancel}><img alt="cancel-button"
+                                                                     src={"/cancel.png"}
+                                                                     title="Cancel"/></Button>
+            </div>
+        </PatientFormStyled>
     )
 }
