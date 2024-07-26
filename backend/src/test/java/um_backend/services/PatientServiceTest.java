@@ -28,12 +28,18 @@ class PatientServiceTest {
     void setUp() {
         mockPatientRepository = mock(PatientRepository.class);
         mockUtilService = mock(UtilService.class);
-        patientService = new PatientService(mockPatientRepository, mockUtilService);
+        DataValidationService mockDataValidationService = mock(DataValidationService.class);
+        patientService = new PatientService(mockPatientRepository, mockUtilService, mockDataValidationService);
         testPatientList = new ArrayList<>() {{
             add(new Patient("1", "Max", "Mustermann", LocalDate.of(2001, 4, 12), "1234567", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")));
             add(new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")));
             add(new Patient("3", "Gerlinde", "Häberle", LocalDate.of(1998, 4, 16), "1256467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")));
         }};
+        when(mockDataValidationService.isValidEmail(anyString())).thenReturn(true);
+        when(mockDataValidationService.isValidDateOfBirth(any(LocalDate.class))).thenReturn(true);
+        when(mockDataValidationService.isValidInsuranceNumber(anyString())).thenReturn(true);
+        when(mockDataValidationService.isValidName(anyString())).thenReturn(true);
+        when(mockDataValidationService.isValidPhoneNumber(anyString())).thenReturn(true);
     }
 
     @Test
@@ -87,14 +93,14 @@ class PatientServiceTest {
 
     @Test
     void createPatient_shouldThrowException_WhenWentWrong() {
+        when(mockPatientRepository.save(any(Patient.class))).thenThrow(new IllegalArgumentException("Error message"));
         PatientPersonalDTO newPatient = new PatientPersonalDTO(
                 testPatientList.getFirst().firstname(), testPatientList.getFirst().lastname(), testPatientList.getFirst().dateOfBirth(), testPatientList.getFirst().insuranceNr(), testPatientList.getFirst().contactInformation());
-        when(mockPatientRepository.save(any(Patient.class))).thenThrow(new NullPointerException("Error message"));
         try {
             patientService.createPatient(newPatient);
             verify(mockPatientRepository).save(any(Patient.class));
             fail("Expected exception, but was not thrown");
-        } catch (RuntimeException e) {
+        } catch (IllegalArgumentException e) {
             assertEquals("Error message", e.getMessage());
         }
     }

@@ -98,15 +98,31 @@ class PatientControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/patients/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"firstname": "Max",
-                                 "lastname": "Mustermann",
-                                 "dateOfBirth": "1984-02-25"}
+                                {
+                                "firstname": "Max",
+                                "lastname": "Mustermann",
+                                "dateOfBirth": "2001-04-12",
+                                "insuranceNr": "1234567",
+                                "contact": { "address":"Sesamstraße 56",
+                                             "town":"68593 Teststadt",
+                                             "phoneNr": null,
+                                             "email": null
+                                                      }
+                                }
                                 """))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().json("""
-                        {"firstname": "Max",
-                         "lastname": "Mustermann",
-                         "dateOfBirth": "1984-02-25"}
+                        {
+                        "firstname": "Max",
+                        "lastname": "Mustermann",
+                        "dateOfBirth": "2001-04-12",
+                        "insuranceNr": "1234567",
+                        "contactInformation": { "address":"Sesamstraße 56",
+                                     "town":"68593 Teststadt",
+                                     "phoneNr": null,
+                                     "email": null
+                                              }
+                        }
                         """))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists());
     }
@@ -114,7 +130,7 @@ class PatientControllerTest {
     @Test
     void updatePatient_returnsUpdatedPatient() throws Exception {
         patientRepository.saveAll(List.of(
-                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
+                (new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "1234567", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
         ));
         mockMvc.perform(MockMvcRequestBuilders.put("/api/patients/edit/2")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +138,13 @@ class PatientControllerTest {
                                 {
                                 "firstname": "Erika",
                                 "lastname": "Müller",
-                                "dateOfBirth": "1986-05-04"
+                                "dateOfBirth": "1986-05-04",
+                                "insuranceNr": "1234567",
+                                "contact": { "address":"Sesamstraße 56",
+                                     "town":"68593 Teststadt",
+                                     "phoneNr": "0153476539",
+                                     "email": "test@email.com"
+                                              }
                                 }
                                 """))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -131,14 +153,20 @@ class PatientControllerTest {
                         "id": "2",
                         "firstname": "Erika",
                         "lastname": "Müller",
-                        "dateOfBirth": "1986-05-04"
+                        "dateOfBirth": "1986-05-04",
+                        "insuranceNr": "1234567",
+                                "contactInformation": { "address":"Sesamstraße 56",
+                                     "town":"68593 Teststadt",
+                                     "phoneNr": "0153476539",
+                                     "email": "test@email.com"
+                                              }
                         }
                         """));
     }
 
     @Test
     void deletePatientById_deletesPatient_ByGivenId() throws Exception {
-        patientRepository.save((new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
+        patientRepository.save((new Patient("2", "Erika", "Musterfrau", LocalDate.of(1986, 5, 4), "1234567", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")))
         );
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/patients/2"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
