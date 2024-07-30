@@ -19,28 +19,6 @@ public class PatientService {
     private final DataValidationService dataValidationService;
     private final EncryptionService encryptionService;
 
-    private void validatePatientData(PatientPersonalDTO patient) {
-        if (!dataValidationService.isValidName(patient.firstname()) ||
-                !dataValidationService.isValidName(patient.lastname())) {
-            throw new IllegalArgumentException("Invalid name format.");
-        }
-        if (!dataValidationService.isValidInsuranceNumber(patient.insuranceNr())) {
-            throw new IllegalArgumentException("Invalid insurance number format.");
-        }
-        if (!dataValidationService.isValidDateOfBirth(patient.dateOfBirth())) {
-            throw new IllegalArgumentException("Invalid date of birth.");
-        }
-        if (patient.contact() != null) {
-            if (!dataValidationService.isValidPhoneNumber(patient.contact().phoneNr())) {
-                throw new IllegalArgumentException("Invalid phone number format.");
-            }
-            if (!dataValidationService.isValidEmail(patient.contact().email())) {
-                throw new IllegalArgumentException("Invalid email address format.");
-            }
-        }
-    }
-
-
     public List<Patient> getAllPatients() {
 
         List<Patient> patients = patientRepository.findAll();
@@ -76,6 +54,27 @@ public class PatientService {
     public void deletePatientById(String id) throws InvalidIdException {
         if (patientRepository.existsById(id)) patientRepository.deleteById(id);
         else throw new InvalidIdException("Patient with id " + id + " not found!");
+    }
+
+    protected void validatePatientData(PatientPersonalDTO patient) {
+        if (!dataValidationService.isValidName(patient.firstname()) ||
+                !dataValidationService.isValidName(patient.lastname())) {
+            throw new IllegalArgumentException("Invalid name format.");
+        }
+        if (!dataValidationService.isValidInsuranceNumber(patient.insuranceNr())) {
+            throw new IllegalArgumentException("Invalid insurance number format.");
+        }
+        if (!dataValidationService.isValidDateOfBirth(patient.dateOfBirth())) {
+            throw new IllegalArgumentException("Invalid date of birth.");
+        }
+        if (patient.contact() != null) {
+            if (!dataValidationService.isValidPhoneNumber(patient.contact().phoneNr())) {
+                throw new IllegalArgumentException("Invalid phone number format.");
+            }
+            if (!dataValidationService.isValidEmail(patient.contact().email())) {
+                throw new IllegalArgumentException("Invalid email address format.");
+            }
+        }
     }
 
     protected Patient decryptPatient(Patient patient) {

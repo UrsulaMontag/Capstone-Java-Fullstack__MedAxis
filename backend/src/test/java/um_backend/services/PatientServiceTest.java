@@ -243,10 +243,133 @@ class PatientServiceTest {
         ContactInformation encryptedContact = new ContactInformation(
                 "encryptedPhoneNr", "encryptedEmail", "encryptedAddress", "encryptedTown"
         );
-        
+
 
         ContactInformation result = patientService.createEncryptedContactInformation(contact);
 
         assertEquals(encryptedContact, result);
+    }
+
+    @Test
+    void validatePatientData_validData_shouldNotThrowException() {
+        PatientPersonalDTO validPatient = new PatientPersonalDTO(
+                "Erika", "Musterfrau", "1986-05-04", "12335467",
+                new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")
+        );
+
+        // Mocked validations to return true
+        when(mockDataValidationService.isValidName("Erika")).thenReturn(true);
+        when(mockDataValidationService.isValidName("Musterfrau")).thenReturn(true);
+        when(mockDataValidationService.isValidDateOfBirth("1986-05-04")).thenReturn(true);
+        when(mockDataValidationService.isValidInsuranceNumber("12335467")).thenReturn(true);
+        when(mockDataValidationService.isValidPhoneNumber("0153476539")).thenReturn(true);
+        when(mockDataValidationService.isValidEmail("test@email.com")).thenReturn(true);
+
+        assertDoesNotThrow(() -> patientService.validatePatientData(validPatient));
+    }
+
+    @Test
+    void validatePatientData_invalidName_shouldThrowException() {
+        PatientPersonalDTO invalidPatient = new PatientPersonalDTO(
+                "InvalidName123", "Musterfrau", "1986-05-04", "12335467",
+                new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")
+        );
+
+        when(mockDataValidationService.isValidName("InvalidName123")).thenReturn(false);
+        when(mockDataValidationService.isValidName("Musterfrau")).thenReturn(true);
+        when(mockDataValidationService.isValidDateOfBirth("1986-05-04")).thenReturn(true);
+        when(mockDataValidationService.isValidInsuranceNumber("12335467")).thenReturn(true);
+        when(mockDataValidationService.isValidPhoneNumber("0153476539")).thenReturn(true);
+        when(mockDataValidationService.isValidEmail("test@email.com")).thenReturn(true);
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> patientService.validatePatientData(invalidPatient)
+        );
+
+        assertEquals("Invalid name format.", thrown.getMessage());
+    }
+
+    @Test
+    void validatePatientData_invalidInsuranceNumber_shouldThrowException() {
+        PatientPersonalDTO invalidPatient = new PatientPersonalDTO(
+                "Erika", "Musterfrau", "1986-05-04", "invalid-insurance",
+                new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")
+        );
+
+        when(mockDataValidationService.isValidName("Erika")).thenReturn(true);
+        when(mockDataValidationService.isValidName("Musterfrau")).thenReturn(true);
+        when(mockDataValidationService.isValidDateOfBirth("1986-05-04")).thenReturn(true);
+        when(mockDataValidationService.isValidInsuranceNumber("invalid-insurance")).thenReturn(false);
+        when(mockDataValidationService.isValidPhoneNumber("0153476539")).thenReturn(true);
+        when(mockDataValidationService.isValidEmail("test@email.com")).thenReturn(true);
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> patientService.validatePatientData(invalidPatient)
+        );
+
+        assertEquals("Invalid insurance number format.", thrown.getMessage());
+    }
+
+    @Test
+    void validatePatientData_invalidDateOfBirth_shouldThrowException() {
+        PatientPersonalDTO invalidPatient = new PatientPersonalDTO(
+                "Erika", "Musterfrau", "invalid-date", "12335467",
+                new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")
+        );
+
+        when(mockDataValidationService.isValidName("Erika")).thenReturn(true);
+        when(mockDataValidationService.isValidName("Musterfrau")).thenReturn(true);
+        when(mockDataValidationService.isValidDateOfBirth("invalid-date")).thenReturn(false);
+        when(mockDataValidationService.isValidInsuranceNumber("12335467")).thenReturn(true);
+        when(mockDataValidationService.isValidPhoneNumber("0153476539")).thenReturn(true);
+        when(mockDataValidationService.isValidEmail("test@email.com")).thenReturn(true);
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> patientService.validatePatientData(invalidPatient)
+        );
+
+        assertEquals("Invalid date of birth.", thrown.getMessage());
+    }
+
+    @Test
+    void validatePatientData_invalidPhoneNumber_shouldThrowException() {
+        PatientPersonalDTO invalidPatient = new PatientPersonalDTO(
+                "Erika", "Musterfrau", "1986-05-04", "12335467",
+                new ContactInformation("invalid-phone", "test@email.com", "Sesamstraße 56", "68593 Teststadt")
+        );
+
+        when(mockDataValidationService.isValidName("Erika")).thenReturn(true);
+        when(mockDataValidationService.isValidName("Musterfrau")).thenReturn(true);
+        when(mockDataValidationService.isValidDateOfBirth("1986-05-04")).thenReturn(true);
+        when(mockDataValidationService.isValidInsuranceNumber("12335467")).thenReturn(true);
+        when(mockDataValidationService.isValidPhoneNumber("invalid-phone")).thenReturn(false);
+        when(mockDataValidationService.isValidEmail("test@email.com")).thenReturn(true);
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> patientService.validatePatientData(invalidPatient)
+        );
+
+        assertEquals("Invalid phone number format.", thrown.getMessage());
+    }
+
+    @Test
+    void validatePatientData_invalidEmail_shouldThrowException() {
+        PatientPersonalDTO invalidPatient = new PatientPersonalDTO(
+                "Erika", "Musterfrau", "1986-05-04", "12335467",
+                new ContactInformation("0153476539", "invalid-email", "Sesamstraße 56", "68593 Teststadt")
+        );
+
+        when(mockDataValidationService.isValidName("Erika")).thenReturn(true);
+        when(mockDataValidationService.isValidName("Musterfrau")).thenReturn(true);
+        when(mockDataValidationService.isValidDateOfBirth("1986-05-04")).thenReturn(true);
+        when(mockDataValidationService.isValidInsuranceNumber("12335467")).thenReturn(true);
+        when(mockDataValidationService.isValidPhoneNumber("0153476539")).thenReturn(true);
+        when(mockDataValidationService.isValidEmail("invalid-email")).thenReturn(false);
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> patientService.validatePatientData(invalidPatient)
+        );
+
+        assertEquals("Invalid email address format.", thrown.getMessage());
     }
 }
