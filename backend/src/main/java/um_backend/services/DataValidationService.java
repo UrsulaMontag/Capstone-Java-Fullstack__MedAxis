@@ -3,6 +3,7 @@ package um_backend.services;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 @Service
 public class DataValidationService {
@@ -16,8 +17,16 @@ public class DataValidationService {
         return insuranceNr != null && insuranceNr.matches(insuranceNrRegex);
     }
 
-    public boolean isValidDateOfBirth(LocalDate dateOfBirth) {
-        return dateOfBirth != null && dateOfBirth.isBefore(LocalDate.now());
+    public boolean isValidDateOfBirth(String dateOfBirth) {
+        if (dateOfBirth == null || dateOfBirth.isEmpty()) {
+            return false;
+        }
+        try {
+            LocalDate dob = LocalDate.parse(dateOfBirth);
+            return dob.isBefore(LocalDate.now());
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 
     public boolean isValidPhoneNumber(String phoneNumber) {

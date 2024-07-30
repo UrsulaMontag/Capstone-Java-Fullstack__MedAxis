@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -28,8 +26,8 @@ class DataValidationServiceTest {
 
     @Test
     void isValidDateOfBirth_testsIfDateOfBirthInputIsValid() {
-        assertThat(dataValidationService.isValidDateOfBirth(LocalDate.of(1990, 1, 1))).isTrue();
-        assertThat(dataValidationService.isValidDateOfBirth(LocalDate.of(3000, 1, 1))).isFalse();
+        assertThat(dataValidationService.isValidDateOfBirth("1990-01-01")).isTrue();
+        assertThat(dataValidationService.isValidDateOfBirth("3000-01-01")).isFalse();
     }
 
     @Test
