@@ -23,13 +23,15 @@ class PatientServiceTest {
     private UtilService mockUtilService;
     private List<Patient> testPatientListEncrypted;
     private List<Patient> testPatientListDecrypted;
+    private EncryptionService mockEncryptionService;
+    private DataValidationService mockDataValidationService;
 
     @BeforeEach
     void setUp() {
         mockPatientRepository = mock(PatientRepository.class);
         mockUtilService = mock(UtilService.class);
-        EncryptionService mockEncryptionService = mock(EncryptionService.class);
-        DataValidationService mockDataValidationService = mock(DataValidationService.class);
+        mockEncryptionService = mock(EncryptionService.class);
+        mockDataValidationService = mock(DataValidationService.class);
         patientService = new PatientService(mockPatientRepository, mockUtilService, mockDataValidationService, mockEncryptionService);
         // Dummy encryption/decryption values
         // Mocked encryption and decryption for the test
@@ -184,5 +186,67 @@ class PatientServiceTest {
         when(mockPatientRepository.findById("2")).thenReturn(Optional.empty());
         assertThrows(InvalidIdException.class, () -> patientService.deletePatientById("2"));
         verify(mockPatientRepository, times(1)).existsById("2");
+    }
+
+    @Test
+    void decryptPatient_shouldDecryptPatientData() {
+        Patient encryptedPatient = testPatientListEncrypted.getFirst();
+
+        Patient decryptedPatient = patientService.decryptPatient(encryptedPatient);
+
+        Patient expectedPatient = testPatientListDecrypted.getFirst();
+        assertEquals(expectedPatient, decryptedPatient);
+    }
+
+    @Test
+    void createOrUpdatePatient_createsNewPatient_whenExistingPatientIsNull() {
+        PatientPersonalDTO dto = new PatientPersonalDTO(
+                "Max", "Mustermann", "1999-05-16", "123495467",
+                new ContactInformation(null, null, "Sesamstraße 56", "68593 Teststadt")
+        );
+
+        Patient newPatient = new Patient(
+                "1", "encryptedMax", "encryptedMustermann", "encryptedDate1", "encryptedInsuranceNr1",
+                new ContactInformation(null, null, "encryptedAddress", "encryptedTown")
+        );
+
+        when(mockUtilService.generateId()).thenReturn("1");
+        Patient result = patientService.createOrUpdatePatient(dto, null);
+
+        verify(mockUtilService).generateId();
+        assertEquals(newPatient, result);
+    }
+
+    @Test
+    void createOrUpdatePatient_updatesExistingPatient_whenExistingPatientIsNotNull() {
+        PatientPersonalDTO dto = new PatientPersonalDTO(
+                "Max", "Mustermann", "1999-05-16", "123495467",
+                new ContactInformation(null, null, "Sesamstraße 56", "68593 Teststadt")
+        );
+        Patient existingPatient = new Patient(
+                "1", "encryptedOldFirstName", "encryptedOldLastName", "encryptedOldDate", "encryptedOldInsuranceNr",
+                new ContactInformation(null, null, "encryptedOldAddress", "encryptedOldTown")
+        );
+        Patient updatedPatient = new Patient(
+                "1", "encryptedMax", "encryptedMustermann", "encryptedDate1", "encryptedInsuranceNr1",
+                new ContactInformation(null, null, "encryptedAddress", "encryptedTown")
+        );
+        Patient result = patientService.createOrUpdatePatient(dto, existingPatient);
+
+        assertEquals(updatedPatient, result);
+    }
+
+    @Test
+    void createEncryptedContactInformation_createsEncryptedContactInformation() {
+        ContactInformation contact = new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt");
+
+        ContactInformation encryptedContact = new ContactInformation(
+                "encryptedPhoneNr", "encryptedEmail", "encryptedAddress", "encryptedTown"
+        );
+        
+
+        ContactInformation result = patientService.createEncryptedContactInformation(contact);
+
+        assertEquals(encryptedContact, result);
     }
 }

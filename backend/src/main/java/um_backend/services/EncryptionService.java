@@ -40,13 +40,13 @@ public class EncryptionService {
     }
 
     public String decryptDate(String encryptedDate) {
-        String decryptedDate = decrypt(encryptedDate); // Entschlüsselter Wert z.B. "2001-04-12"
+        String decryptedDate = decrypt(encryptedDate);
         try {
-            LocalDate date = LocalDate.parse(decryptedDate, DATE_FORMATTER); // Sicherstellen, dass das Format korrekt ist
-            return date.format(DATE_FORMATTER); // Rückgabe des Datums im gewünschten Format
+            LocalDate date = LocalDate.parse(decryptedDate, DATE_FORMATTER);
+            return date.format(DATE_FORMATTER);
         } catch (DateTimeParseException e) {
-            // Behandlung des Fehlers, falls das Datum nicht korrekt geparst werden kann
             throw new IllegalArgumentException("Invalid date format after decryption: " + decryptedDate, e);
         }
     }
+
 }

@@ -78,7 +78,7 @@ public class PatientService {
         else throw new InvalidIdException("Patient with id " + id + " not found!");
     }
 
-    private Patient decryptPatient(Patient patient) {
+    protected Patient decryptPatient(Patient patient) {
         return patient.withFirstname(encryptionService.decrypt(patient.firstname()))
                 .withLastname(encryptionService.decrypt(patient.lastname()))
                 .withDateOfBirth(encryptionService.decryptDate(patient.dateOfBirth()))
@@ -93,7 +93,7 @@ public class PatientService {
                         : null);
     }
 
-    private Patient createOrUpdatePatient(PatientPersonalDTO dto, Patient existingPatient) {
+    protected Patient createOrUpdatePatient(PatientPersonalDTO dto, Patient existingPatient) {
         String encryptedFirstName = encryptionService.encrypt(dto.firstname());
         String encryptedLastName = encryptionService.encrypt(dto.lastname());
         String encryptedDateOfBirth = encryptionService.encryptDate(dto.dateOfBirth());
@@ -121,7 +121,7 @@ public class PatientService {
         }
     }
 
-    private ContactInformation createEncryptedContactInformation(ContactInformation contact) {
+    protected ContactInformation createEncryptedContactInformation(ContactInformation contact) {
         if (contact == null) {
             return null;
         }
