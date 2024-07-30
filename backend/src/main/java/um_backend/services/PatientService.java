@@ -45,23 +45,40 @@ public class PatientService {
 
         List<Patient> patients = patientRepository.findAll();
         return patients.stream()
-                .map(patient -> patient.withFirstname(encryptionService.decrypt(patient.firstname()))
-                        .withLastname(encryptionService.decrypt(patient.lastname()))
-                        .withDateOfBirth(encryptionService.decryptDate(patient.dateOfBirth()))
-                        .withInsuranceNr(encryptionService.decrypt(patient.insuranceNr()))
-                        .withContactInformation(patient.contactInformation() != null ?
-                                new ContactInformation(
-                                        encryptionService.decrypt(patient.contactInformation().phoneNr()),
-                                        encryptionService.decrypt(patient.contactInformation().email()),
-                                        encryptionService.decrypt(patient.contactInformation().address()),
-                                        encryptionService.decrypt(patient.contactInformation().town())
-                                )
-                                : null))
+                .map(this::decryptPatient)
                 .toList();
     }
 
     public Patient getPatientById(String id) throws InvalidIdException {
         Patient patient = patientRepository.findById(id).orElseThrow(() -> new InvalidIdException("Patient with id " + id + "not found!"));
+        return decryptPatient(patient);
+    }
+
+    public Patient createPatient(PatientPersonalDTO patient) throws IllegalArgumentException {
+        if (patient == null) {
+            throw new IllegalArgumentException("PatientPersonalDTO cannot be null");
+        }
+        if (utilService == null || encryptionService == null || patientRepository == null) {
+            throw new IllegalStateException("Required services are not initialized");
+        }
+        validatePatientData(patient);
+        Patient newPatient = createOrUpdatePatient(patient, null);
+        return patientRepository.save(newPatient);
+    }
+
+    public Patient updatePatientById(String id, PatientPersonalDTO patient) throws InvalidIdException {
+        validatePatientData(patient);
+        Patient currentPatient = patientRepository.findById(id).orElseThrow(() -> new InvalidIdException("Patient with id " + id + "not found!"));
+        Patient updatedPatient = createOrUpdatePatient(patient, currentPatient);
+        return patientRepository.save(updatedPatient);
+    }
+
+    public void deletePatientById(String id) throws InvalidIdException {
+        if (patientRepository.existsById(id)) patientRepository.deleteById(id);
+        else throw new InvalidIdException("Patient with id " + id + " not found!");
+    }
+
+    private Patient decryptPatient(Patient patient) {
         return patient.withFirstname(encryptionService.decrypt(patient.firstname()))
                 .withLastname(encryptionService.decrypt(patient.lastname()))
                 .withDateOfBirth(encryptionService.decryptDate(patient.dateOfBirth()))
@@ -76,72 +93,44 @@ public class PatientService {
                         : null);
     }
 
-    public Patient createPatient(PatientPersonalDTO patient) throws IllegalArgumentException {
-        if (patient == null) {
-            throw new IllegalArgumentException("PatientPersonalDTO cannot be null");
-        }
+    private Patient createOrUpdatePatient(PatientPersonalDTO dto, Patient existingPatient) {
+        String encryptedFirstName = encryptionService.encrypt(dto.firstname());
+        String encryptedLastName = encryptionService.encrypt(dto.lastname());
+        String encryptedDateOfBirth = encryptionService.encryptDate(dto.dateOfBirth());
+        String encryptedInsuranceNr = encryptionService.encrypt(dto.insuranceNr());
+        ContactInformation contactInfo = createEncryptedContactInformation(dto.contact());
 
-        if (utilService == null || encryptionService == null || patientRepository == null) {
-            throw new IllegalStateException("Required services are not initialized");
-        }
-        validatePatientData(patient);
-        String encryptedFirstName = encryptionService.encrypt(patient.firstname());
-        String encryptedLastName = encryptionService.encrypt(patient.lastname());
-        String encryptedDateOfBirth = encryptionService.encryptDate(patient.dateOfBirth());
-        String encryptedInsuranceNr = encryptionService.encrypt(patient.insuranceNr());
-
-        ContactInformation contactInfo = null;
-        if (patient.contact() != null) {
-            contactInfo = new ContactInformation(
-                    patient.contact().phoneNr() != null ? encryptionService.encrypt(patient.contact().phoneNr()) : null,
-                    patient.contact().email() != null ? encryptionService.encrypt(patient.contact().email()) : null,
-                    encryptionService.encrypt(patient.contact().address()),
-                    encryptionService.encrypt(patient.contact().town())
+        if (existingPatient == null) {
+            // Creating a new patient
+            return new Patient(
+                    utilService.generateId(),
+                    encryptedFirstName,
+                    encryptedLastName,
+                    encryptedDateOfBirth,
+                    encryptedInsuranceNr,
+                    contactInfo
             );
+        } else {
+            // Updating an existing patient
+            return existingPatient
+                    .withFirstname(encryptedFirstName)
+                    .withLastname(encryptedLastName)
+                    .withDateOfBirth(encryptedDateOfBirth)
+                    .withInsuranceNr(encryptedInsuranceNr)
+                    .withContactInformation(contactInfo);
+        }
+    }
+
+    private ContactInformation createEncryptedContactInformation(ContactInformation contact) {
+        if (contact == null) {
+            return null;
         }
 
-        Patient newPatient = new Patient(
-                utilService.generateId(),
-                encryptedFirstName,
-                encryptedLastName,
-                encryptedDateOfBirth,
-                encryptedInsuranceNr,
-                contactInfo
+        return new ContactInformation(
+                contact.phoneNr() != null ? encryptionService.encrypt(contact.phoneNr()) : null,
+                contact.email() != null ? encryptionService.encrypt(contact.email()) : null,
+                encryptionService.encrypt(contact.address()),
+                encryptionService.encrypt(contact.town())
         );
-
-        return patientRepository.save(newPatient);
-    }
-
-    public Patient updatePatientById(String id, PatientPersonalDTO patient) throws InvalidIdException {
-        validatePatientData(patient);
-        Patient currentPatient = patientRepository.findById(id).orElseThrow(() -> new InvalidIdException("Patient with id " + id + "not found!"));
-        String encryptedFirstname = encryptionService.encrypt(patient.firstname());
-        String encryptedLastname = encryptionService.encrypt(patient.lastname());
-        String encryptedDateOfBirth = encryptionService.encryptDate(patient.dateOfBirth());
-        String encryptedInsuranceNr = encryptionService.encrypt(patient.insuranceNr());
-
-        ContactInformation encryptedContactInfo = null;
-        if (patient.contact() != null) {
-            encryptedContactInfo = new ContactInformation(
-                    encryptionService.encrypt(patient.contact().phoneNr()),
-                    encryptionService.encrypt(patient.contact().email()),
-                    encryptionService.encrypt(patient.contact().address()),
-                    encryptionService.encrypt(patient.contact().town())
-            );
-        }
-
-        Patient updatedPatient = currentPatient
-                .withFirstname(encryptedFirstname)
-                .withLastname(encryptedLastname)
-                .withDateOfBirth(encryptedDateOfBirth)
-                .withInsuranceNr(encryptedInsuranceNr)
-                .withContactInformation(encryptedContactInfo);
-
-        return patientRepository.save(updatedPatient);
-    }
-
-    public void deletePatientById(String id) throws InvalidIdException {
-        if (patientRepository.existsById(id)) patientRepository.deleteById(id);
-        else throw new InvalidIdException("Patient with id " + id + " not found!");
     }
 }
