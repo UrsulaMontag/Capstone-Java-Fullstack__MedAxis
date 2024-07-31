@@ -9,6 +9,6 @@ public record PatientPersonalDTO(
         String lastname,
         String dateOfBirth,
         String insuranceNr,
-        ContactInformation contact
+        ContactInformation contactInformation
 ) {
 }

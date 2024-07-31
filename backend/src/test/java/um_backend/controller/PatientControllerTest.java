@@ -106,8 +106,8 @@ class PatientControllerTest {
                                                     "dateOfBirth": "1999-05-16",
                                                     "insuranceNr": "123495467",
                                                     "contactInformation": {
-                                                        "phoneNr": null,
-                                                        "email":null,
+                                                        "phoneNr": "",
+                                                        "email":"",
                                                         "address":"Sesamstraße 56",
                                                         "town":"68593 Teststadt"
                                                     }
@@ -157,10 +157,8 @@ class PatientControllerTest {
                                 "lastname": "Mustermann",
                                 "dateOfBirth": "1999-05-16",
                                 "insuranceNr": "123495467",
-                                "contact": { "address":"Sesamstraße 56",
-                                             "town":"68593 Teststadt",
-                                             "phoneNr": null,
-                                             "email": null
+                                "contactInformation": { "address":"Sesamstraße 56",
+                                             "town":"68593 Teststadt"
                                                       }
                                 }
                                 """))
@@ -172,8 +170,8 @@ class PatientControllerTest {
                         "dateOfBirth": "encryptedDate1",
                         "insuranceNr": "encryptedInsuranceNr1",
                         "contactInformation": {
-                                     "phoneNr": null,
-                                     "email": null,
+                                     "phoneNr": "",
+                                     "email": "",
                                      "address":"encryptedAddress",
                                      "town":"encryptedTown"
                                               }
@@ -196,7 +194,7 @@ class PatientControllerTest {
                                 "lastname": "Musterfrau",
                                 "dateOfBirth": "1986-05-04",
                                 "insuranceNr": "12335467",
-                                "contact": { "address":"Sesamstraße 56",
+                                "contactInformation": { "address":"Sesamstraße 56",
                                      "town":"68593 Teststadt",
                                      "phoneNr": "0153476539",
                                      "email": "test@email.com"

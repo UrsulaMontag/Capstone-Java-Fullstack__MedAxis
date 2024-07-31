@@ -11,17 +11,8 @@ class EncryptionServiceTest {
     @BeforeEach
     void setUp() {
         String password = "testPassword";
-        encryptionService = new EncryptionService(password);
-    }
-
-    @Test
-    void generateSalt_generatesRandomSaltKey_with32digits() {
-        String salt1 = EncryptionService.generateSalt();
-        String salt2 = EncryptionService.generateSalt();
-
-        assertNotEquals(salt1, salt2);
-        assertEquals(32, salt1.length());
-        assertEquals(32, salt2.length());
+        String salt = "4f6a8b2d5c3e7a1d9e8f4c2a0b1d6f5e";
+        encryptionService = new EncryptionService(password, salt);
     }
 
     @Test

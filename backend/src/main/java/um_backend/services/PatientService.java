@@ -67,29 +67,44 @@ public class PatientService {
         if (!dataValidationService.isValidDateOfBirth(patient.dateOfBirth())) {
             throw new IllegalArgumentException("Invalid date of birth.");
         }
-        if (patient.contact() != null) {
-            if (!dataValidationService.isValidPhoneNumber(patient.contact().phoneNr())) {
+        if (patient.contactInformation().phoneNr() != null && !patient.contactInformation().phoneNr().isEmpty()) {
+            if (!dataValidationService.isValidPhoneNumber(patient.contactInformation().phoneNr())) {
                 throw new IllegalArgumentException("Invalid phone number format.");
             }
-            if (!dataValidationService.isValidEmail(patient.contact().email())) {
+        }
+        if (patient.contactInformation().email() != null && !patient.contactInformation().email().isEmpty()) {
+            if (!dataValidationService.isValidEmail(patient.contactInformation().email())) {
                 throw new IllegalArgumentException("Invalid email address format.");
             }
         }
     }
 
     protected Patient decryptPatient(Patient patient) {
-        return patient.withFirstname(encryptionService.decrypt(patient.firstname()))
-                .withLastname(encryptionService.decrypt(patient.lastname()))
-                .withDateOfBirth(encryptionService.decryptDate(patient.dateOfBirth()))
-                .withInsuranceNr(encryptionService.decrypt(patient.insuranceNr()))
-                .withContactInformation(patient.contactInformation() != null ?
-                        new ContactInformation(
-                                encryptionService.decrypt(patient.contactInformation().phoneNr()),
-                                encryptionService.decrypt(patient.contactInformation().email()),
-                                encryptionService.decrypt(patient.contactInformation().address()),
-                                encryptionService.decrypt(patient.contactInformation().town())
-                        )
-                        : null);
+        String decryptedFirstname = encryptionService.decrypt(patient.firstname());
+        String decryptedLastname = encryptionService.decrypt(patient.lastname());
+        String decryptedDateOfBirth = encryptionService.decryptDate(patient.dateOfBirth());
+        String decryptedInsuranceNr = encryptionService.decrypt(patient.insuranceNr());
+        ContactInformation decryptedContactInformation = null;
+
+        if (patient.contactInformation() != null) {
+            decryptedContactInformation = new ContactInformation(
+                    encryptionService.decrypt(patient.contactInformation().phoneNr()),
+                    encryptionService.decrypt(patient.contactInformation().email()),
+                    encryptionService.decrypt(patient.contactInformation().address()),
+                    encryptionService.decrypt(patient.contactInformation().town())
+            );
+        }
+
+        // Logging der entschlüsselten Werte zur Überprüfung
+        System.out.println("Decrypted Firstname: " + decryptedFirstname);
+        System.out.println("Decrypted Lastname: " + decryptedLastname);
+        // Weitere Logs für andere Felder
+
+        return patient.withFirstname(decryptedFirstname)
+                .withLastname(decryptedLastname)
+                .withDateOfBirth(decryptedDateOfBirth)
+                .withInsuranceNr(decryptedInsuranceNr)
+                .withContactInformation(decryptedContactInformation);
     }
 
     protected Patient createOrUpdatePatient(PatientPersonalDTO dto, Patient existingPatient) {
@@ -97,7 +112,7 @@ public class PatientService {
         String encryptedLastName = encryptionService.encrypt(dto.lastname());
         String encryptedDateOfBirth = encryptionService.encryptDate(dto.dateOfBirth());
         String encryptedInsuranceNr = encryptionService.encrypt(dto.insuranceNr());
-        ContactInformation contactInfo = createEncryptedContactInformation(dto.contact());
+        ContactInformation contactInfo = createEncryptedContactInformation(dto.contactInformation());
 
         if (existingPatient == null) {
             // Creating a new patient
@@ -121,13 +136,9 @@ public class PatientService {
     }
 
     protected ContactInformation createEncryptedContactInformation(ContactInformation contact) {
-        if (contact == null) {
-            return null;
-        }
-
         return new ContactInformation(
-                contact.phoneNr() != null ? encryptionService.encrypt(contact.phoneNr()) : null,
-                contact.email() != null ? encryptionService.encrypt(contact.email()) : null,
+                !contact.phoneNr().isEmpty() ? encryptionService.encrypt(contact.phoneNr()) : "",
+                !contact.email().isEmpty() ? encryptionService.encrypt(contact.email()) : "",
                 encryptionService.encrypt(contact.address()),
                 encryptionService.encrypt(contact.town())
         );
