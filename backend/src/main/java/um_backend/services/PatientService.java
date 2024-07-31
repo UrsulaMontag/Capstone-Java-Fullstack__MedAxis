@@ -98,7 +98,6 @@ public class PatientService {
         // Logging der entschlüsselten Werte zur Überprüfung
         System.out.println("Decrypted Firstname: " + decryptedFirstname);
         System.out.println("Decrypted Lastname: " + decryptedLastname);
-        // Weitere Logs für andere Felder
 
         return patient.withFirstname(decryptedFirstname)
                 .withLastname(decryptedLastname)

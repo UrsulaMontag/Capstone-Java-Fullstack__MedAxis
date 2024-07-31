@@ -10,6 +10,8 @@ class EncryptionServiceTest {
 
     @BeforeEach
     void setUp() {
+        System.out.println("Password: " + System.getenv("encryption.password"));
+        System.out.println("Salt: " + System.getenv("ENCRYPTION_SALT"));
         String password = "testPassword";
         String salt = "4f6a8b2d5c3e7a1d9e8f4c2a0b1d6f5e";
         encryptionService = new EncryptionService(password, salt);

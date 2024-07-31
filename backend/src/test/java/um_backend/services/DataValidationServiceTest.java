@@ -1,16 +1,13 @@
 package um_backend.services;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+
 class DataValidationServiceTest {
 
-    @Autowired
-    private DataValidationService dataValidationService;
+    private final DataValidationService dataValidationService = new DataValidationService();
 
     @Test
     void isValidName_testsIfNameInputIsValid() {
