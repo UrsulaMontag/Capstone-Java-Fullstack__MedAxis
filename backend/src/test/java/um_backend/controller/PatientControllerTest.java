@@ -40,7 +40,7 @@ class PatientControllerTest {
         // Mocked encryption and decryption for the test
         when(encryptionService.encrypt("Erika")).thenReturn("encryptedErika");
         when(encryptionService.encrypt("Musterfrau")).thenReturn("encryptedMusterfrau");
-        when(encryptionService.encryptDate("1986-05-04")).thenReturn("encryptedDate");
+        when(encryptionService.encrypt("1986-05-04")).thenReturn("encryptedDate");
         when(encryptionService.encrypt("12335467")).thenReturn("encryptedInsuranceNr");
         when(encryptionService.encrypt("Sesamstraße 56")).thenReturn("encryptedAddress");
         when(encryptionService.encrypt("68593 Teststadt")).thenReturn("encryptedTown");
@@ -50,7 +50,7 @@ class PatientControllerTest {
         // Mock decryption
         when(encryptionService.decrypt("encryptedErika")).thenReturn("Erika");
         when(encryptionService.decrypt("encryptedMusterfrau")).thenReturn("Musterfrau");
-        when(encryptionService.decryptDate("encryptedDate")).thenReturn("1986-05-04");
+        when(encryptionService.decrypt("encryptedDate")).thenReturn("1986-05-04");
         when(encryptionService.decrypt("encryptedInsuranceNr")).thenReturn("12335467");
         when(encryptionService.decrypt("encryptedAddress")).thenReturn("Sesamstraße 56");
         when(encryptionService.decrypt("encryptedTown")).thenReturn("68593 Teststadt");
@@ -59,12 +59,12 @@ class PatientControllerTest {
 
         when(encryptionService.encrypt("Max")).thenReturn("encryptedMax");
         when(encryptionService.encrypt("Mustermann")).thenReturn("encryptedMustermann");
-        when(encryptionService.encryptDate("1999-05-16")).thenReturn("encryptedDate1");
+        when(encryptionService.encrypt("1999-05-16")).thenReturn("encryptedDate1");
         when(encryptionService.encrypt("123495467")).thenReturn("encryptedInsuranceNr1");
 
         when(encryptionService.decrypt("encryptedMax")).thenReturn("Max");
         when(encryptionService.decrypt("encryptedMustermann")).thenReturn("Mustermann");
-        when(encryptionService.decryptDate("encryptedDate1")).thenReturn("1999-05-16");
+        when(encryptionService.decrypt("encryptedDate1")).thenReturn("1999-05-16");
         when(encryptionService.decrypt("encryptedInsuranceNr1")).thenReturn("123495467");
     }
 

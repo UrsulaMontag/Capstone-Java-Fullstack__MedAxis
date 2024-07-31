@@ -36,7 +36,7 @@ class PatientServiceTest {
         // Dummy encryption/decryption values
         when(mockEncryptionService.encrypt("Erika")).thenReturn("encryptedErika");
         when(mockEncryptionService.encrypt("Musterfrau")).thenReturn("encryptedMusterfrau");
-        when(mockEncryptionService.encryptDate("1986-05-04")).thenReturn("encryptedDate");
+        when(mockEncryptionService.encrypt("1986-05-04")).thenReturn("encryptedDate");
         when(mockEncryptionService.encrypt("12335467")).thenReturn("encryptedInsuranceNr");
         when(mockEncryptionService.encrypt("Sesamstraße 56")).thenReturn("encryptedAddress");
         when(mockEncryptionService.encrypt("68593 Teststadt")).thenReturn("encryptedTown");
@@ -45,7 +45,7 @@ class PatientServiceTest {
 
         when(mockEncryptionService.decrypt("encryptedErika")).thenReturn("Erika");
         when(mockEncryptionService.decrypt("encryptedMusterfrau")).thenReturn("Musterfrau");
-        when(mockEncryptionService.decryptDate("encryptedDate")).thenReturn("1986-05-04");
+        when(mockEncryptionService.decrypt("encryptedDate")).thenReturn("1986-05-04");
         when(mockEncryptionService.decrypt("encryptedInsuranceNr")).thenReturn("12335467");
         when(mockEncryptionService.decrypt("encryptedAddress")).thenReturn("Sesamstraße 56");
         when(mockEncryptionService.decrypt("encryptedTown")).thenReturn("68593 Teststadt");
@@ -54,12 +54,12 @@ class PatientServiceTest {
 
         when(mockEncryptionService.encrypt("Max")).thenReturn("encryptedMax");
         when(mockEncryptionService.encrypt("Mustermann")).thenReturn("encryptedMustermann");
-        when(mockEncryptionService.encryptDate("1999-05-16")).thenReturn("encryptedDate1");
+        when(mockEncryptionService.encrypt("1999-05-16")).thenReturn("encryptedDate1");
         when(mockEncryptionService.encrypt("123495467")).thenReturn("encryptedInsuranceNr1");
 
         when(mockEncryptionService.decrypt("encryptedMax")).thenReturn("Max");
         when(mockEncryptionService.decrypt("encryptedMustermann")).thenReturn("Mustermann");
-        when(mockEncryptionService.decryptDate("encryptedDate1")).thenReturn("1999-05-16");
+        when(mockEncryptionService.decrypt("encryptedDate1")).thenReturn("1999-05-16");
         when(mockEncryptionService.decrypt("encryptedInsuranceNr1")).thenReturn("123495467");
 
         testPatientListEncrypted = new ArrayList<>() {{

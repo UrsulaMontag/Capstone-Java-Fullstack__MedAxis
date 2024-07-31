@@ -82,34 +82,25 @@ public class PatientService {
     protected Patient decryptPatient(Patient patient) {
         String decryptedFirstname = encryptionService.decrypt(patient.firstname());
         String decryptedLastname = encryptionService.decrypt(patient.lastname());
-        String decryptedDateOfBirth = encryptionService.decryptDate(patient.dateOfBirth());
+        String decryptedDateOfBirth = encryptionService.decrypt(patient.dateOfBirth());
         String decryptedInsuranceNr = encryptionService.decrypt(patient.insuranceNr());
-        ContactInformation decryptedContactInformation = null;
 
-        if (patient.contactInformation() != null) {
-            decryptedContactInformation = new ContactInformation(
-                    encryptionService.decrypt(patient.contactInformation().phoneNr()),
-                    encryptionService.decrypt(patient.contactInformation().email()),
-                    encryptionService.decrypt(patient.contactInformation().address()),
-                    encryptionService.decrypt(patient.contactInformation().town())
-            );
-        }
-
-        // Logging der entschlüsselten Werte zur Überprüfung
-        System.out.println("Decrypted Firstname: " + decryptedFirstname);
-        System.out.println("Decrypted Lastname: " + decryptedLastname);
-
-        return patient.withFirstname(decryptedFirstname)
-                .withLastname(decryptedLastname)
-                .withDateOfBirth(decryptedDateOfBirth)
-                .withInsuranceNr(decryptedInsuranceNr)
-                .withContactInformation(decryptedContactInformation);
+        ContactInformation decryptedContactInformation = new ContactInformation(
+                (!patient.contactInformation().phoneNr().isEmpty() ?
+                        encryptionService.decrypt(patient.contactInformation().phoneNr()) : ""),
+                (!patient.contactInformation().email().isEmpty() ?
+                        encryptionService.decrypt(patient.contactInformation().email()) : ""),
+                encryptionService.decrypt(patient.contactInformation().address()),
+                encryptionService.decrypt(patient.contactInformation().town())
+        );
+        return new Patient(patient.id(), decryptedFirstname, decryptedLastname,
+                decryptedDateOfBirth, decryptedInsuranceNr, decryptedContactInformation);
     }
 
     protected Patient createOrUpdatePatient(PatientPersonalDTO dto, Patient existingPatient) {
         String encryptedFirstName = encryptionService.encrypt(dto.firstname());
         String encryptedLastName = encryptionService.encrypt(dto.lastname());
-        String encryptedDateOfBirth = encryptionService.encryptDate(dto.dateOfBirth());
+        String encryptedDateOfBirth = encryptionService.encrypt(dto.dateOfBirth());
         String encryptedInsuranceNr = encryptionService.encrypt(dto.insuranceNr());
         ContactInformation contactInfo = createEncryptedContactInformation(dto.contactInformation());
 
