@@ -5,6 +5,7 @@ import PatientFormStyled from "../styles/PatientForm.styled.tsx";
 import Button from "../styles/Button.styled.tsx";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import validation from "../utils/dataValidation.ts";
+import Typography from "../styles/Typography.tsx";
 
 export default function PatientForm() {
     const {createPatient, updatePatient} = usePatientStore((state) => ({
@@ -80,6 +81,7 @@ export default function PatientForm() {
             navigate("/patients");
             setPatientInput(initialInputState);
         }
+        alert("Your input contains invalid formats. Please fill in the right data format.")
     }
     const handleCancel = (event: FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -106,14 +108,16 @@ export default function PatientForm() {
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
                        setPatientInput({...patientInput, firstname: event.target.value});
                    }}/>
-            {errors.firstname && <p>{errors.firstname}</p>}
+            <br/>
+            {errors.firstname && <Typography variant="error-info">{errors.firstname}</Typography>}
 
             <label>Lastname:</label>
             <input required type="text" value={patientInput.lastname}
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
                        setPatientInput({...patientInput, lastname: event.target.value});
                    }}/>
-            {errors.lastname && <p>{errors.lastname}</p>}
+            <br/>
+            {errors.lastname && <Typography variant="error-info">{errors.lastname}</Typography>}
 
             <label>Birthdate:</label>
             <input required type="date" value={patientInput.dateOfBirth} min="1900-01-01"
@@ -121,14 +125,16 @@ export default function PatientForm() {
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
                        setPatientInput({...patientInput, dateOfBirth: event.target.value});
                    }}/>
-            {errors.dateOfBirth && <p>{errors.dateOfBirth}</p>}
+            <br/>
+            {errors.dateOfBirth && <Typography variant="error-info">{errors.dateOfBirth}</Typography>}
 
             <label>Insurance Nr:</label>
             <input required type="text" value={patientInput.insuranceNr}
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
                        setPatientInput({...patientInput, insuranceNr: event.target.value});
                    }}/>
-            {errors.insuranceNr && <p>{errors.insuranceNr}</p>}
+            <br/>
+            {errors.insuranceNr && <Typography variant="error-info">{errors.insuranceNr}</Typography>}
 
             <label>Phone:</label>
             <input
@@ -137,7 +143,8 @@ export default function PatientForm() {
                 value={patientInput.contactInformation.phoneNr}
                 onChange={handleInputChange}
             />
-            {errors.phone && <p>{errors.phone}</p>}
+            <br/>
+            {errors.phone && <Typography variant="error-info">{errors.phone}</Typography>}
 
             <label>Email:</label>
             <input
@@ -146,7 +153,8 @@ export default function PatientForm() {
                 value={patientInput.contactInformation.email}
                 onChange={handleInputChange}
             />
-            {errors.email && <p>{errors.email}</p>}
+            <br/>
+            {errors.email && <Typography variant="error-info">{errors.email}</Typography>}
 
             <label>Address:</label>
             <input

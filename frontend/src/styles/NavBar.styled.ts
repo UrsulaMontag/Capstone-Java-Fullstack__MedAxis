@@ -60,7 +60,7 @@ export const HamburgerMenu = styled.div<{ $shownav: boolean }>`
         height: 2px;
         width: 100%;
         background-color: var(--color-light);
-        border-radius: 9px;
+        border-radius: 5px;
         transition: all 0.4s ease-in-out;
     }
 

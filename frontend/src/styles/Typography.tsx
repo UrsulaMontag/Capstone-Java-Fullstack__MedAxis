@@ -44,6 +44,12 @@ export default function Typography(props: Readonly<TypographyProps>) {
                     {props.children}
                 </StyledInfoText>
             );
+        case "error-info":
+            return (
+                <StyledErrorInfoText {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledErrorInfoText>
+            )
     }
 }
 
@@ -85,3 +91,13 @@ const StyledInfoText = styled.p`
     color: var(--accent-color-grey);
     font-weight: 400;
 `;
+const StyledErrorInfoText = styled.span`
+    color: var(--accent-color-red);
+    background-color: var(--accent-color-red__transparent);
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.4rem;
+    text-align: center
+`;
+

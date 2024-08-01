@@ -6,6 +6,7 @@
     --accent-color-green: #5EA653;
     --accent-color-grey: #B4CBD9;
     --accent-color-grey__light: #B4CBD9;
-    --accent-color-red: rgb(255, 99, 134);
+    --accent-color-red: #ff6699;
+    --accent-color-red__transparent: #ff669920;
     --accent-color-blue: #646cff;
 }
