@@ -35,6 +35,22 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
                     <Typography variant="base">{props.patient.lastname} {props.patient.firstname}</Typography>
                     <Typography variant="h3">Birthdate: </Typography>
                     <Typography variant="base">{formatDate(props.patient.dateOfBirth)}</Typography>
+                    <Typography variant="h3">Insurance Nr: </Typography>
+                    <Typography variant="base">{props.patient.insuranceNr}</Typography>
+                    <Typography variant="h3">ContactInformation: </Typography>
+                    <span></span>
+                    {props.patient.contactInformation.phoneNr && (<><Typography
+                        variant="h4">Phone Nr: </Typography>
+                        <Typography variant="base">{props.patient.contactInformation.phoneNr}</Typography></>)}
+                    {props.patient.contactInformation.email && (<><Typography
+                        variant="h4">Email: </Typography>
+                        <Typography variant="base">{props.patient.contactInformation.email}</Typography></>)}
+                    <Typography
+                        variant="h4">Address: </Typography>
+                    <Typography variant="base">{props.patient.contactInformation.address}</Typography>
+                    <span></span>
+                    <Typography variant="base">{props.patient.contactInformation.town}</Typography>
+
                 </>)
                 : (<>
                     <NumberEntry>{props.listNr}</NumberEntry>
