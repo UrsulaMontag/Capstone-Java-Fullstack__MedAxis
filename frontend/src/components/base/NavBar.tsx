@@ -1,6 +1,6 @@
 import {useState} from 'react';
-import {HamburgerMenu, NavContainer, NavList, NavItem} from '../styles/NavBar.styled';
-import {StyledLink} from "../styles/Link.styled.ts";
+import {HamburgerMenu, NavContainer, NavList, NavItem} from '../../styles/NavBar.styled.ts';
+import {StyledLink} from "../../styles/Link.styled.ts";
 
 export default function NavBar() {
     const [showNav, setShowNav] = useState(false);

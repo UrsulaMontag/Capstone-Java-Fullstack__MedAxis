@@ -1,13 +1,14 @@
 package um_backend.models.dto;
 
 import lombok.With;
-
-import java.time.LocalDate;
+import um_backend.models.ContactInformation;
 
 @With
 public record PatientPersonalDTO(
         String firstname,
         String lastname,
-        LocalDate dateOfBirth
+        String dateOfBirth,
+        String insuranceNr,
+        ContactInformation contactInformation
 ) {
 }

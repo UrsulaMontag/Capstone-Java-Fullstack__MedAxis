@@ -1,0 +1,12 @@
+{
+  "properties": [
+    {
+      "name": "encryption.password",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "encryption.salt",
+      "type": "java.lang.String"
+    }
+  ]
+}
