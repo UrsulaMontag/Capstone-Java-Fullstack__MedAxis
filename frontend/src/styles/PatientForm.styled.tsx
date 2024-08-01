@@ -35,6 +35,7 @@ const PatientForm = styled.form`
 
         border: none;
         border-bottom: 1px solid var(--accent-color-grey);
+        cursor: pointer;
     }
 
     & div {
