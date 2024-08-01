@@ -34,13 +34,13 @@ public class DataValidationService {
 
     public boolean isValidPhoneNumber(String phoneNumber) {
         // Matches phone numbers with optional country code, separators, and minimum digit lengths
-        String phoneNumberRegex = "^[+]?[0-9]{1,3}[\\s.-]?[0-9]{2,4}([\\s.-]?[0-9]{2,4}){1,3}$";
+        String phoneNumberRegex = "^[+]?\\d{1,3}[\\s.-]?\\d{2,4}([\\s.-]?\\d{2,4}){1,3}$";
         return phoneNumber == null || phoneNumber.matches(phoneNumberRegex);
     }
 
     public boolean isValidEmail(String email) {
         // Matches email addresses with standard formatting
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        String emailRegex = "^[A-Za-z\\d+_.-]+@[A-Za-z\\d.-]+$";
         return email == null || email.matches(emailRegex);
     }
 
