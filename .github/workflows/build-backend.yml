@@ -34,7 +34,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          ENCRYPTION_PASSWORD: ${{ secrets.ENCRYPTION_PASSWORD }} # Setze das tatsächliche Passwort
+          ENCRYPTION_PASSWORD: ${{ secrets.ENCRYPTION_PASSWORD }}
           ENCRYPTION_SALT: ${{ secrets.ENCRYPTION_SALT }}
         working-directory: backend
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ursulam_Capstone-Java-Fullstack__MedAxis_backend
