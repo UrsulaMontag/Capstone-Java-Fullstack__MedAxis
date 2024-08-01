@@ -45,7 +45,7 @@ const BaseButton = styled.button`
     background-color: var(--accent-color-grey);
     text-decoration: none;
     color: var(--color-dark);
-    @media (max-width: 480px) {
+    @media (max-width: 760px) {
         font-size: 1.2rem;
         padding: .1rem .3rem;
 
