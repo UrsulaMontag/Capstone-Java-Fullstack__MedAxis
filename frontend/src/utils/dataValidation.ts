@@ -2,8 +2,8 @@
 const NAME_REGEX = /^[\p{L}'][ \p{L}'-]{2,}$/u;
 // Matches insurance numbers with 7 to 20 alphanumeric characters
 const INSURANCE_NR_REGEX = /^[A-Za-z0-9]{7,20}$/;
-// Matches phone numbers with optional country code, separators, and a minimum length of digits
-const PHONE_REGEX = /^[+]?[0-9]{1,3}[ \s.-]?([0-9]{2,}[ \s.-]?){2,}[0-9]{2,}$/;
+// Matches phone numbers with optional country code, separators, and a minimum and maximum length of digits
+const PHONE_REGEX = /^[+]?[0-9]{1,3}[ \s.-]?[0-9]{2,4}([ \s.-]?[0-9]{2,4}){1,3}$/;
 // Matches email addresses with letters, numbers, and some special characters
 const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/;
 
