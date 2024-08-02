@@ -8,10 +8,11 @@ import {NumberEntry} from "../styles/PatientCard.styled.ts";
 
 export default function PatientList() {
     const fetchPatients: () => void = usePatientStore(state => state.fetchPatients);
+    const patientList: Patient[] = usePatientStore(state => state.patients);
+
     useEffect(() => {
         fetchPatients();
     }, [])
-    const patientList: Patient[] = usePatientStore(state => state.patients).sort();
 
     return (
         <PatientListContainer>

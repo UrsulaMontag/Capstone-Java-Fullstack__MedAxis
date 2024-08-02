@@ -8,7 +8,7 @@ export const CardContainer = styled.article<{ details: boolean }>`
     gap: ${props => props.details ? '1.2rem' : 'none'};
 
     border: 1px solid var(--accent-color-grey);
-    border-radius: 8px;
+    border-radius: 5px;
     margin-bottom: .8rem;
     align-items: center;
     @media (max-width: 480px) {

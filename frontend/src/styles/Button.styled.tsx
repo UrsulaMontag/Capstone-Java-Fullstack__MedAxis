@@ -35,7 +35,7 @@ export default function Button(props: Readonly<ButtonProps>) {
 }
 
 const BaseButton = styled.button`
-    border-radius: 8px;
+    border-radius: 5px;
     padding: .3rem .6rem;
     font-size: 1.4rem;
     width: fit-content;

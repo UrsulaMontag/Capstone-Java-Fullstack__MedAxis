@@ -32,12 +32,24 @@ export default function Typography(props: Readonly<TypographyProps>) {
                     {props.children}
                 </StyledH3>
             );
+        case 'h4':
+            return (
+                <StyledH4 {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledH4>
+            );
         case 'info':
             return (
                 <StyledInfoText {...props.rest} as={props.component}>
                     {props.children}
                 </StyledInfoText>
             );
+        case "error-info":
+            return (
+                <StyledErrorInfoText {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledErrorInfoText>
+            )
     }
 }
 
@@ -68,7 +80,24 @@ const StyledH3 = styled.h3`
         font-size: 1.4rem;
     }
 `;
+const StyledH4 = styled.h4`
+    font-size: 1.6rem;
+    font-weight: 450;
+    @media (max-width: 480px) {
+        font-size: 1.4rem;
+    }
+`;
 const StyledInfoText = styled.p`
     color: var(--accent-color-grey);
     font-weight: 400;
 `;
+const StyledErrorInfoText = styled.span`
+    color: var(--accent-color-red);
+    background-color: var(--accent-color-red__transparent);
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.4rem;
+    text-align: center
+`;
+
