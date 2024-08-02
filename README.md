@@ -73,8 +73,8 @@ back end, the application offers a robust and reliable solution for the demandin
 Clone the monorepo that contains both the frontend and backend projects:
 
 ```bash
-git clone <repository URL>
-cd <repository-directory>
+git clone https://github.com/UrsulaMontag/Capstone-Java-Fullstack__MedAxis.git
+cd Capstone-Java-Fullstack__MedAxis
 ```
 
 ### Frontend setup:
@@ -138,5 +138,4 @@ refer to the [Render Documentation](https://render.com/docs).
 
 ## Contact
 
-For questions or support, please
-contact [Contact Email](mailto:montagu@gmail.com).
+For questions or support, please contact [Contact email](mailto:montagu@gmail.com).
