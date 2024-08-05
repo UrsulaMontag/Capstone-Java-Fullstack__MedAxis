@@ -16,13 +16,12 @@ export const ListHeader = styled.div`
     margin-bottom: 1.6rem;
     border-bottom: 1px solid var(--color-dark);
     z-index: 1;
-    @media (max-width: 480px) {
+    @media (max-width: 760px) {
         grid-template-columns: 14% 0.8fr 0.8fr 10%;
         top: 16rem;
         margin-bottom: .6rem;
         padding: 1.2rem 1.2rem .4rem 0.4rem;
     }
-
     background-color: var(--accent-color-grey);
 `;
 

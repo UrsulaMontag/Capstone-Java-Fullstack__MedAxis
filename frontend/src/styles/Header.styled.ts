@@ -12,7 +12,7 @@ export const HeaderContainer = styled.header`
     background-color: var(--color-dark);
     width: 100vw;
     z-index: 3;
-    @media (max-width: 480px) {
+    @media (max-width: 760px) {
         padding-left: 0.2rem;
     }
 `;

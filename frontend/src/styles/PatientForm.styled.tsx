@@ -19,7 +19,7 @@ const PatientForm = styled.form`
     gap: 1.2rem;
     align-items: center;
     font-size: 1.4rem;
-    @media (max-width: 480px) {
+    @media (max-width: 760px) {
         margin-bottom: .6rem;
         padding-left: 0.2rem;
     }
@@ -35,6 +35,7 @@ const PatientForm = styled.form`
 
         border: none;
         border-bottom: 1px solid var(--accent-color-grey);
+        cursor: pointer;
     }
 
     & div {
@@ -42,7 +43,7 @@ const PatientForm = styled.form`
         display: flex;
         justify-content: flex-end;
         gap: 1.6rem;
-        @media (max-width: 600px) {
+        @media (max-width: 760px) {
             gap: 2px;
             padding-right: 3.6rem;
         }

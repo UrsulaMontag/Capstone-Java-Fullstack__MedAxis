@@ -9,7 +9,7 @@ export const PageTitleContainer = styled.div`
     top: 6.4rem;
     display: flex;
     justify-content: space-between;
-    @media (max-width: 480px) {
+    @media (max-width: 760px) {
         margin-bottom: .6rem;
         padding-left: 0.2rem;
         top: 10.8rem;
