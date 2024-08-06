@@ -1,4 +1,4 @@
-import PatientForm from "../components/PatientForm.tsx";
+import PatientForm from "../components/patient/PatientForm.tsx";
 
 export default function WritePatient() {
 
