@@ -7,6 +7,26 @@
     {
       "name": "encryption.salt",
       "type": "java.lang.String"
+    },
+    {
+      "name": "icd.token.endpoint",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "icd.client.id",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "icd.client.secret",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "icd.api.scope",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "icd.api.grantType",
+      "type": "java.lang.String"
     }
   ]
 }
