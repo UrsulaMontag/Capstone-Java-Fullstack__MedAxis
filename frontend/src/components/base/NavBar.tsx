@@ -31,6 +31,9 @@ export default function NavBar() {
                     <NavItem>
                         <StyledLink to="/patients" onClick={handleLinkClick}>Patients</StyledLink>
                     </NavItem>
+                    <NavItem>
+                        <StyledLink to="/icd" onClick={handleLinkClick}>ICD Data</StyledLink>
+                    </NavItem>
                 </NavList>
             </NavContainer>
         </>

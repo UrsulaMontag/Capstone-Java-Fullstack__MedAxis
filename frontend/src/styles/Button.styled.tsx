@@ -29,6 +29,12 @@ export default function Button(props: Readonly<ButtonProps>) {
                     {props.children}
                 </DeleteButton>
             )
+        case "big":
+            return (
+                <BigButton {...props.rest} as={props.component} onClick={props.onClick}>
+                    {props.children}
+                </BigButton>
+            )
         default:
             return null;
     }
@@ -65,5 +71,8 @@ const OkButton = styled(BaseButton)`
 `;
 const DeleteButton = styled(BaseButton)`
     border: 2px solid var(--accent-color-red);
-
+`;
+const BigButton = styled(BaseButton)`
+    min-width: 40vw;
+    height: fit-content;
 `;
