@@ -5,7 +5,7 @@ import WritePatient from "./routes/WritePatient.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
 import PatientList from "./routes/PatientList.tsx";
 import PatientDetail from "./routes/PatientDetail.tsx";
-import IcdECT from "./components/icd_api/IcdECT.tsx";
+import {IcdECT, IcdECTWrapper} from "./components/icd_api/IcdECT.tsx";
 
 function App() {
     const router = createBrowserRouter([
@@ -39,6 +39,11 @@ function App() {
                     {
                         path: '/icd',
                         element: <IcdECT/>
+                    },
+
+                    {
+                        path: '/icd/:patientId',
+                        element: <IcdECTWrapper/>
                     }
                 ]
         }
