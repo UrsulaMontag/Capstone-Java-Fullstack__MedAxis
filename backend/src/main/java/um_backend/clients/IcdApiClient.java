@@ -13,24 +13,24 @@ public class IcdApiClient {
     private final RestClient restClient;
 
     @Value("${icd.token.endpoint}")
-    private String TOKEN_ENDPOINT;
+    private String tokenEndpoint;
     @Value("${icd.client.id}")
-    private String CLIENT_ID;
+    private String clientId;
     @Value("${icd.client.secret}")
-    private String CLIENT_SECRET;
+    private String clientSecret;
 
     public IcdApiClient() {
         restClient = RestClient.builder().build();
     }
 
     public String getToken() {
-        String SCOPE = "icdapi_access";
-        String GRANT_TYPE = "client_credentials";
+        String scope = "icdapi_access";
+        String grantType = "client_credentials";
 
         String response = restClient.post()
-                .uri(TOKEN_ENDPOINT)
+                .uri(tokenEndpoint)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body("client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&scope=" + SCOPE + "&grant_type=" + GRANT_TYPE)
+                .body("client_id=" + clientId + "&client_secret=" + clientSecret + "&scope=" + scope + "&grant_type=" + grantType)
                 .retrieve()
                 .body(String.class);
 

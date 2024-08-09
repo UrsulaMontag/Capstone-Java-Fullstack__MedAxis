@@ -20,12 +20,12 @@ public class IcdApiServiceTest {
     private IcdApiClient mockIcdApiClient;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testGetIcdData_Success() {
+    void testGetIcdData_Success() {
         // Arrange
         String mockToken = "mockToken123";
         String mockUri = "mock/uri";
@@ -44,7 +44,7 @@ public class IcdApiServiceTest {
     }
 
     @Test
-    public void testGetIcdData_TokenException() {
+    void testGetIcdData_TokenException() {
         // Arrange
         String mockUri = "mock/uri";
         when(mockIcdApiClient.getToken()).thenThrow(new RuntimeException("Token retrieval failed"));
@@ -56,7 +56,7 @@ public class IcdApiServiceTest {
     }
 
     @Test
-    public void testGetIcdData_UriException() {
+    void testGetIcdData_UriException() {
         // Arrange
         String mockToken = "mockToken123";
         String mockUri = "mock/uri";
