@@ -1,5 +1,5 @@
-import {Patient} from "../models/Patient.ts";
-import Typography from "../styles/Typography.tsx";
+import {Patient} from "../../models/patient/Patient.ts";
+import Typography from "../../styles/Typography.tsx";
 
 type PatientCardDetailsProps = {
     patient: Patient;

@@ -89,7 +89,9 @@ const StyledH4 = styled.h4`
 `;
 const StyledInfoText = styled.p`
     color: var(--accent-color-grey);
-    font-weight: 400;
+    font-weight: 200;
+    font-size: 1.2rem;
+
 `;
 const StyledErrorInfoText = styled.span`
     color: var(--accent-color-red);

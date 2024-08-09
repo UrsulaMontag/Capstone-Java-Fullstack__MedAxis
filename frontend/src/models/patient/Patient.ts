@@ -7,6 +7,7 @@ export type Patient = {
     dateOfBirth: string;
     insuranceNr: string;
     contactInformation: ContactInformation;
+    icdCodes?: string[];
 }
 
 export type PatientToAdd = {

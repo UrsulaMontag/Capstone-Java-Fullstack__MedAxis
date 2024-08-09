@@ -23,6 +23,8 @@ export default function PageTitle() {
                 return "Register Patient";
             case "/patients/edit/" + urlParams.id :
                 return "Edit Patient";
+            case "/icd":
+                return "ICD-API Data - WHO"
             default:
                 return "Login first"
         }

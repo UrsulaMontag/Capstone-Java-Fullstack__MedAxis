@@ -1,5 +1,5 @@
-import PatientCard from "../components/PatientCard.tsx";
-import {Patient} from "../models/Patient.ts";
+import PatientCard from "../components/patient/PatientCard.tsx";
+import {Patient} from "../models/patient/Patient.ts";
 import usePatientStore from "../stores/usePatientStore.ts";
 import {Params, useParams} from "react-router-dom";
 

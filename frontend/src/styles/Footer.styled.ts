@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 
-export const HeaderContainer = styled.header`
-    position: sticky;
-    top: 0;
+export const FooterContainer = styled.footer`
+    position: fixed;
+    bottom: 0;
     left: 0;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1.6rem 0 1.6rem 1.6rem;
+    padding: .8rem 0 .8rem 1.6rem;
     background-color: var(--color-dark);
     width: 100vw;
     z-index: 3;
@@ -16,7 +16,7 @@ export const HeaderContainer = styled.header`
         padding-left: 0.2rem;
     }
 `;
-export const HeaderSection = styled.section`
+export const FooterSection = styled.section`
     @media (min-width: 768px) {
         display: flex;
         gap: 4.8rem;

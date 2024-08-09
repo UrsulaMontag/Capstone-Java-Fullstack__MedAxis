@@ -1,11 +1,11 @@
-import usePatientStore from "../stores/usePatientStore.ts";
-import {Patient, PatientToAdd} from "../models/Patient.ts";
+import usePatientStore from "../../stores/usePatientStore.ts";
+import {Patient, PatientToAdd} from "../../models/patient/Patient.ts";
 import {ChangeEvent, FormEvent, useState} from "react";
-import PatientFormStyled from "../styles/PatientForm.styled.tsx";
-import Button from "../styles/Button.styled.tsx";
+import PatientFormStyled from "../../styles/PatientForm.styled.tsx";
+import Button from "../../styles/Button.styled.tsx";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import validation from "../utils/dataValidation.ts";
-import Typography from "../styles/Typography.tsx";
+import validation from "../../utils/dataValidation.ts";
+import Typography from "../../styles/Typography.tsx";
 
 export default function PatientForm() {
     const {createPatient, updatePatient} = usePatientStore((state) => ({
