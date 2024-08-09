@@ -1,23 +1,17 @@
 package um_backend.clients;
 
-import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
-import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
+import org.springframework.web.client.RestClientException;
 
 @Component
-@AllArgsConstructor
 public class IcdApiClient {
-
     private final RestClient restClient;
+
     @Value("${icd.token.endpoint}")
     private String TOKEN_ENDPOINT;
     @Value("${icd.client.id}")
@@ -29,56 +23,30 @@ public class IcdApiClient {
         restClient = RestClient.builder().build();
     }
 
-    // get the OAUTH2 token
-    public String getToken() throws Exception {
-
-        System.out.println("Getting token...");
-
-        // set parameters to post
+    public String getToken() {
         String SCOPE = "icdapi_access";
         String GRANT_TYPE = "client_credentials";
-        String urlParameters =
-                "client_id=" + URLEncoder.encode(CLIENT_ID, StandardCharsets.UTF_8) +
-                        "&client_secret=" + URLEncoder.encode(CLIENT_SECRET, StandardCharsets.UTF_8) +
-                        "&scope=" + URLEncoder.encode(SCOPE, StandardCharsets.UTF_8) +
-                        "&grant_type=" + URLEncoder.encode(GRANT_TYPE, StandardCharsets.UTF_8);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        //Perform post request
-        String response = restClient
-                .post()
-                .uri(new URI(TOKEN_ENDPOINT))
-                .headers(h -> h.addAll(headers))
-                .body(urlParameters)
+        String response = restClient.post()
+                .uri(TOKEN_ENDPOINT)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body("client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&scope=" + SCOPE + "&grant_type=" + GRANT_TYPE)
                 .retrieve()
                 .body(String.class);
 
-        //Parse JSON response
-        JSONObject jsonObject = new JSONObject(response);
-        return jsonObject.getString("access_token");
+        JSONObject jsonObj = new JSONObject(response);
+        return jsonObj.getString("access_token");
     }
 
-
-    // access ICD API
-    public String getIcdDetails() throws Exception {
-        System.out.println("Getting URI...");
-
-        String token = getToken();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-        headers.set("Accept-Language", "en");
-        headers.set("Api-Version", "v2");
-
-        String icdEntityUri = "https://id.who.int/icd/entity";
-        //Perform get request
-        return restClient
-                .get()
-                .uri(new URI(icdEntityUri))
-                .headers(h -> h.addAll(headers))
+    public String getURI(String token, String uri) throws RestClientException {
+        return restClient.get()
+                .uri(uri)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.ACCEPT_LANGUAGE, "en")
+                .header("API-Version", "v2")
                 .retrieve()
                 .body(String.class);
     }
+
 }
