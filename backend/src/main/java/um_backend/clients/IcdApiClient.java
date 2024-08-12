@@ -6,7 +6,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
 
 import java.net.URI;
 
@@ -40,7 +39,7 @@ public class IcdApiClient {
         return jsonObj.getString("access_token");
     }
 
-    public String getURI(String uri) throws RestClientException {
+    public String getURI(String uri) throws IllegalArgumentException {
         String token = getToken();
         return restClient.get()
                 .uri(uri)

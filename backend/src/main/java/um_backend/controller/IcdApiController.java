@@ -12,7 +12,6 @@ public class IcdApiController {
     private final IcdApiService icdApiService;
 
     @GetMapping()
-    @RequestMapping("/details")
     public String getIcdDetails() {
         return icdApiService.getIcdData();
     }
