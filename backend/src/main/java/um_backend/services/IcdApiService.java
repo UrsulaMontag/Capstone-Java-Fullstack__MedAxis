@@ -14,7 +14,14 @@ public class IcdApiService {
     }
 
     public String getIcdData(String uri) {
-        String token = icdApiClient.getToken();
-        return icdApiClient.getURI(token, uri);
+        return icdApiClient.getURI(uri);
+    }
+
+    public String getIcdData() {
+        try {
+            return icdApiClient.getIcdDetails();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get ICD details", e);
+        }
     }
 }

@@ -11,6 +11,12 @@ public class IcdApiController {
 
     private final IcdApiService icdApiService;
 
+    @GetMapping()
+    @RequestMapping("/details")
+    public String getIcdDetails() {
+        return icdApiService.getIcdData();
+    }
+
     @GetMapping("/{code}")
     public String getIcdDetails(@PathVariable String code) {
         String uri = "https://id.who.int/icd/entity/" + code;

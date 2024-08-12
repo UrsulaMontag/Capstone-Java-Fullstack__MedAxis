@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import java.net.URI;
+
 @Component
 public class IcdApiClient {
     private final RestClient restClient;
@@ -38,9 +40,24 @@ public class IcdApiClient {
         return jsonObj.getString("access_token");
     }
 
-    public String getURI(String token, String uri) throws RestClientException {
+    public String getURI(String uri) throws RestClientException {
+        String token = getToken();
         return restClient.get()
                 .uri(uri)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.ACCEPT_LANGUAGE, "en")
+                .header("API-Version", "v2")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getIcdDetails() throws Exception {
+        String token = getToken();
+        String icdEntityUri = "https://id.who.int/icd/entity";
+        return restClient
+                .get()
+                .uri(new URI(icdEntityUri))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .header(HttpHeaders.ACCEPT_LANGUAGE, "en")

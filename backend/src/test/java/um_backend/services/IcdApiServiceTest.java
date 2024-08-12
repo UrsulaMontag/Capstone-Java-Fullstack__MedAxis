@@ -27,45 +27,52 @@ public class IcdApiServiceTest {
     @Test
     void testGetIcdData_Success() {
         // Arrange
-        String mockToken = "mockToken123";
         String mockUri = "mock/uri";
         String mockResponse = "mockResponseData";
 
-        when(mockIcdApiClient.getToken()).thenReturn(mockToken);
-        when(mockIcdApiClient.getURI(mockToken, mockUri)).thenReturn(mockResponse);
+        when(mockIcdApiClient.getURI(mockUri)).thenReturn(mockResponse);
 
         // Act
         String result = icdApiService.getIcdData(mockUri);
 
         // Assert
         assertEquals(mockResponse, result);
-        verify(mockIcdApiClient).getToken();
-        verify(mockIcdApiClient).getURI(mockToken, mockUri);
-    }
-
-    @Test
-    void testGetIcdData_TokenException() {
-        // Arrange
-        String mockUri = "mock/uri";
-        when(mockIcdApiClient.getToken()).thenThrow(new RuntimeException("Token retrieval failed"));
-
-        // Act & Assert
-        assertThrows(Exception.class, () -> icdApiService.getIcdData(mockUri));
-        verify(mockIcdApiClient).getToken();
-        verify(mockIcdApiClient, never()).getURI(anyString(), anyString());
+        verify(mockIcdApiClient).getURI(mockUri);
     }
 
     @Test
     void testGetIcdData_UriException() {
         // Arrange
-        String mockToken = "mockToken123";
         String mockUri = "mock/uri";
-        when(mockIcdApiClient.getToken()).thenReturn(mockToken);
-        when(mockIcdApiClient.getURI(mockToken, mockUri)).thenThrow(new RuntimeException("URI retrieval failed"));
+        when(mockIcdApiClient.getURI(mockUri)).thenThrow(new RuntimeException("URI retrieval failed"));
 
         // Act & Assert
         assertThrows(Exception.class, () -> icdApiService.getIcdData(mockUri));
-        verify(mockIcdApiClient).getToken();
-        verify(mockIcdApiClient).getURI(mockToken, mockUri);
+        verify(mockIcdApiClient).getURI(mockUri);
+    }
+
+    @Test
+    void testGetIcdDetails_Success() throws Exception {
+        // Arrange
+        String mockResponse = "mockIcdDetails";
+
+        when(mockIcdApiClient.getIcdDetails()).thenReturn(mockResponse);
+
+        // Act
+        String result = icdApiService.getIcdData();
+
+        // Assert
+        assertEquals(mockResponse, result);
+        verify(mockIcdApiClient).getIcdDetails();
+    }
+
+    @Test
+    void testGetIcdDetails_Exception() throws Exception {
+        // Arrange
+        when(mockIcdApiClient.getIcdDetails()).thenThrow(new RuntimeException("ICD Details retrieval failed"));
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> icdApiService.getIcdData());
+        verify(mockIcdApiClient).getIcdDetails();
     }
 }

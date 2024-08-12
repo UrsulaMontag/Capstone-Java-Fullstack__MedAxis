@@ -44,4 +44,18 @@ class IcdApiControllerTest {
 
         verify(mockIcdApiService, times(1)).getIcdData("https://id.who.int/icd/entity/" + mockCode);
     }
+
+    @Test
+    void getIcdDetails_ReturnsIcdDetails() throws Exception {
+        String mockResponse = "mockIcdDetails";
+
+        when(mockIcdApiService.getIcdData()).thenReturn(mockResponse);
+
+        mockMvc.perform(get("/api/icd/details"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(mockResponse));
+
+        verify(mockIcdApiService, times(1)).getIcdData();
+    }
+
 }
