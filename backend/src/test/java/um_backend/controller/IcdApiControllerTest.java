@@ -38,7 +38,7 @@ class IcdApiControllerTest {
 
         when(mockIcdApiService.getIcdData(anyString())).thenReturn(mockResponse);
 
-        mockMvc.perform(get("/api/icd/" + mockCode))
+        mockMvc.perform(get("/api/icd/entity/icd/release/11/2024-01/mms/" + mockCode))
                 .andExpect(status().isOk())
                 .andExpect(content().string(mockResponse));
 
@@ -51,7 +51,7 @@ class IcdApiControllerTest {
 
         when(mockIcdApiService.getIcdData()).thenReturn(mockResponse);
 
-        mockMvc.perform(get("/api/icd/details"))
+        mockMvc.perform(get("/api/icd/entity/icd/release/11/v2/mms"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(mockResponse));
 
