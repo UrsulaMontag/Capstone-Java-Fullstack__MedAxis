@@ -26,53 +26,85 @@ public class IcdApiServiceTest {
 
     @Test
     void testGetIcdData_Success() {
-        // Arrange
         String mockUri = "mock/uri";
         String mockResponse = "mockResponseData";
 
         when(mockIcdApiClient.getURI(mockUri)).thenReturn(mockResponse);
-
-        // Act
         String result = icdApiService.getIcdData(mockUri);
 
-        // Assert
         assertEquals(mockResponse, result);
         verify(mockIcdApiClient).getURI(mockUri);
     }
 
     @Test
     void testGetIcdData_UriException() {
-        // Arrange
         String mockUri = "mock/uri";
         when(mockIcdApiClient.getURI(mockUri)).thenThrow(new RuntimeException("URI retrieval failed"));
 
-        // Act & Assert
         assertThrows(Exception.class, () -> icdApiService.getIcdData(mockUri));
         verify(mockIcdApiClient).getURI(mockUri);
     }
 
     @Test
     void testGetIcdDetails_Success() throws Exception {
-        // Arrange
         String mockResponse = "mockIcdDetails";
 
         when(mockIcdApiClient.getIcdDetails()).thenReturn(mockResponse);
-
-        // Act
         String result = icdApiService.getIcdData();
 
-        // Assert
         assertEquals(mockResponse, result);
         verify(mockIcdApiClient).getIcdDetails();
     }
 
     @Test
     void testGetIcdDetails_Exception() throws Exception {
-        // Arrange
         when(mockIcdApiClient.getIcdDetails()).thenThrow(new RuntimeException("ICD Details retrieval failed"));
 
-        // Act & Assert
         assertThrows(RuntimeException.class, () -> icdApiService.getIcdData());
         verify(mockIcdApiClient).getIcdDetails();
+    }
+
+    @Test
+    void testSearchIcd_Success() {
+        // Arrange
+        String query = "mockQuery";
+        boolean subtreeFilterUsesFoundationDescendants = true;
+        boolean includeKeywordResult = true;
+        boolean useFlexisearch = true;
+        boolean flatResults = true;
+        boolean highlightingEnabled = true;
+        boolean medicalCodingMode = true;
+        String mockResponse = "mockSearchResult";
+
+        when(mockIcdApiClient.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult,
+                useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode))
+                .thenReturn(mockResponse);
+
+        // Act
+        String result = icdApiService.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
+
+        // Assert
+        assertEquals(mockResponse, result);
+        verify(mockIcdApiClient).searchIcd(query, subtreeFilterUsesFoundationDescendants,
+                includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
+    }
+
+    @Test
+    void testSearchIcd_Exception() throws Exception {
+        String query = "mockQuery";
+        boolean subtreeFilterUsesFoundationDescendants = true;
+        boolean includeKeywordResult = true;
+        boolean useFlexisearch = true;
+        boolean flatResults = true;
+        boolean highlightingEnabled = true;
+        boolean medicalCodingMode = true;
+        when(mockIcdApiClient.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult,
+                useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode))
+                .thenThrow(new RuntimeException("ICD Details retrieval failed"));
+
+        assertThrows(RuntimeException.class, () -> icdApiService.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult,
+                useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode));
+        verify(mockIcdApiClient).searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult,
+                useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
     }
 }

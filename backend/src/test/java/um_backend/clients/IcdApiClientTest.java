@@ -105,4 +105,43 @@ class IcdApiClientTest {
                 .andRespond(withStatus(HttpStatus.OK));
 
     }
+
+    @Test
+    void testSearchIcd_Success() {
+        String mockTokenResponse = "{\"access_token\": \"mockToken123\"}";
+        String mockSearchResponse = "{\"results\": [\"result1\", \"result2\"]}";
+
+        mockServer.expect(once(), requestTo("https://example.com/token"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mockTokenResponse));
+
+        mockServer.expect(once(), requestTo("https://id.who.int/icd/release/11/2024-01/mms/search?q=mockQuery&subtreeFilterUsesFoundationDescendants=true&includeKeywordResult=true&useFlexisearch=true&flatResults=true&highlightingEnabled=true&medicalCodingMode=true"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer mockToken123"))
+                .andExpect(header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mockSearchResponse));
+    }
+
+    @Test
+    void testSearchIcd_Failure() {
+        String mockTokenResponse = "{\"access_token\": \"mockToken123\"}";
+
+        mockServer.expect(once(), requestTo("https://example.com/token"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mockTokenResponse));
+
+        mockServer.expect(once(), requestTo("https://id.who.int/icd/release/11/2024-01/mms/search?q=mockQuery&subtreeFilterUsesFoundationDescendants=true&includeKeywordResult=true&useFlexisearch=true&flatResults=true&highlightingEnabled=true&medicalCodingMode=true"))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer mockToken123"))
+                .andExpect(header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE))
+                .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        assertThrows(RuntimeException.class, () -> icdApiClient.searchIcd("mockQuery", true, true, true, true, true, true));
+    }
 }

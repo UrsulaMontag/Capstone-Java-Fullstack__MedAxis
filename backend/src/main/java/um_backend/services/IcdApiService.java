@@ -38,6 +38,11 @@ public class IcdApiService {
     }
 
     public String searchIcd(String query, boolean subtreeFilterUsesFoundationDescendants, boolean includeKeywordResult, boolean useFlexisearch, boolean flatResults, boolean highlightingEnabled, boolean medicalCodingMode) {
-        return icdApiClient.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
+        try {
+            return icdApiClient.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get search details", e);
+        }
     }
 }

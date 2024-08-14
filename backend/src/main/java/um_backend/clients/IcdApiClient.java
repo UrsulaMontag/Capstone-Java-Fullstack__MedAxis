@@ -39,7 +39,6 @@ public class IcdApiClient {
         String token = getToken();
         return restClient.get()
                 .uri(uri)
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .header(HttpHeaders.ACCEPT_LANGUAGE, "en")

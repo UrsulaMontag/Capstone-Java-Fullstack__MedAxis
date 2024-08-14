@@ -7,7 +7,13 @@ import um_backend.services.IcdApiService;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/icd/entity")
-@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*", allowCredentials = "true", methods = {RequestMethod.GET, RequestMethod.POST})
+@CrossOrigin(
+        origins = "http://localhost:5173",
+        allowedHeaders = {"Authorization", "Content-Type", "Accept", "API-Version", "Accept-Language"},
+        allowCredentials = "true",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS},
+        maxAge = 3600
+)
 public class IcdApiController {
 
     private final IcdApiService icdApiService;
@@ -28,19 +34,6 @@ public class IcdApiController {
             @RequestParam(required = false, defaultValue = "false") boolean subtreeFilterUsesFoundationDescendants,
             @RequestParam(required = false, defaultValue = "false") boolean includeKeywordResult,
             @RequestParam(required = false, defaultValue = "false") boolean useFlexisearch,
-            @RequestParam(required = false, defaultValue = "false") boolean flatResults,
-            @RequestParam(required = false, defaultValue = "false") boolean highlightingEnabled,
-            @RequestParam(required = false, defaultValue = "false") boolean medicalCodingMode
-    ) {
-        return icdApiService.searchIcd(q, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
-    }
-
-    @GetMapping("/icd/release/11/2024-01/mms/search")
-    public String getIcd(
-            @RequestParam String q,
-            @RequestParam(required = false, defaultValue = "false") boolean subtreeFilterUsesFoundationDescendants,
-            @RequestParam(required = false, defaultValue = "false") boolean includeKeywordResult,
-            @RequestParam(required = false, defaultValue = "true") boolean useFlexisearch,
             @RequestParam(required = false, defaultValue = "false") boolean flatResults,
             @RequestParam(required = false, defaultValue = "false") boolean highlightingEnabled,
             @RequestParam(required = false, defaultValue = "false") boolean medicalCodingMode
