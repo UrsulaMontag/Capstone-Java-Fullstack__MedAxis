@@ -12,7 +12,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,9 +65,7 @@ class IcdApiClientTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(mockTokenResponse));
 
-        assertThrows(RuntimeException.class, () -> {
-            icdApiClient.getToken();
-        });
+        assertThrows(RuntimeException.class, () -> icdApiClient.getToken());
     }
 
     @Test
@@ -77,9 +74,7 @@ class IcdApiClientTest {
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST));
 
-        assertThrows(RestClientException.class, () -> {
-            icdApiClient.getToken();
-        });
+        assertThrows(IllegalArgumentException.class, () -> icdApiClient.getToken());
     }
 
 
