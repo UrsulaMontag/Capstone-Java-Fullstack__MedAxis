@@ -1,15 +1,11 @@
 package um_backend.clients;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class IcdApiClient {
@@ -57,48 +53,29 @@ public class IcdApiClient {
         return getURI(icdEntityUri);
     }
 
-    public String searchIcd(String query) {
-        String baseUri = "https://id.who.int/icd/entity/search?q=";
-        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String icdSearchUri = baseUri + encodedQuery;
+    public String searchIcd(String query, boolean subtreeFilterUsesFoundationDescendants,
+                            boolean includeKeywordResult,
+                            boolean useFlexisearch, boolean flatResults,
+                            boolean highlightingEnabled, boolean medicalCodingMode) {
+        String uri = UriComponentsBuilder.fromHttpUrl("https://id.who.int/icd/release/11/2024-01/mms/search")
+                .queryParam("q", query)
+                .queryParam("subtreeFilterUsesFoundationDescendants", subtreeFilterUsesFoundationDescendants)
+                .queryParam("includeKeywordResult", includeKeywordResult)
+                .queryParam("useFlexisearch", useFlexisearch)
+                .queryParam("flatResults", flatResults)
+                .queryParam("highlightingEnabled", highlightingEnabled)
+                .queryParam("medicalCodingMode", medicalCodingMode)
+                .toUriString();
 
-        // Sende die Anfrage und erhalte die Antwort als String
-        String response = getURI(icdSearchUri);
-
-        // Convert response to JSON object
-        JSONObject jsonResponse = new JSONObject(response); // Hier wird die API-Antwort geparsed
-
-        // Create a new JSON object for the formatted response
-        JSONObject formattedResponse = new JSONObject();
-        JSONObject searchResult = new JSONObject();
-
-        // Extract "words" and "destinationEntities"
-        JSONArray words = jsonResponse.optJSONArray("words");  // Could be null
-        JSONArray destinationEntities = jsonResponse.optJSONArray("destinationEntities");  // Empty array if none
-
-        // If "words" is null, create an empty array
-        if (words == null) {
-            words = new JSONArray();
-        }
-
-        // If "destinationEntities" is not empty, add them to "words"
-        if (destinationEntities != null) {
-            for (int i = 0; i < destinationEntities.length(); i++) {
-                JSONObject entity = destinationEntities.getJSONObject(i);
-                JSONObject word = new JSONObject();
-                word.put("term", entity.optString("label", "Unknown Label"));  // Label or fallback
-                word.put("code", entity.optString("code", "Unknown Code"));    // Code or fallback
-                words.put(word);
-            }
-        }
-
-        // Put "words" into the searchResult
-        searchResult.put("words", words);
-
-        // Add searchResult to the formatted response
-        formattedResponse.put("searchResult", searchResult);
-
-        // Return the formatted response as a string
-        return formattedResponse.toString();
+        return restClient.post()
+                .uri(uri)
+                .header("Authorization", "Bearer " + getToken())
+                .header("Accept", "application/json")
+                .header("API-Version", "v2")
+                .header("Accept-Language", "en")
+                .retrieve()
+                .body(String.class);
     }
+
+
 }

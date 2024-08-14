@@ -31,16 +31,13 @@ public class IcdApiService {
 
     public String getToken() {
         try {
-            String token = icdApiClient.getToken();
-            Map<String, String> response = new HashMap<>();
-            response.put("access_token", token);
-            return token;
+            return icdApiClient.getToken();
         } catch (Exception e) {
             return HttpStatus.INTERNAL_SERVER_ERROR.toString();
         }
     }
 
-    public String searchIcd(String query) {
-        return icdApiClient.searchIcd(query);
+    public String searchIcd(String query, boolean subtreeFilterUsesFoundationDescendants, boolean includeKeywordResult, boolean useFlexisearch, boolean flatResults, boolean highlightingEnabled, boolean medicalCodingMode) {
+        return icdApiClient.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
     }
 }

@@ -2,67 +2,110 @@ import * as ECT from '@whoicd/icd11ect';
 import '@whoicd/icd11ect/style.css';
 
 import {ISelectedEntity} from "../../models/icd_api/icdECTSelectedEntity.ts";
-import {Component} from "react";
 import Typography from "../../styles/Typography.tsx";
-import {addIcdCodeToPatient} from "../../services/IcdEctDataService.ts";
+import {addIcdCodeToPatient, getAuthToken, searchIcd} from "../../services/IcdEctDataService.ts";
 import {useParams} from "react-router-dom";
+import {FC, useEffect} from "react";
 
-class IcdECT extends Component<{ patientId?: string }, any> {
-    iNo = 1;
-
-    constructor(props: any) {
-        super(props);
-
-        // configure the ECT
-        const settings = {
-            // the API located at the URL below should be used only for software development and testing
-            apiServerUrl: 'https://icd11restapi-developer-test.azurewebsites.net',
-            autoBind: false, // in React we recommend using the manual binding
-        };
-        const callbacks = {
-            selectedEntityFunction: this.handleSelectedEntity.bind(this),
-        };
-        ECT.Handler.configure(settings, callbacks);
-    }
-
-    componentDidMount() {
-        // manual binding only after the component has been mounted
-        ECT.Handler.bind(this.iNo);
-    }
-
-    async handleSelectedEntity(selectedEntity: ISelectedEntity) {
-        if (this.props.patientId) {
-            try {
-                const {patientId} = this.props;
-                await addIcdCodeToPatient(patientId, selectedEntity.code);
-                alert('ICD-11 code selected and saved: ' + selectedEntity.code);
-            } catch (error) {
-                alert("Failed to save ICD-11 code. Please try again.")
-            }
-        } else {
-            alert('ICD-11 code selected: ' + selectedEntity.code);
-        }
-    }
-
-    render() {
-        return (
-            <>
-                <Typography variant="base">Start search:</Typography>
-                {/* input element used for typing the search */}
-                <input
-                    type="text"
-                    className="ctw-input"
-                    autoComplete="off"
-                    data-ctw-ino={this.iNo}
-                />
-                {/* div element used for showing the search results */}
-                <div className="ctw-window" data-ctw-ino={this.iNo}></div>
-            </>
-        );
-    }
+interface IcdECTProps {
+    patientId?: string;
 }
 
-const IcdECTWrapper = () => {
+const IcdECT: FC<IcdECTProps> = ({patientId}) => {
+    const iNo: number = 1;
+
+    const handleSelectedEntity = async (selectedEntity: ISelectedEntity) => {
+        console.log("Selected Entity: ", selectedEntity);
+        const code = selectedEntity.code;
+
+        if (patientId) {
+            try {
+                await addIcdCodeToPatient(patientId, code);
+                alert('ICD-11 code selected and saved: ' + code);
+            } catch (error) {
+                alert("Failed to save ICD-11 code. Please try again.");
+            }
+        } else {
+            alert('ICD-11 code selected: ' + code);
+        }
+    };
+
+
+    useEffect(() => {
+        const fetchTokenAndConfigure = async () => {
+            try {
+                const token = await getAuthToken();
+                console.log("Token fetched:", token);
+
+                const settings = {
+                    apiServerUrl: 'http://localhost:8088/api/icd/entity',
+                    icdMinorVersion: 'v2',
+                    icdLinearization: 'mms',
+                    language: 'en',
+                    flexisearchAvailable: true,
+                    autoBind: false,
+                    authHeaders: {
+                        'Authorization': `Bearer ${token}`,
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                    endpoints: {
+                        search: '/mms/search'
+                    }
+                };
+                const myCallbacks = {
+                    selectedEntityFunction: handleSelectedEntity,
+                    getNewTokenFunction: async () => {
+                        await getAuthToken();
+                    },
+                    searchStartedFunction: () => {
+                        //...
+                    },
+                    searchEndedFunction: async (searchResult: { searchResult: { words: string[]; } }) => {
+                        console.log("Search result received:", searchResult);
+                        if (searchResult && searchResult.searchResult) {
+                            const words = searchResult.searchResult.words || [];
+                            console.log("Words extracted:", words);
+                            for (const word of words) {
+                                console.log("Processing word:", word);
+                                await searchIcd(word);  // Jedes Wort einzeln an searchIcd übergeben
+                            }
+                        } else {
+                            console.error("No search results found.");
+                        }
+                    }
+                };
+
+                ECT.Handler.configure(settings, {...myCallbacks});
+                ECT.Handler.bind(iNo);
+                console.log("ECT Handler configured and bound successfully");
+            } catch (error) {
+                console.error("Failed to fetch token or configure ECT", error);
+            }
+        };
+
+        const configure = fetchTokenAndConfigure();
+
+        return () => {
+            configure.then(() => ECT.Handler.clear(iNo));
+            // unbind to avoid memory leaks
+        };
+    }, [iNo]);
+
+    return (
+        <>
+            <Typography variant="base">Start search:</Typography>
+            <input
+                type="text"
+                className="ctw-input"
+                autoComplete="off"
+                data-ctw-ino={iNo}
+            />
+            <div className="ctw-window" data-ctw-ino={iNo}></div>
+        </>
+    );
+};
+
+const IcdECTWrapper: FC = () => {
     const {patientId} = useParams();
     return <IcdECT patientId={patientId}/>;
 };

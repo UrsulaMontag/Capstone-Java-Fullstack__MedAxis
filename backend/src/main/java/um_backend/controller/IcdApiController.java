@@ -22,14 +22,30 @@ public class IcdApiController {
         return icdApiService.getToken();
     }
 
-    @PostMapping("/icd/release/11/v2/mms/search")
-    public String searchIcd(@RequestParam("q") String query) {
-        return icdApiService.searchIcd(query);
+    @PostMapping("icd/release/11/v2/mms/search")
+    public String searchIcd(
+            @RequestParam String q,
+            @RequestParam(required = false, defaultValue = "false") boolean subtreeFilterUsesFoundationDescendants,
+            @RequestParam(required = false, defaultValue = "false") boolean includeKeywordResult,
+            @RequestParam(required = false, defaultValue = "false") boolean useFlexisearch,
+            @RequestParam(required = false, defaultValue = "false") boolean flatResults,
+            @RequestParam(required = false, defaultValue = "false") boolean highlightingEnabled,
+            @RequestParam(required = false, defaultValue = "false") boolean medicalCodingMode
+    ) {
+        return icdApiService.searchIcd(q, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
     }
 
     @GetMapping("/icd/release/11/2024-01/mms/search")
-    public String getIcd(@RequestParam("q") String query) {
-        return icdApiService.searchIcd(query);
+    public String getIcd(
+            @RequestParam String q,
+            @RequestParam(required = false, defaultValue = "false") boolean subtreeFilterUsesFoundationDescendants,
+            @RequestParam(required = false, defaultValue = "false") boolean includeKeywordResult,
+            @RequestParam(required = false, defaultValue = "true") boolean useFlexisearch,
+            @RequestParam(required = false, defaultValue = "false") boolean flatResults,
+            @RequestParam(required = false, defaultValue = "false") boolean highlightingEnabled,
+            @RequestParam(required = false, defaultValue = "false") boolean medicalCodingMode
+    ) {
+        return icdApiService.searchIcd(q, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
     }
 
     @GetMapping("/icd/release/11/v2/mms/{code}")
