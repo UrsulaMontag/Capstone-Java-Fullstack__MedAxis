@@ -46,7 +46,7 @@ const IcdECT: FC<IcdECTProps> = ({patientId}) => {
                     autoBind: false,
                     authHeaders: {
                         'Authorization': `Bearer ${token}`,
-                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Origin': "http://localhost:5173",
                     },
                     endpoints: {
                         search: '/mms/search'
