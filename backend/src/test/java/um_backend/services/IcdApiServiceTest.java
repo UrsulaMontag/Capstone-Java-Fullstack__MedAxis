@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import um_backend.clients.IcdApiClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,86 +26,95 @@ public class IcdApiServiceTest {
     }
 
     @Test
-    void testGetIcdData_Success() {
-        String mockUri = "mock/uri";
-        String mockResponse = "mockResponseData";
+    void testGetIcdDataByUri_Success() {
+        String mockUri = "https://id.who.int/icd/entity/mock-code";
+        String mockResponse = "{\"data\": \"mockIcdData\"}";
 
         when(mockIcdApiClient.getURI(mockUri)).thenReturn(mockResponse);
+
         String result = icdApiService.getIcdData(mockUri);
 
         assertEquals(mockResponse, result);
-        verify(mockIcdApiClient).getURI(mockUri);
+        verify(mockIcdApiClient, times(1)).getURI(mockUri);
     }
 
     @Test
-    void testGetIcdData_UriException() {
-        String mockUri = "mock/uri";
-        when(mockIcdApiClient.getURI(mockUri)).thenThrow(new RuntimeException("URI retrieval failed"));
+    void testGetIcdDataByUri_Failure() {
+        String mockUri = "https://id.who.int/icd/entity/mock-code";
 
-        assertThrows(Exception.class, () -> icdApiService.getIcdData(mockUri));
-        verify(mockIcdApiClient).getURI(mockUri);
+        when(mockIcdApiClient.getURI(mockUri)).thenThrow(new IllegalArgumentException("Invalid URI"));
+
+        assertThrows(IllegalArgumentException.class, () -> icdApiService.getIcdData(mockUri));
+        verify(mockIcdApiClient, times(1)).getURI(mockUri);
     }
 
     @Test
-    void testGetIcdDetails_Success() throws Exception {
-        String mockResponse = "mockIcdDetails";
+    void testGetIcdData_Success() throws Exception {
+        String mockResponse = "{\"data\": \"mockIcdDetails\"}";
 
         when(mockIcdApiClient.getIcdDetails()).thenReturn(mockResponse);
+
         String result = icdApiService.getIcdData();
 
         assertEquals(mockResponse, result);
-        verify(mockIcdApiClient).getIcdDetails();
+        verify(mockIcdApiClient, times(1)).getIcdDetails();
     }
 
     @Test
-    void testGetIcdDetails_Exception() throws Exception {
-        when(mockIcdApiClient.getIcdDetails()).thenThrow(new RuntimeException("ICD Details retrieval failed"));
+    void testGetIcdData_Failure() throws Exception {
+        when(mockIcdApiClient.getIcdDetails()).thenThrow(new RuntimeException("Service unavailable"));
 
-        assertThrows(RuntimeException.class, () -> icdApiService.getIcdData());
-        verify(mockIcdApiClient).getIcdDetails();
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> icdApiService.getIcdData());
+
+        assertEquals("Failed to get ICD details", exception.getMessage());
+        verify(mockIcdApiClient, times(1)).getIcdDetails();
+    }
+
+    @Test
+    void testGetToken_Success() {
+        String mockToken = "mockToken123";
+
+        when(mockIcdApiClient.getToken()).thenReturn(mockToken);
+
+        String result = icdApiService.getToken();
+
+        assertEquals(mockToken, result);
+        verify(mockIcdApiClient, times(1)).getToken();
+    }
+
+    @Test
+    void testGetToken_Failure() {
+        when(mockIcdApiClient.getToken()).thenThrow(new RuntimeException("Token fetch failed"));
+
+        String result = icdApiService.getToken();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.toString(), result);
+        verify(mockIcdApiClient, times(1)).getToken();
     }
 
     @Test
     void testSearchIcd_Success() {
-        // Arrange
-        String query = "mockQuery";
-        boolean subtreeFilterUsesFoundationDescendants = true;
-        boolean includeKeywordResult = true;
-        boolean useFlexisearch = true;
-        boolean flatResults = true;
-        boolean highlightingEnabled = true;
-        boolean medicalCodingMode = true;
-        String mockResponse = "mockSearchResult";
+        String mockQuery = "mockQuery";
+        String mockSearchResponse = "{\"results\": [\"result1\", \"result2\"]}";
 
-        when(mockIcdApiClient.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult,
-                useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode))
-                .thenReturn(mockResponse);
+        when(mockIcdApiClient.searchIcd(mockQuery, true, true, true, true, true, true)).thenReturn(mockSearchResponse);
 
-        // Act
-        String result = icdApiService.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
+        String result = icdApiService.searchIcd(mockQuery, true, true, true, true, true, true);
 
-        // Assert
-        assertEquals(mockResponse, result);
-        verify(mockIcdApiClient).searchIcd(query, subtreeFilterUsesFoundationDescendants,
-                includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
+        assertEquals(mockSearchResponse, result);
+        verify(mockIcdApiClient, times(1)).searchIcd(mockQuery, true, true, true, true, true, true);
     }
 
     @Test
-    void testSearchIcd_Exception() throws Exception {
-        String query = "mockQuery";
-        boolean subtreeFilterUsesFoundationDescendants = true;
-        boolean includeKeywordResult = true;
-        boolean useFlexisearch = true;
-        boolean flatResults = true;
-        boolean highlightingEnabled = true;
-        boolean medicalCodingMode = true;
-        when(mockIcdApiClient.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult,
-                useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode))
-                .thenThrow(new RuntimeException("ICD Details retrieval failed"));
+    void testSearchIcd_Failure() {
+        String mockQuery = "mockQuery";
 
-        assertThrows(RuntimeException.class, () -> icdApiService.searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult,
-                useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode));
-        verify(mockIcdApiClient).searchIcd(query, subtreeFilterUsesFoundationDescendants, includeKeywordResult,
-                useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
+        when(mockIcdApiClient.searchIcd(mockQuery, true, true, true, true, true, true))
+                .thenThrow(new RuntimeException("Search failed"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> icdApiService.searchIcd(mockQuery, true, true, true, true, true, true));
+
+        assertEquals("Failed to get search details", exception.getMessage());
+        verify(mockIcdApiClient, times(1)).searchIcd(mockQuery, true, true, true, true, true, true);
     }
 }

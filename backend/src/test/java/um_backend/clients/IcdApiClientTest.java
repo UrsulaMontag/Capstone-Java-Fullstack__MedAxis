@@ -12,6 +12,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.client.ExpectedCount.once;
@@ -53,6 +55,33 @@ class IcdApiClientTest {
                         .body(mockTokenResponse));
 
     }
+
+    @Test
+    void testGetToken_Failure_InvalidJson() {
+        String mockTokenResponse = "invalid json";
+
+        mockServer.expect(once(), requestTo("https://example.com/token"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mockTokenResponse));
+
+        assertThrows(RuntimeException.class, () -> {
+            icdApiClient.getToken();
+        });
+    }
+
+    @Test
+    void testGetToken_Failure_BadRequest() {
+        mockServer.expect(once(), requestTo("https://example.com/token"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.BAD_REQUEST));
+
+        assertThrows(RestClientException.class, () -> {
+            icdApiClient.getToken();
+        });
+    }
+
 
     @Test
     void testGetURI_Success() {
@@ -141,6 +170,34 @@ class IcdApiClientTest {
                 .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer mockToken123"))
                 .andExpect(header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        assertThrows(RuntimeException.class, () -> icdApiClient.searchIcd("mockQuery", true, true, true, true, true, true));
+    }
+
+    @Test
+    void testSearchIcd_Failure_InvalidToken() {
+        String mockTokenResponse = "{\"access_token\": \"mockToken123\"}";
+
+        mockServer.expect(once(), requestTo("https://example.com/token"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withStatus(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(mockTokenResponse));
+
+        String uri = UriComponentsBuilder.fromHttpUrl("https://id.who.int/icd/release/11/2024-01/mms/search")
+                .queryParam("q", "mockQuery")
+                .queryParam("subtreeFilterUsesFoundationDescendants", true)
+                .queryParam("includeKeywordResult", true)
+                .queryParam("useFlexisearch", true)
+                .queryParam("flatResults", true)
+                .queryParam("highlightingEnabled", true)
+                .queryParam("medicalCodingMode", true)
+                .toUriString();
+
+        mockServer.expect(once(), requestTo(uri))
+                .andExpect(method(HttpMethod.POST))
+                .andExpect(header(HttpHeaders.AUTHORIZATION, "Bearer mockToken123"))
+                .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
         assertThrows(RuntimeException.class, () -> icdApiClient.searchIcd("mockQuery", true, true, true, true, true, true));
     }
