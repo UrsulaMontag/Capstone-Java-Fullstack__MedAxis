@@ -1,9 +1,9 @@
-import {Patient} from "../models/Patient.ts";
-import {CardActionContainer, CardContainer, NumberEntry} from "../styles/PatientCard.styled.ts";
+import {Patient} from "../../models/patient/Patient.ts";
+import {CardActionContainer, CardContainer, NumberEntry} from "../../styles/PatientCard.styled.ts";
 import {useLocation, useNavigate} from "react-router-dom";
-import Typography from "../styles/Typography.tsx";
-import usePatientStore from "../stores/usePatientStore.ts";
-import Button from "../styles/Button.styled.tsx";
+import Typography from "../../styles/Typography.tsx";
+import usePatientStore from "../../stores/usePatientStore.ts";
+import Button from "../../styles/Button.styled.tsx";
 import PatientCardDetails from "./PatientCardDetails.tsx";
 
 type PatientCardProps = {

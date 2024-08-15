@@ -1,7 +1,7 @@
-import {Patient} from "../models/Patient.ts";
+import {Patient} from "../models/patient/Patient.ts";
 import usePatientStore from "../stores/usePatientStore.ts";
 import {ListHeader, PatientListContainer, PatientListItem} from "../styles/PatientList.styled.ts";
-import PatientCard from "../components/PatientCard.tsx";
+import PatientCard from "../components/patient/PatientCard.tsx";
 import {useEffect} from "react";
 import Typography from "../styles/Typography.tsx";
 import {NumberEntry} from "../styles/PatientCard.styled.ts";

@@ -41,7 +41,7 @@ export const NavItem = styled.li`
 `;
 
 export const HamburgerMenu = styled.div<{ $shownav: boolean }>`
-    @media (min-width: 780px) {
+    @media (min-width: 768px) {
         display: none;
     }
     position: absolute;

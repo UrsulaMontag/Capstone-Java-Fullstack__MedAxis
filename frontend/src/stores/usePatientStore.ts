@@ -1,4 +1,4 @@
-import {Patient, PatientToAdd} from "../models/Patient.ts";
+import {Patient, PatientToAdd} from "../models/patient/Patient.ts";
 import {create} from "zustand";
 import axios from "axios";
 
