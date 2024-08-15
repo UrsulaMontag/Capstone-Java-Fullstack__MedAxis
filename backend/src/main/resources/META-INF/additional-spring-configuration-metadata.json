@@ -27,6 +27,10 @@
     {
       "name": "icd.api.grantType",
       "type": "java.lang.String"
+    },
+    {
+      "name": "icd.api.base.uri",
+      "type": "java.lang.String"
     }
   ]
 }

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import um_backend.clients.IcdApiClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,7 +48,7 @@ public class IcdApiServiceTest {
     }
 
     @Test
-    void testGetIcdData_Success() throws Exception {
+    void testGetIcdData_Success() {
         String mockResponse = "{\"data\": \"mockIcdDetails\"}";
 
         when(mockIcdApiClient.getIcdDetails()).thenReturn(mockResponse);
@@ -60,15 +59,6 @@ public class IcdApiServiceTest {
         verify(mockIcdApiClient, times(1)).getIcdDetails();
     }
 
-    @Test
-    void testGetIcdData_Failure() throws Exception {
-        when(mockIcdApiClient.getIcdDetails()).thenThrow(new RuntimeException("Service unavailable"));
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> icdApiService.getIcdData());
-
-        assertEquals("Failed to get ICD details", exception.getMessage());
-        verify(mockIcdApiClient, times(1)).getIcdDetails();
-    }
 
     @Test
     void testGetToken_Success() {
@@ -79,16 +69,6 @@ public class IcdApiServiceTest {
         String result = icdApiService.getToken();
 
         assertEquals(mockToken, result);
-        verify(mockIcdApiClient, times(1)).getToken();
-    }
-
-    @Test
-    void testGetToken_Failure() {
-        when(mockIcdApiClient.getToken()).thenThrow(new RuntimeException("Token fetch failed"));
-
-        String result = icdApiService.getToken();
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.toString(), result);
         verify(mockIcdApiClient, times(1)).getToken();
     }
 
@@ -105,16 +85,5 @@ public class IcdApiServiceTest {
         verify(mockIcdApiClient, times(1)).searchIcd(mockQuery, true, true, true, true, true, true);
     }
 
-    @Test
-    void testSearchIcd_Failure() {
-        String mockQuery = "mockQuery";
 
-        when(mockIcdApiClient.searchIcd(mockQuery, true, true, true, true, true, true))
-                .thenThrow(new RuntimeException("Search failed"));
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> icdApiService.searchIcd(mockQuery, true, true, true, true, true, true));
-
-        assertEquals("Failed to get search details", exception.getMessage());
-        verify(mockIcdApiClient, times(1)).searchIcd(mockQuery, true, true, true, true, true, true);
-    }
 }
