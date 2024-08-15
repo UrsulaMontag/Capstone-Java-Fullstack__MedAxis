@@ -1,6 +1,7 @@
 package um_backend.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import um_backend.services.IcdApiService;
 
@@ -18,16 +19,20 @@ public class IcdApiController {
 
     private final IcdApiService icdApiService;
 
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/icd/release/11/v2/mms")
     public String getIcdDetails() {
         return icdApiService.getIcdData();
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/icd/release/11/mms/token")
     public String getToken() {
         return icdApiService.getToken();
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("icd/release/11/v2/mms/search")
     public String searchIcd(
             @RequestParam String q,
@@ -41,6 +46,7 @@ public class IcdApiController {
         return icdApiService.searchIcd(q, subtreeFilterUsesFoundationDescendants, includeKeywordResult, useFlexisearch, flatResults, highlightingEnabled, medicalCodingMode);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/icd/release/11/v2/mms/{code}")
     public String getIcdDetails(@PathVariable String code) {
         String uri = "https://id.who.int/icd/entity/" + code;
