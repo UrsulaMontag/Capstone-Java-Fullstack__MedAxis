@@ -41,14 +41,16 @@ public class PatientService {
         }
         validatePatientData(patient);
         Patient newPatient = createOrUpdatePatient(patient, null);
-        return patientRepository.save(newPatient);
+        patientRepository.save(newPatient);
+        return decryptPatient(newPatient);
     }
 
     public Patient updatePatientById(String id, PatientPersonalDTO patient) throws InvalidIdException {
         validatePatientData(patient);
         Patient currentPatient = patientRepository.findById(id).orElseThrow(() -> new InvalidIdException("Patient with id " + id + "not found!"));
         Patient updatedPatient = createOrUpdatePatient(patient, currentPatient);
-        return patientRepository.save(updatedPatient);
+        patientRepository.save(updatedPatient);
+        return decryptPatient(updatedPatient);
     }
 
     public void deletePatientById(String id) throws InvalidIdException {
@@ -84,6 +86,7 @@ public class PatientService {
         String decryptedLastname = encryptionService.decrypt(patient.lastname());
         String decryptedDateOfBirth = encryptionService.decrypt(patient.dateOfBirth());
         String decryptedInsuranceNr = encryptionService.decrypt(patient.insuranceNr());
+        String decryptedHealthDataId = !patient.healthDataId().equals("newId") ? encryptionService.decrypt(patient.healthDataId()) : "newId";
 
         ContactInformation decryptedContactInformation = new ContactInformation(
                 (!patient.contactInformation().phoneNr().isEmpty() ?
@@ -94,7 +97,7 @@ public class PatientService {
                 encryptionService.decrypt(patient.contactInformation().town())
         );
         return new Patient(patient.id(), decryptedFirstname, decryptedLastname,
-                decryptedDateOfBirth, decryptedInsuranceNr, decryptedContactInformation);
+                decryptedDateOfBirth, decryptedInsuranceNr, decryptedContactInformation, decryptedHealthDataId);
     }
 
     protected Patient createOrUpdatePatient(PatientPersonalDTO dto, Patient existingPatient) {
@@ -112,16 +115,19 @@ public class PatientService {
                     encryptedLastName,
                     encryptedDateOfBirth,
                     encryptedInsuranceNr,
-                    contactInfo
+                    contactInfo,
+                    "newId"
             );
         } else {
             // Updating an existing patient
+            String healthDataId = existingPatient.healthDataId();
             return existingPatient
                     .withFirstname(encryptedFirstName)
                     .withLastname(encryptedLastName)
                     .withDateOfBirth(encryptedDateOfBirth)
                     .withInsuranceNr(encryptedInsuranceNr)
-                    .withContactInformation(contactInfo);
+                    .withContactInformation(contactInfo)
+                    .withHealthDataId(healthDataId);
         }
     }
 
