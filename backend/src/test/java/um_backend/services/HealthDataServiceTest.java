@@ -3,11 +3,13 @@ package um_backend.services;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import um_backend.exeptions.InvalidIdException;
 import um_backend.models.HealthData;
 import um_backend.repository.HealthDataRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,55 +32,52 @@ class HealthDataServiceTest {
 
     @Test
     void testAddOrUpdateHealthData_CreateNew() {
-        String patientId = "patient1";
         String icdCode = "ICD-10";
         String generatedId = "newId";
 
-        when(mockHealthDataRepository.findByPatientId(patientId)).thenReturn(null);
+        when(mockHealthDataRepository.findById(generatedId)).thenReturn(Optional.empty());
         when(mockUtilService.generateId()).thenReturn(generatedId);
 
-        HealthData newHealthData = new HealthData(generatedId, patientId, List.of(icdCode));
+        HealthData newHealthData = new HealthData(generatedId, List.of(icdCode));
         when(mockHealthDataRepository.save(any(HealthData.class))).thenReturn(newHealthData);
 
-        HealthData result = healthDataService.addOrUpdateHealthData(patientId, icdCode);
+        healthDataService.addOrUpdateHealthData(generatedId, icdCode);
 
-        assertEquals(newHealthData, result);
-        verify(mockHealthDataRepository).findByPatientId(patientId);
+        verify(mockHealthDataRepository).findById(generatedId);
         verify(mockUtilService).generateId();
         verify(mockHealthDataRepository).save(any(HealthData.class));
     }
 
     @Test
-    void testAddOrUpdateHealthData_UpdateExisting() {
-        String patientId = "patient1";
+    void testAddOrUpdateHealthData_UpdateExisting() throws IllegalArgumentException {
+        String dataId = "oldId";
         String icdCode = "ICD-10";
         List<String> existingCodes = new ArrayList<>();
         existingCodes.add("existingCode");
-        HealthData existingHealthData = new HealthData("existingId", patientId, existingCodes);
+        HealthData existingHealthData = new HealthData(dataId, existingCodes);
 
-        when(mockHealthDataRepository.findByPatientId(patientId)).thenReturn(existingHealthData);
+        when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.of(existingHealthData));
         when(mockHealthDataRepository.save(any(HealthData.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        HealthData result = healthDataService.addOrUpdateHealthData(patientId, icdCode);
+        HealthData result = healthDataService.addOrUpdateHealthData(dataId, icdCode);
 
-        assertEquals("existingId", result.id());
-        assertEquals(patientId, result.patientId());
+        assertEquals(dataId, result.id());
         assertEquals(List.of("existingCode", icdCode), result.icdCodes());
-        verify(mockHealthDataRepository).findByPatientId(patientId);
+        verify(mockHealthDataRepository).findById(dataId);
         verify(mockHealthDataRepository).save(any(HealthData.class));
     }
 
     @Test
-    void testGetHealthDataByPatientId() {
-        String patientId = "patient1";
-        HealthData healthData = new HealthData("existingId", patientId, List.of("code1"));
+    void testGetHealthDataByPatientId() throws InvalidIdException {
+        String dataId = "oldId";
+        HealthData healthData = new HealthData("existingId", List.of("code1"));
 
-        when(mockHealthDataRepository.findByPatientId(patientId)).thenReturn(healthData);
+        when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.of(healthData));
 
-        HealthData result = healthDataService.getHealthDataByPatientId(patientId);
+        HealthData result = healthDataService.getHealthDataById(dataId);
 
         assertEquals(healthData, result);
-        verify(mockHealthDataRepository).findByPatientId(patientId);
+        verify(mockHealthDataRepository).findById(dataId);
     }
 }
 

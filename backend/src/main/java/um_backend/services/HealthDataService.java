@@ -2,10 +2,11 @@ package um_backend.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import um_backend.exeptions.InvalidIdException;
 import um_backend.models.HealthData;
 import um_backend.repository.HealthDataRepository;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -13,17 +14,20 @@ public class HealthDataService {
     private final HealthDataRepository healthDataRepository;
     private final UtilService utilService;
 
-    public HealthData addOrUpdateHealthData(String patientId, String icdCode) {
-        HealthData healthData = healthDataRepository.findByPatientId(patientId);
-        if (healthData == null) {
-            healthData = new HealthData(utilService.generateId(), patientId, List.of(icdCode));
-        } else {
+    public HealthData addOrUpdateHealthData(String dataId, String icdCode) {
+        try {
+            HealthData healthData = healthDataRepository.findById(dataId)
+                    .orElseGet(() -> new HealthData(utilService.generateId(), new ArrayList<>()));
             healthData.icdCodes().add(icdCode);
+            return healthDataRepository.save(healthData);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Health data contains problems");
         }
-        return healthDataRepository.save(healthData);
+
     }
 
-    public HealthData getHealthDataByPatientId(String patientId) {
-        return healthDataRepository.findByPatientId(patientId);
+    public HealthData getHealthDataById(String id) throws InvalidIdException {
+        return healthDataRepository.findById(id).orElseThrow(
+                () -> new InvalidIdException("Data with id " + id + "not found!"));
     }
 }

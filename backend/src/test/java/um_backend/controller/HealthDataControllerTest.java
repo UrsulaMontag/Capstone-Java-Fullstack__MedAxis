@@ -36,33 +36,37 @@ class HealthDataControllerTest {
 
     @Test
     void testAddIcdCodeToPatient() throws Exception {
-        String patientId = "patient1";
+        String dataId = "newId";
         String icdCode = "ICD-10";
         List<String> icdCodes = new ArrayList<>() {{
             add(icdCode);
         }};
-        HealthData healthData = new HealthData("newId", patientId, icdCodes);
+        HealthData healthData = new HealthData(dataId, icdCodes);
 
-        when(mockHealthDataService.addOrUpdateHealthData(patientId, icdCode)).thenReturn(healthData);
+        when(mockHealthDataService.addOrUpdateHealthData(dataId, icdCode)).thenReturn(healthData);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data/" + patientId + "/add-icd-code")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data/" + "/" + dataId + "/add-icd-code")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(icdCode))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.patientId").value(patientId));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value("ICD-10"));
     }
 
     @Test
-    void testGetHealthDataByPatientId() throws Exception {
-        String patientId = "patient1";
-        HealthData healthData = new HealthData("existingId", patientId, List.of("code1"));
+    void testGetHealthDataById() throws Exception {
+        String dataId = "oldId";
+        String icdCode = "ICD-10";
 
-        when(mockHealthDataService.getHealthDataByPatientId(patientId)).thenReturn(healthData);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/health_data/{patientId}", patientId)
+        HealthData healthData = new HealthData(dataId, List.of(icdCode));
+
+        when(mockHealthDataService.getHealthDataById(dataId)).thenReturn(healthData);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/health_data/{dataId}", dataId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.patientId").value(patientId))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value("code1"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value(icdCode));
     }
 }
