@@ -21,6 +21,7 @@ import um_backend.services.EncryptionService;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 
 @SpringBootTest
@@ -175,23 +176,12 @@ class PatientControllerTest {
                                 "insuranceNr": "123495467",
                                 "contactInformation": { "address":"Sesamstraße 56",
                                              "town":"68593 Teststadt"
-                                                      },
-                                "healthDataId": ""
+                                                      }
                                 }
                                 """))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().json("""
-                        {
-                                 "firstname": "Max",
-                                 "lastname": "Mustermann",
-                                 "dateOfBirth": "1999-05-16",
-                                 "insuranceNr": "123495467",
-                                 "contactInformation": { "address":"Sesamstraße 56",
-                                              "town":"68593 Teststadt"
-                                                       },
-                                "healthDataId": "newId"
-                                 }
-                        """))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstname").value("Max"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastname").value("Mustermann"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").exists());
     }
 

@@ -11,12 +11,14 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import um_backend.exeptions.InvalidIdException;
 import um_backend.models.HealthData;
 import um_backend.services.HealthDataService;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -43,7 +45,7 @@ class HealthDataControllerTest {
         }};
         HealthData healthData = new HealthData(dataId, icdCodes);
 
-        when(mockHealthDataService.addOrUpdateHealthData(dataId, icdCode)).thenReturn(healthData);
+        when(mockHealthDataService.addOrUpdateIcdCodes(dataId, icdCode)).thenReturn(healthData);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data/" + "/" + dataId + "/add-icd-code")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -52,6 +54,7 @@ class HealthDataControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value("ICD-10"));
     }
+
 
     @Test
     void testGetHealthDataById() throws Exception {
@@ -68,5 +71,50 @@ class HealthDataControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value(icdCode));
+    }
+
+    @Test
+    void testGetHealthDataById_NotFound() throws Exception {
+        String dataId = "invalidId";
+
+        when(mockHealthDataService.getHealthDataById(dataId))
+                .thenThrow(new InvalidIdException("Data with id " + dataId + " not found!"));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/health_data/{dataId}", dataId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    // Test für das Erstellen von HealthData
+    @Test
+    void testCreateHealthData() throws Exception {
+        String dataId = "newDataId";
+        List<String> icdCodes = List.of("ICD-10");
+        HealthData healthData = new HealthData(dataId, icdCodes);
+
+        when(mockHealthDataService.createHealthData(any(HealthData.class))).thenReturn(healthData);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":\"" + dataId + "\", \"icdCodes\":[\"ICD-10\"]}"))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value("ICD-10"));
+    }
+
+    @Test
+    void testCreateHealthData_NotFound() throws Exception {
+        String dataId = "newDataId";
+        List<String> icdCodes = List.of("ICD-10");
+        HealthData healthData = new HealthData(dataId, icdCodes);
+
+        when(mockHealthDataService.createHealthData(any(HealthData.class)))
+                .thenThrow(new IllegalArgumentException("Failed creating health data."));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":\"" + dataId + "\", \"icdCodes\":[\"ICD-10\"]}"))
+                .andExpect(MockMvcResultMatchers.status().is5xxServerError());
     }
 }

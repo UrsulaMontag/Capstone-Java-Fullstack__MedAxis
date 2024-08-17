@@ -16,12 +16,18 @@ public class HealthDataController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{dataId}/add-icd-code")
     public HealthData addIcdCodeToPatient(@PathVariable String dataId, @RequestBody String icdCode) throws IllegalArgumentException {
-        return healthDataService.addOrUpdateHealthData(dataId, icdCode);
+        return healthDataService.addOrUpdateIcdCodes(dataId, icdCode);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{dataId}")
     public HealthData getHealthDataByPatientId(@PathVariable String dataId) throws InvalidIdException {
         return healthDataService.getHealthDataById(dataId);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping()
+    public HealthData createHealthData(@RequestBody HealthData healthData) throws IllegalArgumentException {
+        return healthDataService.createHealthData(healthData);
     }
 }

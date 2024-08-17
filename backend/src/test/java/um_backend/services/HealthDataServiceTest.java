@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -31,7 +32,7 @@ class HealthDataServiceTest {
     }
 
     @Test
-    void testAddOrUpdateHealthData_CreateNew() {
+    void testAddOrUpdateIcdCodes_CreateNew() {
         String icdCode = "ICD-10";
         String generatedId = "newId";
 
@@ -41,7 +42,7 @@ class HealthDataServiceTest {
         HealthData newHealthData = new HealthData(generatedId, List.of(icdCode));
         when(mockHealthDataRepository.save(any(HealthData.class))).thenReturn(newHealthData);
 
-        healthDataService.addOrUpdateHealthData(generatedId, icdCode);
+        healthDataService.addOrUpdateIcdCodes(generatedId, icdCode);
 
         verify(mockHealthDataRepository).findById(generatedId);
         verify(mockUtilService).generateId();
@@ -49,7 +50,19 @@ class HealthDataServiceTest {
     }
 
     @Test
-    void testAddOrUpdateHealthData_UpdateExisting() throws IllegalArgumentException {
+    void testAddOrUpdateIcdCodes_InvalidId() {
+        String icdCode = "ICD-10";
+        String invalidId = "invalidId";
+
+        when(mockHealthDataRepository.findById(invalidId)).thenThrow(new IllegalArgumentException());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            healthDataService.addOrUpdateIcdCodes(invalidId, icdCode);
+        });
+    }
+
+    @Test
+    void testAddOrUpdateIcdCodes_UpdateExisting() throws IllegalArgumentException {
         String dataId = "oldId";
         String icdCode = "ICD-10";
         List<String> existingCodes = new ArrayList<>();
@@ -59,7 +72,7 @@ class HealthDataServiceTest {
         when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.of(existingHealthData));
         when(mockHealthDataRepository.save(any(HealthData.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        HealthData result = healthDataService.addOrUpdateHealthData(dataId, icdCode);
+        HealthData result = healthDataService.addOrUpdateIcdCodes(dataId, icdCode);
 
         assertEquals(dataId, result.id());
         assertEquals(List.of("existingCode", icdCode), result.icdCodes());
@@ -68,7 +81,7 @@ class HealthDataServiceTest {
     }
 
     @Test
-    void testGetHealthDataByPatientId() throws InvalidIdException {
+    void testGetHealthDataById() throws InvalidIdException {
         String dataId = "oldId";
         HealthData healthData = new HealthData("existingId", List.of("code1"));
 
@@ -79,5 +92,36 @@ class HealthDataServiceTest {
         assertEquals(healthData, result);
         verify(mockHealthDataRepository).findById(dataId);
     }
+
+    @Test
+    void testGetHealthDataById_InvalidId() {
+        String invalidId = "invalidId";
+
+        when(mockHealthDataRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        assertThrows(InvalidIdException.class, () -> {
+            healthDataService.getHealthDataById(invalidId);
+        });
+    }
+
+    @Test
+    void testCreateHealthData_Success() {
+        HealthData healthData = new HealthData("newId", List.of("ICD-10"));
+
+        when(mockHealthDataRepository.save(any(HealthData.class))).thenReturn(healthData);
+
+        HealthData result = healthDataService.createHealthData(healthData);
+
+        assertEquals("newId", result.id());
+        assertEquals(List.of("ICD-10"), result.icdCodes());
+        verify(mockHealthDataRepository).save(any(HealthData.class));
+    }
+
+    @Test
+    void testCreateHealthData_NullHealthData() {
+        assertThrows(IllegalArgumentException.class, () -> healthDataService.createHealthData(null),
+                "HealthData cannot be null");
+    }
+
 }
 

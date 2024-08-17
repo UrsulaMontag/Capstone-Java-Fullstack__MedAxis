@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.ContactInformation;
+import um_backend.models.HealthData;
 import um_backend.models.Patient;
 import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.repository.PatientRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,6 +20,7 @@ public class PatientService {
     private final UtilService utilService;
     private final DataValidationService dataValidationService;
     private final EncryptionService encryptionService;
+    private final HealthDataService healthDataService;
 
     public List<Patient> getAllPatients() {
 
@@ -86,7 +89,7 @@ public class PatientService {
         String decryptedLastname = encryptionService.decrypt(patient.lastname());
         String decryptedDateOfBirth = encryptionService.decrypt(patient.dateOfBirth());
         String decryptedInsuranceNr = encryptionService.decrypt(patient.insuranceNr());
-        String decryptedHealthDataId = !patient.healthDataId().equals("newId") ? encryptionService.decrypt(patient.healthDataId()) : "newId";
+        String decryptedHealthDataId = encryptionService.decrypt(patient.healthDataId());
 
         ContactInformation decryptedContactInformation = new ContactInformation(
                 (!patient.contactInformation().phoneNr().isEmpty() ?
@@ -109,6 +112,7 @@ public class PatientService {
 
         if (existingPatient == null) {
             // Creating a new patient
+            String encryptedHealthDataId = encryptionService.encrypt(createEmptyHealthDataObject());
             return new Patient(
                     utilService.generateId(),
                     encryptedFirstName,
@@ -116,19 +120,26 @@ public class PatientService {
                     encryptedDateOfBirth,
                     encryptedInsuranceNr,
                     contactInfo,
-                    "newId"
+                    encryptedHealthDataId
             );
         } else {
             // Updating an existing patient
-            String healthDataId = existingPatient.healthDataId();
+            String encryptedHealthDataId = existingPatient.healthDataId();
+
             return existingPatient
                     .withFirstname(encryptedFirstName)
                     .withLastname(encryptedLastName)
                     .withDateOfBirth(encryptedDateOfBirth)
                     .withInsuranceNr(encryptedInsuranceNr)
                     .withContactInformation(contactInfo)
-                    .withHealthDataId(healthDataId);
+                    .withHealthDataId(encryptedHealthDataId);
         }
+    }
+
+    protected String createEmptyHealthDataObject() {
+        HealthData newHealthData = new HealthData(utilService.generateId(), new ArrayList<>());
+        healthDataService.createHealthData(newHealthData);
+        return newHealthData.id();
     }
 
     protected ContactInformation createEncryptedContactInformation(ContactInformation contact) {

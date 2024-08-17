@@ -14,7 +14,7 @@ public class HealthDataService {
     private final HealthDataRepository healthDataRepository;
     private final UtilService utilService;
 
-    public HealthData addOrUpdateHealthData(String dataId, String icdCode) {
+    public HealthData addOrUpdateIcdCodes(String dataId, String icdCode) {
         try {
             HealthData healthData = healthDataRepository.findById(dataId)
                     .orElseGet(() -> new HealthData(utilService.generateId(), new ArrayList<>()));
@@ -29,5 +29,12 @@ public class HealthDataService {
     public HealthData getHealthDataById(String id) throws InvalidIdException {
         return healthDataRepository.findById(id).orElseThrow(
                 () -> new InvalidIdException("Data with id " + id + "not found!"));
+    }
+
+    public HealthData createHealthData(HealthData healthData) {
+        if (healthData == null) {
+            throw new IllegalArgumentException("HealthData cannot be null");
+        }
+        return healthDataRepository.save(healthData);
     }
 }
