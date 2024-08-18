@@ -5,6 +5,8 @@ import Typography from "../../styles/Typography.tsx";
 import usePatientStore from "../../stores/usePatientStore.ts";
 import Button from "../../styles/Button.styled.tsx";
 import PatientCardDetails from "./PatientCardDetails.tsx";
+import PatientHealthCard from "../health-data/PatientHealthCard.tsx";
+import useGlobalStore from "../../stores/useGloblaStore.ts";
 
 type PatientCardProps = {
     patient: Patient;
@@ -16,10 +18,12 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
     const {patient, detailed, listNr} = props;
     const location = useLocation();
     const navigate = useNavigate();
+    const userRole: ("nurse" | "doctor" | null) = useGlobalStore(state => state.userRole)
     const deletePatient: (id: string) => void = usePatientStore(state => state.deletePatient);
     const isViewingPatientDetails = location.pathname === `/patients/${patient.id}`;
     const isEditingPatient = location.pathname === `/patients/edit/${patient.id}`;
     const isPatientList = location.pathname === `/patients`;
+    const isViewingPatientHealthDetails = location.pathname === `/health_data/${patient.healthDataId}`;
 
 
     const handleDelete = () => {
@@ -30,10 +34,20 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
         }
     }
 
+    const handleDetailNav = () => {
+        userRole === "nurse"
+            ? navigate(`/patients/${patient.id}`)
+            : userRole === "doctor" ?
+                navigate(`/health_data/${patient.healthDataId}`)
+                : navigate("/");
+    }
+
     return (
         <CardContainer details={detailed}>
-            {detailed ? (
+            {detailed && userRole === "nurse" ? (
                 <PatientCardDetails patient={patient}/>
+            ) : detailed && userRole === "doctor" ? (
+                <PatientHealthCard patient={patient}/>
             ) : (
                 <>
                     <NumberEntry>{listNr}</NumberEntry>
@@ -42,8 +56,8 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
                 </>
             )}
             <CardActionContainer details={detailed}>
-                {!isViewingPatientDetails && (
-                    <Button variant="normal" onClick={() => navigate(`/patients/${patient.id}`)}>
+                {!isViewingPatientDetails && !isViewingPatientHealthDetails && (
+                    <Button variant="normal" onClick={handleDetailNav}>
                         <img alt="details-button" src={"/monitoring.png"} title="details"/>
                     </Button>
                 )}
