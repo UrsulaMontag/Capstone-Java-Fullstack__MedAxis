@@ -1,9 +1,11 @@
 import styled from 'styled-components';
 
 export const FooterContainer = styled.footer`
-    position: fixed;
+    position: sticky;
     bottom: 0;
-    left: 0;
+    height: 2rem;
+    margin-top: 2px;
+
     display: flex;
     align-items: baseline;
     justify-content: space-between;

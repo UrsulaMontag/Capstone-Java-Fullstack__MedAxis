@@ -10,17 +10,16 @@ interface HealthDataState {
 
 const useHealthDataStore = create<HealthDataState>()((set) => ({
     healthData: {id: "newId", icdCodes: []},
-    getHealthDataById: (id: string) => {
-        axios.get(`/api/health_data/${id}`)
-            .then(response => {
-                set((state) => ({
-                    healthData: state.healthData = response.data
-                }))
-            })
-            .catch(error => {
-                console.error("Error getting health data of patient", error);
-                alert(`Failed to get health data of patient. Please try again later.`);
-            });
+    getHealthDataById: async (id: string) => {
+
+        try {
+            const response = await axios.get(`/api/health_data/${id}`);
+            const data = await response.data
+            set({healthData: data});
+        } catch (error) {
+            console.error("Error getting health data of patient", error);
+            alert(`Failed to get health data of patient. Please try again later.`);
+        }
     },
     addIcdCodeToPatientHealthData: async (dataId: string, icdCode: string) => {
         try {
