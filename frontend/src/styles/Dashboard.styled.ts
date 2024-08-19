@@ -16,13 +16,31 @@ export const ButtonContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    padding-left: 1.6rem;
+    padding: 0 1.6rem .3rem 1.6rem;
+
+
+    cursor: pointer;
+    transition: border-color 0.25s;
+    @media (max-width: 760px) {
+        font-size: 1.2rem;
+        padding: .1rem .3rem;
+
+    }
+
+    &:hover {
+        border-color: var(--accent-color-blue);
+    }
+
+    &:focus,
+    &:focus-visible {
+        outline: 4px auto -webkit-focus-ring-color;
+    }
 
     img {
         width: 10rem;
         align-self: flex-end;
         position: absolute;
-        top: 0;
+        top: 1.6rem;
         background-color: var(--accent-color-grey__light);
         @media (max-width: 760px) {
             width: 6rem;
@@ -34,7 +52,7 @@ export const StatisticsContainer = styled(ButtonContainer)`
     width: 86vw;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 
 
     div {
