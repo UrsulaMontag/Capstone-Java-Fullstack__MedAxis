@@ -9,6 +9,8 @@ statistics. Particular attention has been paid to the secure handling of data: S
 encryption and is only accessible to authorised users. By combining state-of-the-art technologies in the front end and
 back end, the application offers a robust and reliable solution for the demanding requirements of hospital management.
 
+## <span style="color:red"> - *In development* -</span>
+
 ## Features
 
 - **Patient Management**: Comprehensive overview and management of patient data.
