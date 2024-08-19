@@ -50,6 +50,22 @@ export default function Typography(props: Readonly<TypographyProps>) {
                     {props.children}
                 </StyledErrorInfoText>
             )
+        case "button-field-info":
+            return (
+                <StyledButtonFieldInfo {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledButtonFieldInfo>
+            )
+        case "button-field-header":
+            return (
+                <StyledButtonFieldHeader {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledButtonFieldHeader>
+            )
+        default:
+            return <BaseText {...props.rest} as={props.component}>
+                {props.children}
+            </BaseText>
     }
 }
 
@@ -63,7 +79,7 @@ const BaseText = styled.p`
 `
 const StyledH1 = styled.h1`
     color: var(--accent-color-mainblue);
-    font-size: 2.8rem;
+    font-size: 3.2rem;
     margin-top: 4.8rem;
     @media (min-width: 768px) {
         margin: 0;
@@ -101,5 +117,14 @@ const StyledErrorInfoText = styled.span`
     font-weight: 400;
     line-height: 1.4rem;
     text-align: center
+`;
+
+const StyledButtonFieldInfo = styled(BaseText)`
+    font-size: 1.4rem;
+
+`;
+const StyledButtonFieldHeader = styled(StyledH3)`
+    font-size: 1.8rem;
+
 `;
 

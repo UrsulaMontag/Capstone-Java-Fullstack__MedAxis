@@ -14,7 +14,7 @@ export default function PageTitle() {
     const getPageTitle = () => {
         switch (location.pathname) {
             case "/":
-                return "Dashboard";
+                return "Dashboard - Station A";
             case "/patients":
                 return "Patients";
             case "/patients/" + urlParams.id :
