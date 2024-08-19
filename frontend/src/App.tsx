@@ -25,8 +25,10 @@ function App() {
                     },
                     {
                         path: '/patients',
-                        element: <PatientList/>,
-                        children: []
+
+                        element: <ProtectedRoute role={userRole} allowedRoles={["nurse", "doctor"]}>
+                            <PatientList/>
+                        </ProtectedRoute>
                     },
                     {
                         path: '/patients/:id',

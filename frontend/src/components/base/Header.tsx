@@ -4,6 +4,7 @@ import Typography from "../../styles/Typography.tsx";
 import PageTitle from "./PageTitle.tsx";
 import SearchField from "./SearchField.tsx";
 import {useLocation} from "react-router-dom";
+import Login from "./Login.tsx";
 
 export default function Header() {
     const location = useLocation();
@@ -12,6 +13,8 @@ export default function Header() {
             <HeaderContainer>
                 <HeaderSection>
                     <Typography variant="h1">MedAxis</Typography>
+                    {location.pathname === "/" &&
+                        <Login/>}
                     {location.pathname === "/patients" &&
                         <SearchField/>}
                 </HeaderSection>

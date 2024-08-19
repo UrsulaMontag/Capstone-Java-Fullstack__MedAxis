@@ -2,11 +2,14 @@ import {useLocation, useNavigate, useParams} from "react-router-dom";
 import Typography from "../../styles/Typography.tsx";
 import {PageTitleContainer} from "../../styles/PageTitle.styled.ts";
 import Button from "../../styles/Button.styled.tsx";
+import useGlobalStore from "../../stores/useGloblaStore.ts";
 
 export default function PageTitle() {
     const location = useLocation();
     const urlParams = useParams();
     const navigate = useNavigate();
+    const userRole: "nurse" | "doctor" | null = useGlobalStore(state => state.userRole)
+
 
     const onButtonClick = () => {
         navigate("/patients/add");
@@ -37,7 +40,7 @@ export default function PageTitle() {
     return (
         <PageTitleContainer>
             <Typography variant="h2">{getPageTitle()}</Typography>
-            {location.pathname === "/patients" &&
+            {userRole !== "doctor" && location.pathname === "/patients" &&
                 <Button variant="normal" onClick={onButtonClick}><img alt="register-patient-button"
                                                                       src={"/add-user.png"}
                                                                       title="Add new patient"/>

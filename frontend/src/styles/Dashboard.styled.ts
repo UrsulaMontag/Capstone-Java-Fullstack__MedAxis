@@ -10,13 +10,13 @@ export const ButtonSectionContainer = styled.article`
 export const ButtonContainer = styled.div`
     position: relative;
     width: 42vw;
-    height: 32vh;
+    height: 36vh;
     background-color: var(--accent-color-grey__light);
     border-radius: 5px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    padding: 0 1.6rem .3rem 1.6rem;
+    padding: 0 1.6rem 1.6rem 1.6rem;
 
 
     cursor: pointer;
@@ -51,9 +51,11 @@ export const ButtonContainer = styled.div`
 export const StatisticsContainer = styled(ButtonContainer)`
     width: 86vw;
     flex-direction: row;
-    align-items: center;
     justify-content: space-between;
 
+    h3 {
+        align-self: center;
+    }
 
     div {
         display: flex;

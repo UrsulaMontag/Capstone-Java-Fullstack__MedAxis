@@ -5,11 +5,11 @@ import usePatientStore from "../stores/usePatientStore.ts";
 import {ButtonContainer, ButtonSectionContainer, StatisticsContainer} from "../styles/Dashboard.styled.ts";
 
 export default function Dashboard() {
+    const patients: Patient[] = usePatientStore(state => state.patients);
     const navigate = useNavigate();
     const handleNavigate = (path: string) => {
         navigate(path);
     }
-    const patients: Patient[] = usePatientStore(state => state.patients);
     return (
         <section>
             <ButtonSectionContainer>

@@ -7,6 +7,7 @@ import Button from "../../styles/Button.styled.tsx";
 import PatientCardDetails from "./PatientCardDetails.tsx";
 import PatientHealthCard from "../health-data/PatientHealthCard.tsx";
 import useGlobalStore from "../../stores/useGloblaStore.ts";
+import {formatDate} from "../../utils/formatDateView.ts";
 
 type PatientCardProps = {
     patient: Patient;
@@ -59,7 +60,7 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
                 <>
                     <NumberEntry>{listNr}</NumberEntry>
                     <Typography variant="base">{patient.lastname} {patient.firstname}</Typography>
-                    <Typography variant="base">{new Date(patient.dateOfBirth).toLocaleDateString()}</Typography>
+                    <Typography variant="base">{formatDate(patient.dateOfBirth)}</Typography>
                 </>
             )}
             <CardActionContainer details={detailed}>

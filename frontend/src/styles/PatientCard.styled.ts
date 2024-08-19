@@ -22,7 +22,7 @@ export const NumberEntry = styled.p`
     justify-self: end;
     padding-right: 1.6rem;
     font-size: 1.4rem;
-    font-weight: 550;
+    font-weight: 500;
     @media (max-width: 760px) {
         font-size: 1.4rem;
     }

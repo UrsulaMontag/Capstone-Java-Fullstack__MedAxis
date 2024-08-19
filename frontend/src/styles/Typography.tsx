@@ -49,6 +49,12 @@ export default function Typography(props: Readonly<TypographyProps>) {
                 <StyledErrorInfoText {...props.rest} as={props.component}>
                     {props.children}
                 </StyledErrorInfoText>
+            );
+        case "auth-role":
+            return (
+                <StyledAuthRole {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledAuthRole>
             )
         case "button-field-info":
             return (
@@ -91,7 +97,7 @@ const StyledH2 = styled.h2`
 `;
 const StyledH3 = styled.h3`
     font-size: 1.4rem;
-    font-weight: 550;
+    font-weight: 500;
     @media (max-width: 760px) {
         font-size: 1.4rem;
     }
@@ -117,6 +123,13 @@ const StyledErrorInfoText = styled.span`
     font-weight: 400;
     line-height: 1.4rem;
     text-align: center
+`;
+
+const StyledAuthRole = styled(StyledInfoText)`
+    color: var(--accent-color-mainblue);
+    font-size: 1.2rem;
+    font-weight: 400;
+    place-self: center
 `;
 
 const StyledButtonFieldInfo = styled(BaseText)`

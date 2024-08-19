@@ -9,6 +9,7 @@ type ProtectedRouteProps = {
 
 export default function ProtectedRoute(props: Readonly<ProtectedRouteProps>) {
     if (!props.role || !props.allowedRoles.includes(props.role)) {
+        alert("Please login before usage")
         return <Navigate to={"/"}/>
     }
     return props.children;

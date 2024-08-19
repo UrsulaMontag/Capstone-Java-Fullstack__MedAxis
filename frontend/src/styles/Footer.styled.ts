@@ -7,7 +7,7 @@ export const FooterContainer = styled.footer`
     margin-top: 2px;
 
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
     padding: .8rem 0 .8rem 1.6rem;

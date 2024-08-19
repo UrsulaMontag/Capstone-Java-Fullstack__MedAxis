@@ -1,6 +1,6 @@
 import * as ECT from '@whoicd/icd11ect';
 import '@whoicd/icd11ect/style.css';
-
+import '../../styles/IcdECT.styled.css'
 import {ISelectedEntity} from "../../models/icd_api/icdECTSelectedEntity.ts";
 import Typography from "../../styles/Typography.tsx";
 import {getAuthToken, searchIcd} from "../../services/IcdEctDataService.ts";
@@ -47,6 +47,7 @@ const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
                     language: 'en',
                     flexisearchAvailable: true,
                     autoBind: false,
+                    enableKeyboard: true,
                     authHeaders: {
                         'Authorization': `Bearer ${token}`,
                         'Access-Control-Allow-Origin': "http://localhost:5173",
@@ -95,7 +96,7 @@ const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
     }, [iNo]);
 
     return (
-        <>
+        <div className="ctw-container">
             <Typography variant="base">Start search:</Typography>
             <input
                 type="text"
@@ -104,7 +105,7 @@ const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
                 data-ctw-ino={iNo}
             />
             <div className="ctw-window" data-ctw-ino={iNo}></div>
-        </>
+        </div>
     );
 };
 

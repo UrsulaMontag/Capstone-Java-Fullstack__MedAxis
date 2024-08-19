@@ -34,9 +34,9 @@ export default function Login() {
         <>
             {userRole === null ? (
                 <StyledSelect value={selectedRole} onChange={handleRoleChange}>
-                    <option value="" disabled>Select role</option>
-                    <option value="nurse">Login as Nurse</option>
-                    <option value="doctor">Login as Doctor</option>
+                    <option value="" disabled>Login to use MedAxis</option>
+                    <option value="nurse">Nurse</option>
+                    <option value="doctor">Doctor</option>
                 </StyledSelect>
             ) : (
                 <Button variant="normal" onClick={handleLogout}>Logout</Button>

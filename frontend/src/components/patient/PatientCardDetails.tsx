@@ -19,6 +19,7 @@ export default function PatientCardDetails(props: Readonly<PatientCardDetailsPro
             <Typography variant="base">{patient.insuranceNr}</Typography>
             <Typography variant="h3">Contact Information: </Typography>
             <br/>
+            {console.log(patient.dateOfBirth)}
             {patient.contactInformation.phoneNr && (
                 <>
                     <Typography variant="h4">Phone Nr: </Typography>
