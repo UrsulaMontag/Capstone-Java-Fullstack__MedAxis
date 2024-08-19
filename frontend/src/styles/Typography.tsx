@@ -55,7 +55,7 @@ export default function Typography(props: Readonly<TypographyProps>) {
 
 const BaseText = styled.p`
     color: var(--color-dark);
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 400;
     @media (max-width: 760px) {
         font-size: 1.4rem;
@@ -74,14 +74,14 @@ const StyledH2 = styled.h2`
     font-size: 2.2rem;
 `;
 const StyledH3 = styled.h3`
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 550;
     @media (max-width: 760px) {
         font-size: 1.4rem;
     }
 `;
 const StyledH4 = styled.h4`
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 450;
     @media (max-width: 760px) {
         font-size: 1.4rem;

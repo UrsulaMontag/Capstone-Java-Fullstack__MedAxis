@@ -4,16 +4,16 @@ import {FormEvent, JSX, ReactNode} from "react";
 type PatientFormProps = {
     children: ReactNode,
     onSubmit: (event: FormEvent<HTMLFormElement>) => void,
-    component?: keyof JSX.IntrinsicElements;
+    component?: keyof JSX.IntrinsicElements,
     rest?: { [key: string]: never },
 }
-export default function PatientFormStyled(props: Readonly<PatientFormProps>) {
+export default function FormStyled(props: Readonly<PatientFormProps>) {
     return (
-        <PatientForm {...props.rest} as={props.component} onSubmit={props.onSubmit}>{props.children}</PatientForm>
+        <StyledForm {...props.rest} as={props.component} onSubmit={props.onSubmit}>{props.children}</StyledForm>
     )
 }
 
-const PatientForm = styled.form`
+const StyledForm = styled.form`
     display: grid;
     grid-template-columns: 1fr 3fr;
     gap: 1.2rem;

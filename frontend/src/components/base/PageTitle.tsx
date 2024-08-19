@@ -18,13 +18,17 @@ export default function PageTitle() {
             case "/patients":
                 return "Patients";
             case "/patients/" + urlParams.id :
-                return "Patient details";
+                return "Patient Details";
             case "/patients/add":
                 return "Register Patient";
             case "/patients/edit/" + urlParams.id :
                 return "Edit Patient";
             case "/icd":
-                return "ICD-API Data - WHO"
+                return "ICD-API Data - WHO";
+            case "/health_data/" + urlParams.healthDataId:
+                return "Patient Details";
+            case "/health_data/" + urlParams.healthDataId + "/add-icd-details":
+                return "ICD-API Data Diagnostics";
             default:
                 return "Login first"
         }

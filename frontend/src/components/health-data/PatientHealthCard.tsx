@@ -43,14 +43,39 @@ export default function PatientHealthCard(props: Readonly<PatientHealthCardProps
         return <Typography variant="base">Health data not found.</Typography>;
     }
 
+    const icdCodesArray: string[] = healthData.icdCodes;
+    const extractIcdCodesFromResponse = (response: string): { code: string, description: string }[] => {
+        const jsonLikeObjects = response.split('},{').map((item, index, array) => {
+            if (index !== 0) item = '{' + item;
+            if (index !== array.length - 1) item = item + '}';
+            return item;
+        });
+
+        return jsonLikeObjects.map(jsonString => {
+            const parsedObject = JSON.parse(jsonString);
+            const [code, ...descriptionParts] = parsedObject.icdCode.split(":");
+            const description = descriptionParts.join(":").trim(); // Handle cases where the description might contain ':'
+
+            return {
+                code: code.trim(),
+                description
+            }
+        });
+    }
+
+
     return (
+
         <>
             <Typography variant="h3">Name: </Typography>
             <Typography variant="base">{patient.lastname} {patient.firstname}</Typography>
             <Typography variant="h3">Birthdate: </Typography>
             <Typography variant="base">{formatDate(patient.dateOfBirth)}</Typography>
             <Typography variant="h3">Health Data:</Typography>
-            <Typography variant="base">{healthData.icdCodes}</Typography>
+            {icdCodesArray.map(icdCode => (<><Typography
+                variant="base">{extractIcdCodesFromResponse(icdCode)[0].code}:</Typography><br/><Typography
+                variant="info">{extractIcdCodesFromResponse(icdCode)[0].description}</Typography><br/></>))}
+
         </>
     );
 }

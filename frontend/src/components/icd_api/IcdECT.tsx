@@ -19,10 +19,11 @@ const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
     const handleSelectedEntity = (selectedEntity: ISelectedEntity) => {
         console.log("Selected Entity: ", selectedEntity);
         const code = selectedEntity.code;
+        const title = selectedEntity.selectedText;
 
         if (healthDataId) {
             try {
-                addIcdCodeToPatient(healthDataId, code);
+                addIcdCodeToPatient(healthDataId, `${code}: ${title}`);
                 alert('ICD-11 code selected and saved: ' + code);
             } catch (error) {
                 alert("Failed to save ICD-11 code. Please try again.");

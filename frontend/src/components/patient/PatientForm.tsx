@@ -1,7 +1,7 @@
 import usePatientStore from "../../stores/usePatientStore.ts";
 import {Patient, PatientToAdd} from "../../models/patient/Patient.ts";
 import {ChangeEvent, FormEvent, useState} from "react";
-import PatientFormStyled from "../../styles/PatientForm.styled.tsx";
+import FormStyled from "../../styles/Form.styled.tsx";
 import Button from "../../styles/Button.styled.tsx";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import validation from "../../utils/dataValidation.ts";
@@ -11,7 +11,6 @@ export default function PatientForm() {
     const {createPatient, updatePatient} = usePatientStore((state) => ({
         createPatient: state.createPatient,
         updatePatient: state.updatePatient,
-        fetchPatients: state.fetchPatients
     }));
     const patients: Patient[] = usePatientStore(state => state.patients);
 
@@ -81,7 +80,6 @@ export default function PatientForm() {
             navigate("/patients");
             setPatientInput(initialInputState);
         }
-        alert("Your input contains invalid formats. Please fill in the right data format.")
     }
     const handleCancel = (event: FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -102,7 +100,7 @@ export default function PatientForm() {
     };
 
     return (
-        <PatientFormStyled onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
+        <FormStyled onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
             <label>Firstname:</label>
             <input required type="text" value={patientInput.firstname}
                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -181,6 +179,6 @@ export default function PatientForm() {
                                                                      src={"/cancel.png"}
                                                                      title="Cancel"/></Button>
             </div>
-        </PatientFormStyled>
+        </FormStyled>
     )
 }

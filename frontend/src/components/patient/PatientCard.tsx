@@ -41,6 +41,13 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
                 navigate(`/health_data/${patient.healthDataId}`)
                 : navigate("/");
     }
+    const handleEditNav = () => {
+        userRole === "nurse"
+            ? navigate(`/patients/edit/${patient.id}`)
+            : userRole === "doctor" ?
+                navigate(`/health_data/${patient.healthDataId}/add-icd-details`)
+                : navigate("/");
+    }
 
     return (
         <CardContainer details={detailed}>
@@ -62,16 +69,16 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
                     </Button>
                 )}
                 {!isEditingPatient && (
-                    <Button variant="normal" onClick={() => navigate(`/patients/edit/${patient.id}`)}>
+                    <Button variant="normal" onClick={handleEditNav}>
                         <img alt="edit-button" src={"/edit.png"} title="edit"/>
                     </Button>
                 )}
-                {!isPatientList && (
+                {!isPatientList && !isViewingPatientHealthDetails && (
                     <Button variant="delete" onClick={handleDelete}>
                         <img alt="delete-button" src={"/trash.png"} title="delete"/>
                     </Button>
                 )}
-                {isViewingPatientDetails && (
+                {isViewingPatientDetails || isViewingPatientHealthDetails && (
                     <Button variant="normal" onClick={() => navigate(`/patients`)}>
                         <img alt="cancel-button" src={"/cancel.png"} title="cancel"/>
                     </Button>
