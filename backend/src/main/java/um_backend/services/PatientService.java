@@ -6,6 +6,7 @@ import um_backend.exeptions.InvalidIdException;
 import um_backend.models.ContactInformation;
 import um_backend.models.HealthData;
 import um_backend.models.Patient;
+import um_backend.models.dto.HealthDataDto;
 import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.repository.PatientRepository;
 
@@ -137,9 +138,9 @@ public class PatientService {
     }
 
     protected String createEmptyHealthDataObject() {
-        HealthData newHealthData = new HealthData(utilService.generateId(), new ArrayList<>());
-        healthDataService.createHealthData(newHealthData);
-        return newHealthData.id();
+        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
+        HealthData result = healthDataService.createHealthData(newHealthData);
+        return result.id();
     }
 
     protected ContactInformation createEncryptedContactInformation(ContactInformation contact) {

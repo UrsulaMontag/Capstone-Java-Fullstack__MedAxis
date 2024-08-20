@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.ContactInformation;
+import um_backend.models.HealthData;
 import um_backend.models.Patient;
+import um_backend.models.dto.HealthDataDto;
 import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.repository.PatientRepository;
 
@@ -131,16 +133,22 @@ class PatientServiceTest {
         PatientPersonalDTO newPatient = new PatientPersonalDTO(
                 testPatientListDecrypted.get(1).firstname(), testPatientListDecrypted.get(1).lastname(), testPatientListDecrypted.get(1).dateOfBirth(), testPatientListDecrypted.get(1).insuranceNr(), testPatientListDecrypted.get(1).contactInformation());
         Patient expectedPatient = testPatientListEncrypted.get(1);
+        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
 
         when(mockUtilService.generateId()).thenReturn("2");
         when(mockPatientRepository.save(expectedPatient)).thenReturn(expectedPatient);
+        when(mockHealthDataService.createHealthData(newHealthData)).thenReturn(new HealthData("2", newHealthData.icdCodes()));
         patientService.createPatient(newPatient);
         verify(mockPatientRepository).save(expectedPatient);
-        verify(mockUtilService, times(2)).generateId();
+        verify(mockHealthDataService).createHealthData(newHealthData);
+        verify(mockUtilService).generateId();
     }
 
     @Test
     void createPatient_shouldThrowException_WhenWentWrong() {
+        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
+        when(mockHealthDataService.createHealthData(newHealthData)).thenReturn(new HealthData("2", newHealthData.icdCodes()));
+
         when(mockPatientRepository.save(any(Patient.class))).thenThrow(new IllegalArgumentException("Error message"));
         PatientPersonalDTO newPatient = new PatientPersonalDTO(
                 testPatientListDecrypted.get(1).firstname(), testPatientListDecrypted.get(1).lastname(),
@@ -212,13 +220,18 @@ class PatientServiceTest {
 
         Patient newPatient = new Patient(
                 "1", "encryptedMax", "encryptedMustermann", "encryptedDate1", "encryptedInsuranceNr1",
-                new ContactInformation("", "", "encryptedAddress", "encryptedTown"), "encryptedHealthDataId1"
+                new ContactInformation("", "", "encryptedAddress", "encryptedTown"), "encryptedHealthDataId"
         );
+        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
+
 
         when(mockUtilService.generateId()).thenReturn("1");
+        when(mockHealthDataService.createHealthData(newHealthData)).thenReturn(new HealthData("2", newHealthData.icdCodes()));
+
         Patient result = patientService.createOrUpdatePatient(dto, null);
 
-        verify(mockUtilService, times(2)).generateId();
+        verify(mockUtilService).generateId();
+        verify(mockHealthDataService).createHealthData(newHealthData);
         assertEquals(newPatient, result);
     }
 
@@ -228,7 +241,6 @@ class PatientServiceTest {
                 "Max", "Mustermann", "1999-05-16", "123495467",
                 new ContactInformation(null, null, "Sesamstraße 56", "68593 Teststadt")
         );
-        Patient existingPatient = testPatientListEncrypted.getFirst();
         Patient updatedPatient = new Patient(
                 "1", "encryptedMax", "encryptedMustermann", "encryptedDate1", "encryptedInsuranceNr1",
                 new ContactInformation("", "", "encryptedAddress", "encryptedTown"), "encryptedHealthDataId1"

@@ -40,7 +40,7 @@ public class DataValidationService {
 
     public boolean isValidEmail(String email) {
         // Matches email addresses with standard formatting
-        String emailRegex = "^[A-Za-z\\d+_.-]+@[A-Za-z\\d.-]+$";
+        String emailRegex = "^[A-Za-z\\d+_.-]+@[A-Za-z\\d.-]+\\.[A-Za-z]+$";
         return email == null || email.matches(emailRegex);
     }
 

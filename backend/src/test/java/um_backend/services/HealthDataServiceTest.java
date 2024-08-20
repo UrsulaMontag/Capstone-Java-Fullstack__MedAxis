@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.HealthData;
+import um_backend.models.dto.HealthDataDto;
 import um_backend.repository.HealthDataRepository;
 
 import java.util.ArrayList;
@@ -56,9 +57,7 @@ class HealthDataServiceTest {
 
         when(mockHealthDataRepository.findById(invalidId)).thenThrow(new IllegalArgumentException());
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            healthDataService.addOrUpdateIcdCodes(invalidId, icdCode);
-        });
+        assertThrows(IllegalArgumentException.class, () -> healthDataService.addOrUpdateIcdCodes(invalidId, icdCode));
     }
 
     @Test
@@ -99,18 +98,17 @@ class HealthDataServiceTest {
 
         when(mockHealthDataRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        assertThrows(InvalidIdException.class, () -> {
-            healthDataService.getHealthDataById(invalidId);
-        });
+        assertThrows(InvalidIdException.class, () -> healthDataService.getHealthDataById(invalidId));
     }
 
     @Test
     void testCreateHealthData_Success() {
         HealthData healthData = new HealthData("newId", List.of("ICD-10"));
+        HealthDataDto newHealthData = new HealthDataDto(List.of("ICD-10"));
 
         when(mockHealthDataRepository.save(any(HealthData.class))).thenReturn(healthData);
 
-        HealthData result = healthDataService.createHealthData(healthData);
+        HealthData result = healthDataService.createHealthData(newHealthData);
 
         assertEquals("newId", result.id());
         assertEquals(List.of("ICD-10"), result.icdCodes());

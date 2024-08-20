@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.HealthData;
+import um_backend.models.dto.HealthDataDto;
 import um_backend.services.HealthDataService;
 
 @RestController
@@ -27,7 +28,7 @@ public class HealthDataController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping()
-    public HealthData createHealthData(@RequestBody HealthData healthData) throws IllegalArgumentException {
-        return healthDataService.createHealthData(healthData);
+    public HealthData createHealthData(@RequestBody HealthDataDto healthDataDto) throws IllegalArgumentException {
+        return healthDataService.createHealthData(healthDataDto);
     }
 }

@@ -60,4 +60,28 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.apiPath").exists());
     }
+
+    @Test
+    void testHandleBadRequestException() throws Exception {
+        Mockito.when(patientService.createPatient(Mockito.any(PatientPersonalDTO.class))).thenThrow(new BadRequestException("This is a BadRequestException"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/patients/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"firstname\":\"testpatient\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorMsg").value("This is a BadRequestException"))
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.apiPath").exists());
+    }
+
+    @Test
+    void testHandleNotFoundException() throws Exception {
+        Mockito.when(patientService.getPatientById(Mockito.any(String.class))).thenThrow(new NotFoundException("This is a NotFoundException"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/patients/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorMsg").value("This is a NotFoundException"))
+                .andExpect(jsonPath("$.errorCode").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.apiPath").exists());
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.HealthData;
+import um_backend.models.dto.HealthDataDto;
 import um_backend.services.HealthDataService;
 
 import java.util.ArrayList;
@@ -92,7 +93,8 @@ class HealthDataControllerTest {
         List<String> icdCodes = List.of("ICD-10");
         HealthData healthData = new HealthData(dataId, icdCodes);
 
-        when(mockHealthDataService.createHealthData(any(HealthData.class))).thenReturn(healthData);
+
+        when(mockHealthDataService.createHealthData(any(HealthDataDto.class))).thenReturn(healthData);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -105,10 +107,8 @@ class HealthDataControllerTest {
     @Test
     void testCreateHealthData_NotFound() throws Exception {
         String dataId = "newDataId";
-        List<String> icdCodes = List.of("ICD-10");
-        HealthData healthData = new HealthData(dataId, icdCodes);
 
-        when(mockHealthDataService.createHealthData(any(HealthData.class)))
+        when(mockHealthDataService.createHealthData(any(HealthDataDto.class)))
                 .thenThrow(new IllegalArgumentException("Failed creating health data."));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data")

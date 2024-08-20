@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.HealthData;
+import um_backend.models.dto.HealthDataDto;
 import um_backend.repository.HealthDataRepository;
 
 import java.util.ArrayList;
@@ -31,10 +32,11 @@ public class HealthDataService {
                 () -> new InvalidIdException("Data with id " + id + "not found!"));
     }
 
-    public HealthData createHealthData(HealthData healthData) {
-        if (healthData == null) {
+    public HealthData createHealthData(HealthDataDto healthDataDto) {
+        if (healthDataDto == null) {
             throw new IllegalArgumentException("HealthData cannot be null");
         }
+        HealthData healthData = new HealthData(utilService.generateId(), healthDataDto.icdCodes());
         return healthDataRepository.save(healthData);
     }
 }
