@@ -10,7 +10,9 @@ export default function Footer() {
     return (
         <FooterContainer>
             <FooterSection>
-                {!isIcdToolView && <Typography variant="auth-role">Logged in as {userRole}</Typography>}
+                {!isIcdToolView && userRole ? <Typography variant="auth-role">Logged in as {userRole}</Typography>
+                    : !isIcdToolView && !userRole &&
+                    <Typography variant="auth-role">Please login to use MedAxis hospital management</Typography>}
                 {isIcdToolView && <Typography variant="info">WHO ICD-API v 2.4 - ECT v1.7.1</Typography>}
             </FooterSection>
         </FooterContainer>

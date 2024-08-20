@@ -10,13 +10,13 @@ export const ButtonSectionContainer = styled.article`
 export const ButtonContainer = styled.div`
     position: relative;
     width: 42vw;
-    height: 36vh;
+    height: 19vh;
     background-color: var(--accent-color-grey__light);
     border-radius: 5px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    padding: 0 1.6rem 1.6rem 1.6rem;
+    padding: 1.6rem;
 
 
     cursor: pointer;
@@ -37,13 +37,13 @@ export const ButtonContainer = styled.div`
     }
 
     img {
-        width: 10rem;
+        width: 6.8rem;
         align-self: flex-end;
         position: absolute;
         top: 1.6rem;
         background-color: var(--accent-color-grey__light);
         @media (max-width: 760px) {
-            width: 6rem;
+            width: 4.6rem;
         }
     }
 `;
@@ -52,6 +52,7 @@ export const StatisticsContainer = styled(ButtonContainer)`
     width: 86vw;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 
     h3 {
         align-self: center;
@@ -59,11 +60,11 @@ export const StatisticsContainer = styled(ButtonContainer)`
 
     div {
         display: flex;
-        gap: 1.6rem;
+        gap: 3.2rem;
     }
 
     img {
         position: unset;
-        width: 15rem;
+        width: 9rem;
     }
 `;

@@ -4,7 +4,7 @@ export const CardContainer = styled.article<{ details: boolean }>`
     width: ${props => props.details ? '66vw' : '100%'};
     display: grid;
     grid-template-columns: ${props => props.details ? '1.5fr 3fr' : '10% 1fr 0.8fr 10%'};
-    padding: ${props => props.details ? '1.6rem' : '1.2rem 1.2rem 1.2rem 0'};
+    padding: ${props => props.details ? '1.6rem' : '.3rem 1.2rem .3rem 0'};
     gap: ${props => props.details ? '1.2rem' : 'none'};
 
     border: 1px solid var(--accent-color-grey);
