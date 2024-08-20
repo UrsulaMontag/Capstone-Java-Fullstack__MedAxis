@@ -1,0 +1,10 @@
+
+.ctw-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.ctw-window {
+    width: fit-content;
+
+}

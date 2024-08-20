@@ -72,7 +72,7 @@ public class IcdApiClient {
     }
 
     public String getIcdDetails() {
-        return getURI(baseUri);
+        return getURI(baseUri + "/entity");
     }
 
     public String searchIcd(String query, boolean subtreeFilterUsesFoundationDescendants,

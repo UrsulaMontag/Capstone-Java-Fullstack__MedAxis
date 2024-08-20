@@ -1,26 +1,29 @@
 import * as ECT from '@whoicd/icd11ect';
 import '@whoicd/icd11ect/style.css';
-
+import '../../styles/IcdECT.styled.css'
 import {ISelectedEntity} from "../../models/icd_api/icdECTSelectedEntity.ts";
 import Typography from "../../styles/Typography.tsx";
-import {addIcdCodeToPatient, getAuthToken, searchIcd} from "../../services/IcdEctDataService.ts";
+import {getAuthToken, searchIcd} from "../../services/IcdEctDataService.ts";
 import {useParams} from "react-router-dom";
 import {FC, useEffect} from "react";
+import useHealthDataStore from "../../stores/useHealthDataStore.ts";
 
 interface IcdECTProps {
-    patientId?: string;
+    healthDataId?: string;
 }
 
-const IcdECT: FC<IcdECTProps> = ({patientId}) => {
+const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
     const iNo: number = 1;
+    const addIcdCodeToPatient: (id: string, icdCode: string) => void = useHealthDataStore(state => state.addIcdCodeToPatientHealthData)
 
-    const handleSelectedEntity = async (selectedEntity: ISelectedEntity) => {
+    const handleSelectedEntity = (selectedEntity: ISelectedEntity) => {
         console.log("Selected Entity: ", selectedEntity);
         const code = selectedEntity.code;
+        const title = selectedEntity.selectedText;
 
-        if (patientId) {
+        if (healthDataId) {
             try {
-                await addIcdCodeToPatient(patientId, code);
+                addIcdCodeToPatient(healthDataId, `${code}: ${title}`);
                 alert('ICD-11 code selected and saved: ' + code);
             } catch (error) {
                 alert("Failed to save ICD-11 code. Please try again.");
@@ -44,6 +47,7 @@ const IcdECT: FC<IcdECTProps> = ({patientId}) => {
                     language: 'en',
                     flexisearchAvailable: true,
                     autoBind: false,
+                    enableKeyboard: true,
                     authHeaders: {
                         'Authorization': `Bearer ${token}`,
                         'Access-Control-Allow-Origin': "http://localhost:5173",
@@ -92,7 +96,7 @@ const IcdECT: FC<IcdECTProps> = ({patientId}) => {
     }, [iNo]);
 
     return (
-        <>
+        <div className="ctw-container">
             <Typography variant="base">Start search:</Typography>
             <input
                 type="text"
@@ -101,13 +105,13 @@ const IcdECT: FC<IcdECTProps> = ({patientId}) => {
                 data-ctw-ino={iNo}
             />
             <div className="ctw-window" data-ctw-ino={iNo}></div>
-        </>
+        </div>
     );
 };
 
 const IcdECTWrapper: FC = () => {
-    const {patientId} = useParams();
-    return <IcdECT patientId={patientId}/>;
+    const {healthDataId} = useParams();
+    return <IcdECT healthDataId={healthDataId}/>;
 };
 
 export {IcdECT, IcdECTWrapper};

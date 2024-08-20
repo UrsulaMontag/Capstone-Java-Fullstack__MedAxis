@@ -1,5 +1,6 @@
 import {Patient} from "../../models/patient/Patient.ts";
 import Typography from "../../styles/Typography.tsx";
+import {formatDate} from "../../utils/formatDateView.ts";
 
 type PatientCardDetailsProps = {
     patient: Patient;
@@ -7,10 +8,6 @@ type PatientCardDetailsProps = {
 
 export default function PatientCardDetails(props: Readonly<PatientCardDetailsProps>) {
     const patient = props.patient;
-    const formatDate = (dateString: string) => {
-        const options: Intl.DateTimeFormatOptions = {year: 'numeric', month: '2-digit', day: '2-digit'};
-        return new Date(dateString).toLocaleDateString('en-US', options);
-    };
 
     return (
         <>
@@ -22,6 +19,7 @@ export default function PatientCardDetails(props: Readonly<PatientCardDetailsPro
             <Typography variant="base">{patient.insuranceNr}</Typography>
             <Typography variant="h3">Contact Information: </Typography>
             <br/>
+            {console.log(patient.dateOfBirth)}
             {patient.contactInformation.phoneNr && (
                 <>
                     <Typography variant="h4">Phone Nr: </Typography>

@@ -4,10 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.ContactInformation;
+import um_backend.models.HealthData;
 import um_backend.models.Patient;
+import um_backend.models.dto.HealthDataDto;
 import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.repository.PatientRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,6 +21,7 @@ public class PatientService {
     private final UtilService utilService;
     private final DataValidationService dataValidationService;
     private final EncryptionService encryptionService;
+    private final HealthDataService healthDataService;
 
     public List<Patient> getAllPatients() {
 
@@ -41,14 +45,16 @@ public class PatientService {
         }
         validatePatientData(patient);
         Patient newPatient = createOrUpdatePatient(patient, null);
-        return patientRepository.save(newPatient);
+        patientRepository.save(newPatient);
+        return decryptPatient(newPatient);
     }
 
     public Patient updatePatientById(String id, PatientPersonalDTO patient) throws InvalidIdException {
         validatePatientData(patient);
         Patient currentPatient = patientRepository.findById(id).orElseThrow(() -> new InvalidIdException("Patient with id " + id + "not found!"));
         Patient updatedPatient = createOrUpdatePatient(patient, currentPatient);
-        return patientRepository.save(updatedPatient);
+        patientRepository.save(updatedPatient);
+        return decryptPatient(updatedPatient);
     }
 
     public void deletePatientById(String id) throws InvalidIdException {
@@ -84,6 +90,7 @@ public class PatientService {
         String decryptedLastname = encryptionService.decrypt(patient.lastname());
         String decryptedDateOfBirth = encryptionService.decrypt(patient.dateOfBirth());
         String decryptedInsuranceNr = encryptionService.decrypt(patient.insuranceNr());
+        String decryptedHealthDataId = encryptionService.decrypt(patient.healthDataId());
 
         ContactInformation decryptedContactInformation = new ContactInformation(
                 (!patient.contactInformation().phoneNr().isEmpty() ?
@@ -94,7 +101,7 @@ public class PatientService {
                 encryptionService.decrypt(patient.contactInformation().town())
         );
         return new Patient(patient.id(), decryptedFirstname, decryptedLastname,
-                decryptedDateOfBirth, decryptedInsuranceNr, decryptedContactInformation);
+                decryptedDateOfBirth, decryptedInsuranceNr, decryptedContactInformation, decryptedHealthDataId);
     }
 
     protected Patient createOrUpdatePatient(PatientPersonalDTO dto, Patient existingPatient) {
@@ -106,23 +113,34 @@ public class PatientService {
 
         if (existingPatient == null) {
             // Creating a new patient
+            String encryptedHealthDataId = encryptionService.encrypt(createEmptyHealthDataObject());
             return new Patient(
                     utilService.generateId(),
                     encryptedFirstName,
                     encryptedLastName,
                     encryptedDateOfBirth,
                     encryptedInsuranceNr,
-                    contactInfo
+                    contactInfo,
+                    encryptedHealthDataId
             );
         } else {
             // Updating an existing patient
+            String encryptedHealthDataId = existingPatient.healthDataId();
+
             return existingPatient
                     .withFirstname(encryptedFirstName)
                     .withLastname(encryptedLastName)
                     .withDateOfBirth(encryptedDateOfBirth)
                     .withInsuranceNr(encryptedInsuranceNr)
-                    .withContactInformation(contactInfo);
+                    .withContactInformation(contactInfo)
+                    .withHealthDataId(encryptedHealthDataId);
         }
+    }
+
+    protected String createEmptyHealthDataObject() {
+        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
+        HealthData result = healthDataService.createHealthData(newHealthData);
+        return result.id();
     }
 
     protected ContactInformation createEncryptedContactInformation(ContactInformation contact) {

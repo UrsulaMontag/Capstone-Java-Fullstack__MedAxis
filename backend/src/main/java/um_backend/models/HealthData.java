@@ -11,7 +11,6 @@ import java.util.List;
 public record HealthData(
         @Id
         String id,
-        String patientId,
         List<String> icdCodes
 ) {
 }

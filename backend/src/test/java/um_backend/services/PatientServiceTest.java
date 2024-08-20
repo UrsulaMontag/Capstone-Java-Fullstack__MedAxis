@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.ContactInformation;
+import um_backend.models.HealthData;
 import um_backend.models.Patient;
+import um_backend.models.dto.HealthDataDto;
 import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.repository.PatientRepository;
 
@@ -23,16 +25,17 @@ class PatientServiceTest {
     private UtilService mockUtilService;
     private List<Patient> testPatientListEncrypted;
     private List<Patient> testPatientListDecrypted;
-    private EncryptionService mockEncryptionService;
     private DataValidationService mockDataValidationService;
+    private HealthDataService mockHealthDataService;
 
     @BeforeEach
     void setUp() {
         mockPatientRepository = mock(PatientRepository.class);
         mockUtilService = mock(UtilService.class);
-        mockEncryptionService = mock(EncryptionService.class);
+        EncryptionService mockEncryptionService = mock(EncryptionService.class);
         mockDataValidationService = mock(DataValidationService.class);
-        patientService = new PatientService(mockPatientRepository, mockUtilService, mockDataValidationService, mockEncryptionService);
+        mockHealthDataService = mock(HealthDataService.class);
+        patientService = new PatientService(mockPatientRepository, mockUtilService, mockDataValidationService, mockEncryptionService, mockHealthDataService);
         // Dummy encryption/decryption values
         when(mockEncryptionService.encrypt("Erika")).thenReturn("encryptedErika");
         when(mockEncryptionService.encrypt("Musterfrau")).thenReturn("encryptedMusterfrau");
@@ -42,6 +45,8 @@ class PatientServiceTest {
         when(mockEncryptionService.encrypt("68593 Teststadt")).thenReturn("encryptedTown");
         when(mockEncryptionService.encrypt("0153476539")).thenReturn("encryptedPhoneNr");
         when(mockEncryptionService.encrypt("test@email.com")).thenReturn("encryptedEmail");
+        when(mockEncryptionService.encrypt("2")).thenReturn("encryptedHealthDataId");
+
 
         when(mockEncryptionService.decrypt("encryptedErika")).thenReturn("Erika");
         when(mockEncryptionService.decrypt("encryptedMusterfrau")).thenReturn("Musterfrau");
@@ -51,27 +56,31 @@ class PatientServiceTest {
         when(mockEncryptionService.decrypt("encryptedTown")).thenReturn("68593 Teststadt");
         when(mockEncryptionService.decrypt("encryptedPhoneNr")).thenReturn("0153476539");
         when(mockEncryptionService.decrypt("encryptedEmail")).thenReturn("test@email.com");
+        when(mockEncryptionService.decrypt("encryptedHealthDataId")).thenReturn("2");
 
         when(mockEncryptionService.encrypt("Max")).thenReturn("encryptedMax");
         when(mockEncryptionService.encrypt("Mustermann")).thenReturn("encryptedMustermann");
         when(mockEncryptionService.encrypt("1999-05-16")).thenReturn("encryptedDate1");
         when(mockEncryptionService.encrypt("123495467")).thenReturn("encryptedInsuranceNr1");
+        when(mockEncryptionService.encrypt("1")).thenReturn("encryptedHealthDataId1");
 
         when(mockEncryptionService.decrypt("encryptedMax")).thenReturn("Max");
         when(mockEncryptionService.decrypt("encryptedMustermann")).thenReturn("Mustermann");
         when(mockEncryptionService.decrypt("encryptedDate1")).thenReturn("1999-05-16");
         when(mockEncryptionService.decrypt("encryptedInsuranceNr1")).thenReturn("123495467");
+        when(mockEncryptionService.decrypt("encryptedHealthDataId1")).thenReturn("1");
+
 
         testPatientListEncrypted = new ArrayList<>() {{
             add(new Patient("1", "encryptedMax", "encryptedMustermann", "encryptedDate1", "encryptedInsuranceNr1",
-                    new ContactInformation(null, null, "encryptedAddress", "encryptedTown")));
+                    new ContactInformation(null, null, "encryptedAddress", "encryptedTown"), "encryptedHealthDataId1"));
             add(new Patient("2", "encryptedErika", "encryptedMusterfrau", "encryptedDate", "encryptedInsuranceNr",
-                    new ContactInformation("encryptedPhoneNr", "encryptedEmail", "encryptedAddress", "encryptedTown")));
+                    new ContactInformation("encryptedPhoneNr", "encryptedEmail", "encryptedAddress", "encryptedTown"), "encryptedHealthDataId"));
         }};
 
         testPatientListDecrypted = new ArrayList<>() {{
-            add(new Patient("1", "Max", "Mustermann", "1999-05-16", "123495467", new ContactInformation(null, null, "Sesamstraße 56", "68593 Teststadt")));
-            add(new Patient("2", "Erika", "Musterfrau", "1986-05-04", "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt")));
+            add(new Patient("1", "Max", "Mustermann", "1999-05-16", "123495467", new ContactInformation(null, null, "Sesamstraße 56", "68593 Teststadt"), "1"));
+            add(new Patient("2", "Erika", "Musterfrau", "1986-05-04", "12335467", new ContactInformation("0153476539", "test@email.com", "Sesamstraße 56", "68593 Teststadt"), "2"));
         }};
 
         when(mockDataValidationService.isValidEmail(anyString())).thenReturn(true);
@@ -124,16 +133,22 @@ class PatientServiceTest {
         PatientPersonalDTO newPatient = new PatientPersonalDTO(
                 testPatientListDecrypted.get(1).firstname(), testPatientListDecrypted.get(1).lastname(), testPatientListDecrypted.get(1).dateOfBirth(), testPatientListDecrypted.get(1).insuranceNr(), testPatientListDecrypted.get(1).contactInformation());
         Patient expectedPatient = testPatientListEncrypted.get(1);
+        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
 
         when(mockUtilService.generateId()).thenReturn("2");
         when(mockPatientRepository.save(expectedPatient)).thenReturn(expectedPatient);
+        when(mockHealthDataService.createHealthData(newHealthData)).thenReturn(new HealthData("2", newHealthData.icdCodes()));
         patientService.createPatient(newPatient);
         verify(mockPatientRepository).save(expectedPatient);
+        verify(mockHealthDataService).createHealthData(newHealthData);
         verify(mockUtilService).generateId();
     }
 
     @Test
     void createPatient_shouldThrowException_WhenWentWrong() {
+        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
+        when(mockHealthDataService.createHealthData(newHealthData)).thenReturn(new HealthData("2", newHealthData.icdCodes()));
+
         when(mockPatientRepository.save(any(Patient.class))).thenThrow(new IllegalArgumentException("Error message"));
         PatientPersonalDTO newPatient = new PatientPersonalDTO(
                 testPatientListDecrypted.get(1).firstname(), testPatientListDecrypted.get(1).lastname(),
@@ -149,13 +164,14 @@ class PatientServiceTest {
 
     @Test
     void updatePatient_returnsPatient_whenPatientIsUpdated() throws InvalidIdException {
-        when(mockPatientRepository.findById("2")).thenReturn(Optional.of(testPatientListEncrypted.get(1)));
-        when(mockPatientRepository.save(any(Patient.class))).thenReturn(testPatientListDecrypted.get(1));
         PatientPersonalDTO updateDto = new PatientPersonalDTO(
                 testPatientListDecrypted.get(1).firstname(), testPatientListDecrypted.get(1).lastname(),
                 testPatientListDecrypted.get(1).dateOfBirth(), testPatientListDecrypted.get(1).insuranceNr(), testPatientListDecrypted.get(1).contactInformation());
+        Patient actualPatient = testPatientListDecrypted.get(1);
 
-        Patient actualPatient = patientService.updatePatientById("2", updateDto);
+        when(mockPatientRepository.findById("2")).thenReturn(Optional.of(testPatientListEncrypted.get(1)));
+        when(mockPatientRepository.save(any(Patient.class))).thenReturn(actualPatient);
+        patientService.updatePatientById("2", updateDto);
         verify(mockPatientRepository).findById("2");
         verify(mockPatientRepository).save(any(Patient.class));
         assertEquals(testPatientListDecrypted.get(1), actualPatient);
@@ -204,13 +220,18 @@ class PatientServiceTest {
 
         Patient newPatient = new Patient(
                 "1", "encryptedMax", "encryptedMustermann", "encryptedDate1", "encryptedInsuranceNr1",
-                new ContactInformation("", "", "encryptedAddress", "encryptedTown")
+                new ContactInformation("", "", "encryptedAddress", "encryptedTown"), "encryptedHealthDataId"
         );
+        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
+
 
         when(mockUtilService.generateId()).thenReturn("1");
+        when(mockHealthDataService.createHealthData(newHealthData)).thenReturn(new HealthData("2", newHealthData.icdCodes()));
+
         Patient result = patientService.createOrUpdatePatient(dto, null);
 
         verify(mockUtilService).generateId();
+        verify(mockHealthDataService).createHealthData(newHealthData);
         assertEquals(newPatient, result);
     }
 
@@ -220,15 +241,11 @@ class PatientServiceTest {
                 "Max", "Mustermann", "1999-05-16", "123495467",
                 new ContactInformation(null, null, "Sesamstraße 56", "68593 Teststadt")
         );
-        Patient existingPatient = new Patient(
-                "1", "encryptedOldFirstName", "encryptedOldLastName", "encryptedOldDate", "encryptedOldInsuranceNr",
-                new ContactInformation("", "", "encryptedOldAddress", "encryptedOldTown")
-        );
         Patient updatedPatient = new Patient(
                 "1", "encryptedMax", "encryptedMustermann", "encryptedDate1", "encryptedInsuranceNr1",
-                new ContactInformation("", "", "encryptedAddress", "encryptedTown")
+                new ContactInformation("", "", "encryptedAddress", "encryptedTown"), "encryptedHealthDataId1"
         );
-        Patient result = patientService.createOrUpdatePatient(dto, existingPatient);
+        Patient result = patientService.createOrUpdatePatient(dto, updatedPatient);
 
         assertEquals(updatedPatient, result);
     }

@@ -5,9 +5,14 @@ import WritePatient from "./routes/WritePatient.tsx";
 import MainLayout from "./layouts/MainLayout.tsx";
 import PatientList from "./routes/PatientList.tsx";
 import PatientDetail from "./routes/PatientDetail.tsx";
-import {IcdECT, IcdECTWrapper} from "./components/icd_api/IcdECT.tsx";
+import ProtectedRoute from "./routes/routeSec/ProtectedRoute.tsx";
+import useGlobalStore from "./stores/useGloblaStore.ts";
+import HealthDataForm from "./components/health-data/HealthDataForm.tsx";
+import {IcdECT} from "./components/icd_api/IcdECT.tsx";
 
 function App() {
+
+    const userRole: "nurse" | "doctor" | null = useGlobalStore(state => state.userRole)
     const router = createBrowserRouter([
         {
             path: '/',
@@ -20,31 +25,55 @@ function App() {
                     },
                     {
                         path: '/patients',
-                        element: <PatientList/>,
-                        children: []
+
+                        element: <ProtectedRoute role={userRole} allowedRoles={["nurse", "doctor"]}>
+                            <PatientList/>
+                        </ProtectedRoute>
                     },
                     {
                         path: '/patients/:id',
-                        element: <PatientDetail/>,
+                        element:
+                            <ProtectedRoute role={userRole} allowedRoles={["nurse", "doctor"]}>
+                                <PatientDetail/>
+                            </ProtectedRoute>
+
                     },
                     {
                         path: '/patients/add',
-                        element: <WritePatient/>,
+                        element:
+                            <ProtectedRoute role={userRole} allowedRoles={["nurse"]}>
+                                <WritePatient/>
+                            </ProtectedRoute>,
                     },
                     {
                         path: '/patients/edit/:id',
-                        element: <WritePatient/>,
+                        element: <ProtectedRoute role={userRole} allowedRoles={["nurse"]}>
+                            <WritePatient/>
+                        </ProtectedRoute>,
                     },
 
                     {
                         path: '/icd',
-                        element: <IcdECT/>
+                        element: <ProtectedRoute role={userRole} allowedRoles={["nurse", "doctor"]}>
+                            <IcdECT/>
+                        </ProtectedRoute>,
                     },
 
                     {
-                        path: '/icd/:patientId',
-                        element: <IcdECTWrapper/>
+                        path: '/health_data/:healthDataId/add-icd-details',
+                        element: <ProtectedRoute role={userRole} allowedRoles={["doctor"]}>
+                            <HealthDataForm/>
+                        </ProtectedRoute>,
+                    },
+
+                    {
+                        path: '/health_data/:healthDataId',
+                        element: <ProtectedRoute role={userRole} allowedRoles={["doctor"]}>
+                            <PatientDetail/>
+                        </ProtectedRoute>,
                     }
+
+
                 ]
         }
     ])

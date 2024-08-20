@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 
 export const FooterContainer = styled.footer`
-    position: fixed;
+    position: sticky;
     bottom: 0;
-    left: 0;
+    height: 2rem;
+    margin-top: 2px;
+
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
     padding: .8rem 0 .8rem 1.6rem;

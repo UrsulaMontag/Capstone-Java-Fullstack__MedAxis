@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const apiUrl = "/api/patients";
-export const addIcdCodeToPatient = async (patientId: string, icdCode: string) => {
+const apiUrl = "/api/health_data";
+export const addIcdCodeToPatient = async (dataId: string, icdCode: string) => {
     try {
-        const response = await axios.post(`${apiUrl}/${patientId}/add-icd-code`, {icdCode});
+        const response = await axios.post(`${apiUrl}/${dataId}/add-icd-code`, {icdCode});
         return response.data;
     } catch (error) {
         console.error("Error adding ICD code to patient", error);

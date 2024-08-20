@@ -5,6 +5,9 @@ import Typography from "../../styles/Typography.tsx";
 import usePatientStore from "../../stores/usePatientStore.ts";
 import Button from "../../styles/Button.styled.tsx";
 import PatientCardDetails from "./PatientCardDetails.tsx";
+import PatientHealthCard from "../health-data/PatientHealthCard.tsx";
+import useGlobalStore from "../../stores/useGloblaStore.ts";
+import {formatDate} from "../../utils/formatDateView.ts";
 
 type PatientCardProps = {
     patient: Patient;
@@ -16,10 +19,12 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
     const {patient, detailed, listNr} = props;
     const location = useLocation();
     const navigate = useNavigate();
+    const userRole: ("nurse" | "doctor" | null) = useGlobalStore(state => state.userRole)
     const deletePatient: (id: string) => void = usePatientStore(state => state.deletePatient);
     const isViewingPatientDetails = location.pathname === `/patients/${patient.id}`;
     const isEditingPatient = location.pathname === `/patients/edit/${patient.id}`;
     const isPatientList = location.pathname === `/patients`;
+    const isViewingPatientHealthDetails = location.pathname === `/health_data/${patient.healthDataId}`;
 
 
     const handleDelete = () => {
@@ -30,34 +35,51 @@ export default function PatientCard(props: Readonly<PatientCardProps>) {
         }
     }
 
+    const handleDetailNav = () => {
+        userRole === "nurse"
+            ? navigate(`/patients/${patient.id}`)
+            : userRole === "doctor" ?
+                navigate(`/health_data/${patient.healthDataId}`)
+                : navigate("/");
+    }
+    const handleEditNav = () => {
+        userRole === "nurse"
+            ? navigate(`/patients/edit/${patient.id}`)
+            : userRole === "doctor" ?
+                navigate(`/health_data/${patient.healthDataId}/add-icd-details`)
+                : navigate("/");
+    }
+
     return (
         <CardContainer details={detailed}>
-            {detailed ? (
+            {detailed && userRole === "nurse" ? (
                 <PatientCardDetails patient={patient}/>
+            ) : detailed && userRole === "doctor" ? (
+                <PatientHealthCard patient={patient}/>
             ) : (
                 <>
                     <NumberEntry>{listNr}</NumberEntry>
                     <Typography variant="base">{patient.lastname} {patient.firstname}</Typography>
-                    <Typography variant="base">{new Date(patient.dateOfBirth).toLocaleDateString()}</Typography>
+                    <Typography variant="base">{formatDate(patient.dateOfBirth)}</Typography>
                 </>
             )}
             <CardActionContainer details={detailed}>
-                {!isViewingPatientDetails && (
-                    <Button variant="normal" onClick={() => navigate(`/patients/${patient.id}`)}>
+                {!isViewingPatientDetails && !isViewingPatientHealthDetails && (
+                    <Button variant="normal" onClick={handleDetailNav}>
                         <img alt="details-button" src={"/monitoring.png"} title="details"/>
                     </Button>
                 )}
                 {!isEditingPatient && (
-                    <Button variant="normal" onClick={() => navigate(`/patients/edit/${patient.id}`)}>
+                    <Button variant="normal" onClick={handleEditNav}>
                         <img alt="edit-button" src={"/edit.png"} title="edit"/>
                     </Button>
                 )}
-                {!isPatientList && (
+                {!isPatientList && !isViewingPatientHealthDetails && (
                     <Button variant="delete" onClick={handleDelete}>
                         <img alt="delete-button" src={"/trash.png"} title="delete"/>
                     </Button>
                 )}
-                {isViewingPatientDetails && (
+                {isViewingPatientDetails || isViewingPatientHealthDetails && (
                     <Button variant="normal" onClick={() => navigate(`/patients`)}>
                         <img alt="cancel-button" src={"/cancel.png"} title="cancel"/>
                     </Button>

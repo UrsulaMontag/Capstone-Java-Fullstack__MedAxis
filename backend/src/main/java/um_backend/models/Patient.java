@@ -13,6 +13,7 @@ public record Patient(
         String lastname,
         String dateOfBirth,
         String insuranceNr,
-        ContactInformation contactInformation
+        ContactInformation contactInformation,
+        String healthDataId
 ) {
 }

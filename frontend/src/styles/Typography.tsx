@@ -49,13 +49,35 @@ export default function Typography(props: Readonly<TypographyProps>) {
                 <StyledErrorInfoText {...props.rest} as={props.component}>
                     {props.children}
                 </StyledErrorInfoText>
+            );
+        case "auth-role":
+            return (
+                <StyledAuthRole {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledAuthRole>
             )
+        case "button-field-info":
+            return (
+                <StyledButtonFieldInfo {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledButtonFieldInfo>
+            )
+        case "button-field-header":
+            return (
+                <StyledButtonFieldHeader {...props.rest} as={props.component}>
+                    {props.children}
+                </StyledButtonFieldHeader>
+            )
+        default:
+            return <BaseText {...props.rest} as={props.component}>
+                {props.children}
+            </BaseText>
     }
 }
 
 const BaseText = styled.p`
     color: var(--color-dark);
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 400;
     @media (max-width: 760px) {
         font-size: 1.4rem;
@@ -63,8 +85,10 @@ const BaseText = styled.p`
 `
 const StyledH1 = styled.h1`
     color: var(--accent-color-mainblue);
-    font-size: 2.8rem;
+    font-size: 3.2rem;
     margin-top: 4.8rem;
+    font-weight: 600;
+
     @media (min-width: 768px) {
         margin: 0;
     }
@@ -72,17 +96,19 @@ const StyledH1 = styled.h1`
 const StyledH2 = styled.h2`
     color: var(--color-dark);
     font-size: 2.2rem;
+    font-weight: 450;
+
 `;
 const StyledH3 = styled.h3`
-    font-size: 1.6rem;
-    font-weight: 550;
+    font-size: 1.4rem;
+    font-weight: 400;
     @media (max-width: 760px) {
         font-size: 1.4rem;
     }
 `;
 const StyledH4 = styled.h4`
-    font-size: 1.6rem;
-    font-weight: 450;
+    font-size: 1.4rem;
+    font-weight: 400;
     @media (max-width: 760px) {
         font-size: 1.4rem;
     }
@@ -101,5 +127,21 @@ const StyledErrorInfoText = styled.span`
     font-weight: 400;
     line-height: 1.4rem;
     text-align: center
+`;
+
+const StyledAuthRole = styled(StyledInfoText)`
+    color: var(--accent-color-mainblue);
+    font-size: 1.2rem;
+    font-weight: 300;
+    place-self: center
+`;
+
+const StyledButtonFieldInfo = styled(BaseText)`
+    font-size: 1.4rem;
+    font-weight: 300;
+
+`;
+const StyledButtonFieldHeader = styled(StyledH3)`
+    font-size: 1.6rem;
 `;
 
