@@ -1,6 +1,7 @@
 package um_backend.services;
 
 import org.junit.jupiter.api.Test;
+import um_backend.models.EmergencyContact;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,5 +60,59 @@ class DataValidationServiceTest {
         assertThat(dataValidationService.isValidEmail("test@.com")).isFalse(); // Missing domain name
         assertThat(dataValidationService.isValidEmail("test@domain.c")).isTrue(); // Single character top-level domain is valid
         assertThat(dataValidationService.isValidEmail(null)).isTrue(); // Null input, acceptable per current logic
+    }
+
+    @Test
+    void isValidGender_testsIfGenderInputIsValid() {
+        assertThat(dataValidationService.isValidGender("male")).isTrue();
+        assertThat(dataValidationService.isValidGender("female")).isTrue();
+        assertThat(dataValidationService.isValidGender("other")).isTrue();
+        assertThat(dataValidationService.isValidGender("unknown")).isFalse(); // Invalid gender
+        assertThat(dataValidationService.isValidGender(null)).isFalse(); // Null input
+    }
+
+    @Test
+    void isValidNationality_testsIfNationalityInputIsValid() {
+        assertThat(dataValidationService.isValidNationality("German")).isTrue();
+        assertThat(dataValidationService.isValidNationality("")).isFalse(); // Empty string
+        assertThat(dataValidationService.isValidNationality(null)).isFalse(); // Null input
+    }
+
+    @Test
+    void isValidMaritalStatus_testsIfMaritalStatusInputIsValid() {
+        assertThat(dataValidationService.isValidMaritalStatus("single")).isTrue();
+        assertThat(dataValidationService.isValidMaritalStatus("married")).isTrue();
+        assertThat(dataValidationService.isValidMaritalStatus("divorced")).isTrue();
+        assertThat(dataValidationService.isValidMaritalStatus("widowed")).isTrue();
+        assertThat(dataValidationService.isValidMaritalStatus("complicated")).isFalse(); // Invalid status
+        assertThat(dataValidationService.isValidMaritalStatus(null)).isFalse(); // Null input
+    }
+
+    @Test
+    void isValidPrimaryLanguage_testsIfPrimaryLanguageInputIsValid() {
+        assertThat(dataValidationService.isValidPrimaryLanguage("English")).isTrue();
+        assertThat(dataValidationService.isValidPrimaryLanguage("")).isFalse(); // Empty string
+        assertThat(dataValidationService.isValidPrimaryLanguage(null)).isFalse(); // Null input
+    }
+
+    @Test
+    void isValidOccupation_testsIfOccupationInputIsValid() {
+        assertThat(dataValidationService.isValidOccupation("Software Engineer")).isTrue();
+        assertThat(dataValidationService.isValidOccupation("")).isFalse(); // Empty string
+        assertThat(dataValidationService.isValidOccupation(null)).isFalse(); // Null input
+    }
+
+    @Test
+    void isValidEmergencyContact_testsIfEmergencyContactInputIsValid() {
+        EmergencyContact validContact = new EmergencyContact("Jane Doe", "Mother", "+49 123 456 789");
+        EmergencyContact invalidContactNoName = new EmergencyContact("", "Mother", "+49 123 456 789");
+        EmergencyContact invalidContactNoPhone = new EmergencyContact("Jane Doe", "Mother", "");
+        EmergencyContact invalidContactNoRelation = new EmergencyContact("Jane Doe", "", "+49 123 456 789");
+
+        assertThat(dataValidationService.isValidEmergencyContact(validContact)).isTrue();
+        assertThat(dataValidationService.isValidEmergencyContact(invalidContactNoName)).isFalse(); // Invalid: No name
+        assertThat(dataValidationService.isValidEmergencyContact(invalidContactNoPhone)).isFalse(); // Invalid: No phone
+        assertThat(dataValidationService.isValidEmergencyContact(invalidContactNoRelation)).isFalse(); // Invalid: No relationship
+        assertThat(dataValidationService.isValidEmergencyContact(null)).isFalse(); // Null input
     }
 }
