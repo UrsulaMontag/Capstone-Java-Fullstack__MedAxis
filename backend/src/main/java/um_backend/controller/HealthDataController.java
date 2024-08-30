@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import um_backend.exeptions.InvalidIdException;
 import um_backend.models.HealthData;
+import um_backend.models.IcdCode;
 import um_backend.models.dto.HealthDataDto;
 import um_backend.services.HealthDataService;
 
@@ -15,10 +16,11 @@ public class HealthDataController {
     private final HealthDataService healthDataService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{dataId}/add-icd-code")
-    public HealthData addIcdCodeToPatient(@PathVariable String dataId, @RequestBody String icdCode) throws IllegalArgumentException {
-        return healthDataService.addOrUpdateIcdCodes(dataId, icdCode);
+    @PostMapping("/{dataId}/add-health-data")
+    public HealthData addIcdCodeToPatient(@PathVariable String dataId, @RequestBody IcdCode icdCode) throws IllegalArgumentException, InvalidIdException {
+        return healthDataService.addIcdCodeToHealthData(dataId, icdCode);
     }
+
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{dataId}")

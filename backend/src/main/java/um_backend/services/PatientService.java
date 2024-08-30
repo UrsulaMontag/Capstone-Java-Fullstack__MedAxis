@@ -3,14 +3,15 @@ package um_backend.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import um_backend.exeptions.InvalidIdException;
-import um_backend.models.ContactInformation;
-import um_backend.models.EmergencyContact;
-import um_backend.models.HealthData;
-import um_backend.models.Patient;
+import um_backend.models.*;
 import um_backend.models.dto.HealthDataDto;
 import um_backend.models.dto.PatientPersonalDTO;
 import um_backend.repository.PatientRepository;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,7 +156,9 @@ public class PatientService {
 
         if (existingPatient == null) {
             // Creating a new patient
-            String encryptedHealthDataId = encryptionService.encrypt(createEmptyHealthDataObject());
+            String encryptedHealthDataId = encryptionService.encrypt(
+                    createEmptyHealthDataObject(dto.gender(), calculateAgeFromString(dto.dateOfBirth())));
+            System.out.println(encryptedHealthDataId);
             return new Patient(
                     utilService.generateId(),
                     encryptedFirstName,
@@ -191,10 +194,40 @@ public class PatientService {
         }
     }
 
-    protected String createEmptyHealthDataObject() {
-        HealthDataDto newHealthData = new HealthDataDto(new ArrayList<>());
+    protected String createEmptyHealthDataObject(String gender, int ageAtFirstAdmission) {
+        LocalDate firstAdmissionDate = LocalDate.now();
+        HealthDataDto newHealthData = new HealthDataDto(gender, ageAtFirstAdmission, firstAdmissionDate,
+                new ArrayList<>());
         HealthData result = healthDataService.createHealthData(newHealthData);
         return result.id();
+    }
+
+    protected int calculateAgeFromString(String birthDateString) {
+        LocalDate birthDate = parseDateString(birthDateString);
+        if (birthDate != null) {
+            LocalDate currentDate = LocalDate.now();
+            if (birthDate.isBefore(currentDate)) {
+                return Period.between(birthDate, currentDate).getYears();
+            } else {
+                throw new IllegalArgumentException("Date of birth may not be in the future.");
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid date format.");
+        }
+    }
+
+    protected LocalDate parseDateString(String dateString) {
+        try {
+            if (dateString.contains("-")) {
+                return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            } else if (dateString.contains(".")) {
+                return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            } else {
+                throw new IllegalArgumentException("Invalid date format.");
+            }
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format.", e);
+        }
     }
 
     protected ContactInformation createEncryptedContactInformation(ContactInformation contact) {
