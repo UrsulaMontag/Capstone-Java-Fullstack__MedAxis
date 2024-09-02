@@ -9,7 +9,12 @@ interface HealthDataState {
 }
 
 const useHealthDataStore = create<HealthDataState>()((set) => ({
-    healthData: {id: "newId", icdCodes: []},
+    healthData: {
+        id: "newId",
+        gender: "other",
+        ageAtFirstAdmissionDate: Date.now(),
+        medicalExaminations: []
+    },
     getHealthDataById: async (id: string) => {
 
         try {
@@ -23,7 +28,7 @@ const useHealthDataStore = create<HealthDataState>()((set) => ({
     },
     addIcdCodeToPatientHealthData: async (dataId: string, icdCode: string) => {
         try {
-            const response = await axios.post(`/api/health_data/${dataId}/add-icd-code`, {icdCode});
+            const response = await axios.post(`/api/health_data/${dataId}/add-health-data`, {icdCode});
             return response.data;
         } catch (error) {
             console.error("Error adding ICD code to patient", error);

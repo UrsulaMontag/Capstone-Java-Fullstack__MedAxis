@@ -1,4 +1,6 @@
 // Matches names with at least three characters, including any European letters, spaces, apostrophes, and dashes
+import {EmergencyContact} from "../models/patient/ContactInformation.ts";
+
 const NAME_REGEX = /^[\p{L}'][ \p{L}'-]{2,}$/u;
 // Matches insurance numbers with 7 to 20 alphanumeric characters
 const INSURANCE_NR_REGEX = /^[A-Za-z0-9]{7,20}$/;
@@ -28,7 +30,43 @@ const validation = {
 
     isValidEmail(email: string | undefined): boolean {
         return email === undefined || EMAIL_REGEX.test(email);
+    },
+
+    isValidGender(gender: string | undefined): boolean {
+        return gender !== undefined && (
+            gender.toLowerCase() === 'male' ||
+            gender.toLowerCase() === 'female' ||
+            gender.toLowerCase() === 'other');
+    },
+
+    isValidNationality(nationality: string | undefined): boolean {
+        return nationality !== undefined && nationality.trim().length > 0;
+    },
+
+    isValidMaritalStatus(maritalStatus: string | undefined): boolean {
+        return maritalStatus !== undefined && (
+            maritalStatus.toLowerCase() === 'single' ||
+            maritalStatus.toLowerCase() === 'married' ||
+            maritalStatus.toLowerCase() === 'divorced' ||
+            maritalStatus.toLowerCase() === 'widowed');
+    },
+
+    isValidPrimaryLanguage(primaryLanguage: string | undefined): boolean {
+        return primaryLanguage !== undefined && primaryLanguage.trim().length > 0;
+    },
+
+    isValidOccupation(occupation: string | undefined): boolean {
+        return occupation !== undefined && occupation.trim().length > 0;
+    },
+
+    isValidEmergencyContact(emergencyContact: EmergencyContact): boolean {
+        if (!emergencyContact) return false;
+        return this.isValidName(emergencyContact.name) &&
+            this.isValidPhoneNumber(emergencyContact.phoneNumber) &&
+            emergencyContact.relationship.trim().length > 0;
     }
+
+
 };
 
 export default validation;

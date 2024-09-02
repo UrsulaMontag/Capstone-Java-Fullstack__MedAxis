@@ -1,18 +1,18 @@
 export type HealthData = {
     id: string,
     gender: string,
-    ageAtFirstAdmissionDate: Date,
+    ageAtFirstAdmissionDate: number,
     medicalExaminations: MedicalExamination[],
 }
 
 export type HealthDataToAdd = {
     gender: string,
-    ageAtFirstAdmissionDate: Date,
+    ageAtFirstAdmissionDate: number,
     medicalExaminations: MedicalExamination[],
 }
 
 type MedicalExamination = {
-    examinationDate: Date,
+    examinationDate: number,
     icdCodes: IcdCode[],
     symptoms: string,
     diagnosis: string,
