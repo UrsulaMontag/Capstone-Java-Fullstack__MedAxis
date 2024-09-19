@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
 class HealthDataServiceTest {
     private HealthDataService healthDataService;
+
     @Mock
     private HealthDataRepository mockHealthDataRepository;
     @Mock
@@ -34,115 +34,104 @@ class HealthDataServiceTest {
     }
 
     @Test
-    void testUpdateHealthData_CreateNew() {
-        String generatedId = "newId";
-        HealthData newHealthData = new HealthData(generatedId, "Female", 45, LocalDate.now(), new ArrayList<>());
-        HealthDataDto healthDataDto = new HealthDataDto("Female", 45, newHealthData.firstAdmissionDate(), new ArrayList<>());
+    void testAddExaminationWithIcdCodes_Success() throws InvalidIdException {
+        String dataId = "existingId";
+        IcdCode icdCode = new IcdCode("ICD-10", "test-description");
+        MedicalExamination newExamination = new MedicalExamination(LocalDateTime.now(), List.of(icdCode), "", "",
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "");
 
-        when(mockHealthDataRepository.findById(generatedId)).thenReturn(Optional.empty());
-        when(mockUtilService.generateId()).thenReturn(generatedId);
+        HealthData existingHealthData = new HealthData(dataId, "Female", 30, LocalDate.of(2020, 1, 1),
+                new ArrayList<>());
+        when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.of(existingHealthData));
+        when(mockHealthDataRepository.save(any(HealthData.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        when(mockHealthDataRepository.save(any(HealthData.class))).thenReturn(newHealthData);
+        HealthData result = healthDataService.addExaminationWithIcdCodes(dataId, newExamination);
 
-        healthDataService.updateHealthData(generatedId, healthDataDto);
-
-        verify(mockHealthDataRepository).findById(generatedId);
-        verify(mockUtilService).generateId();
+        assertEquals(dataId, result.id());
+        assertEquals(1, result.medicalExaminations().size());
+        assertEquals(List.of(icdCode), result.medicalExaminations().getFirst().icdCodes());
+        verify(mockHealthDataRepository).findById(dataId);
         verify(mockHealthDataRepository).save(any(HealthData.class));
     }
 
     @Test
-    void testUpdateHealthData_ExistingDataWithModifiedFields() {
+    void testAddExaminationWithIcdCodes_InvalidId() {
+        String invalidId = "invalidId";
+        MedicalExamination newExamination = new MedicalExamination(LocalDateTime.now(), new ArrayList<>(), "", "",
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "");
+
+        when(mockHealthDataRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        assertThrows(InvalidIdException.class,
+                () -> healthDataService.addExaminationWithIcdCodes(invalidId, newExamination));
+        verify(mockHealthDataRepository, never()).save(any(HealthData.class));
+    }
+
+    @Test
+    void testUpdateHealthData_ExistingDataWithModifiedFields() throws InvalidIdException {
         String dataId = "existingId";
-        HealthData existingHealthData = new HealthData(dataId, "Female", 30, LocalDate.of(2020, 1, 1), new ArrayList<>());
-        HealthDataDto modifiedHealthDataDto = new HealthDataDto("Male", 35, LocalDate.of(2021, 1, 1), new ArrayList<>());
+        HealthData existingHealthData = new HealthData(dataId, "Female", 30, LocalDate.of(2020, 1, 1),
+                new ArrayList<>());
+        List<MedicalExamination> medicalExaminations = new ArrayList<>() {
+            {
+                add(new MedicalExamination(LocalDateTime.now(), new ArrayList<>(), "", "", new ArrayList<>(),
+                        new ArrayList<>(), new ArrayList<>(), ""));
+            }
+        };
 
         when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.of(existingHealthData));
         when(mockHealthDataRepository.save(any(HealthData.class))).thenReturn(existingHealthData
-                .withGender(modifiedHealthDataDto.gender())
-                .withAgeAtFirstAdmission(modifiedHealthDataDto.ageAtFirstAdmission())
-                .withFirstAdmissionDate(modifiedHealthDataDto.firstAdmissionDate())
-                .withMedicalExaminations(modifiedHealthDataDto.medicalExaminations())
-        );
+                .withMedicalExaminations(medicalExaminations));
 
-        HealthData result = healthDataService.updateHealthData(dataId, modifiedHealthDataDto);
+        HealthData result = healthDataService.updateHealthData(dataId, medicalExaminations.getFirst());
 
         assertEquals(dataId, result.id());
-        assertEquals("Male", result.gender());
-        assertEquals(35, result.ageAtFirstAdmission());
-        assertEquals(LocalDate.of(2021, 1, 1), result.firstAdmissionDate());
+        assertEquals("Female", result.gender());
+        assertEquals(30, result.ageAtFirstAdmission());
+        assertEquals(LocalDate.of(2020, 1, 1), result.firstAdmissionDate());
+        assertEquals(medicalExaminations, result.medicalExaminations());
         verify(mockHealthDataRepository).findById(dataId);
         verify(mockHealthDataRepository).save(any(HealthData.class));
     }
 
     @Test
     void testUpdateHealthData_InvalidId() {
-        HealthDataDto healthDataDto = new HealthDataDto("Female", 45, LocalDate.now(), new ArrayList<>());
-
         String invalidId = "invalidId";
+        MedicalExamination newExamination = new MedicalExamination(LocalDateTime.now(), new ArrayList<>(), "", "",
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "");
 
-        when(mockHealthDataRepository.findById(invalidId)).thenThrow(new IllegalArgumentException());
+        when(mockHealthDataRepository.findById(invalidId)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> healthDataService.updateHealthData(invalidId, healthDataDto));
+        assertThrows(InvalidIdException.class, () -> healthDataService.updateHealthData(invalidId, newExamination));
+
+        verify(mockHealthDataRepository, never()).save(any(HealthData.class));
     }
 
-
     @Test
-    void testAddOrUpdateIcdCodes_UpdateExisting() throws IllegalArgumentException {
+    void testAddOrUpdateIcdCodes_UpdateExisting() throws IllegalArgumentException, InvalidIdException {
         String dataId = "oldId";
         IcdCode icdCode = new IcdCode("ICD-10", "test-description");
 
-        List<MedicalExamination> medicalExaminations = new ArrayList<>() {{
-            add(new MedicalExamination(LocalDateTime.now(), new ArrayList<>(), "", "", List.of(""),
-                    List.of(new Treatment("type", "description")),
-                    List.of(new VitalSigns(38, 60, 90, 120, 20)), ""));
-        }};
+        List<MedicalExamination> medicalExaminations = new ArrayList<>() {
+            {
+                add(new MedicalExamination(LocalDateTime.now(), new ArrayList<>(), "", "", List.of(""),
+                        List.of(new Treatment("type", "description")),
+                        List.of(new VitalSigns(38, 60, 90, 120, 20)), ""));
+            }
+        };
         medicalExaminations.getLast().icdCodes().add(icdCode);
         HealthData newHealthData = new HealthData(dataId, "Female", 45, LocalDate.now(), medicalExaminations);
-        HealthDataDto healthDataDto = new HealthDataDto("Female", 45, newHealthData.firstAdmissionDate(), medicalExaminations);
 
         when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.of(newHealthData));
         when(mockHealthDataRepository.save(any(HealthData.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        HealthData result = healthDataService.updateHealthData(dataId, healthDataDto);
+        HealthData result = healthDataService.updateHealthData(dataId, medicalExaminations.getFirst());
 
         assertEquals(dataId, result.id());
-        assertEquals(List.of(new IcdCode("ICD-10", "test-description")), result.medicalExaminations().getLast().icdCodes());
+        assertEquals(List.of(new IcdCode("ICD-10", "test-description")),
+                result.medicalExaminations().getLast().icdCodes());
         verify(mockHealthDataRepository).findById(dataId);
         verify(mockHealthDataRepository).save(any(HealthData.class));
-    }
-
-    @Test
-    void testAddIcdCodeToHealthData_NullIcdCode() {
-        String dataId = "someId";
-
-        when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.of(new HealthData(dataId, "Female", 45, LocalDate.now(), new ArrayList<>())));
-
-        assertThrows(IllegalArgumentException.class, () -> healthDataService.addIcdCodeToHealthData(dataId, null));
-        verify(mockHealthDataRepository, never()).save(any(HealthData.class));
-    }
-
-    @Test
-    void testAddIcdCodeToHealthData_NonExistentData() {
-        String dataId = "nonExistentId";
-        IcdCode icdCode = new IcdCode("ICD-10", "test-description");
-
-        when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.empty());
-
-        assertThrows(InvalidIdException.class, () -> healthDataService.addIcdCodeToHealthData(dataId, icdCode));
-        verify(mockHealthDataRepository, never()).save(any(HealthData.class));
-    }
-
-    @Test
-    void testAddIcdCodeToHealthData_CatchesIllegalArgumentException() {
-        String dataId = "someId";
-        IcdCode icdCode = new IcdCode("ICD-10", "test-description");
-
-        when(mockHealthDataRepository.findById(dataId)).thenReturn(Optional.of(new HealthData(dataId, "Female", 45, LocalDate.now(), new ArrayList<>())));
-        when(mockHealthDataRepository.save(any(HealthData.class))).thenThrow(new IllegalArgumentException("Underlying problem"));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> healthDataService.addIcdCodeToHealthData(dataId, icdCode));
-        assertEquals("Health data contains problems", exception.getMessage());
     }
 
     @Test
@@ -183,21 +172,24 @@ class HealthDataServiceTest {
 
     @Test
     void testCreateHealthData_Success() {
-        List<MedicalExamination> medicalExaminations = new ArrayList<>() {{
-            add(new MedicalExamination(LocalDateTime.now(), new ArrayList<>(), "", "", List.of(""),
-                    List.of(new Treatment("type", "description")),
-                    List.of(new VitalSigns(38, 60, 90, 120, 20)), ""));
-        }};
-        medicalExaminations.getLast().icdCodes().add(new IcdCode("newCode", "newDescription"));
+        List<MedicalExamination> medicalExaminations = new ArrayList<>() {
+            {
+                add(new MedicalExamination(LocalDateTime.now(), new ArrayList<>(), "", "", List.of(""),
+                        List.of(new Treatment("type", "description")),
+                        List.of(new VitalSigns(38, 60, 90, 120, 20)), ""));
+            }
+        };
+        medicalExaminations.getFirst().icdCodes().add(new IcdCode("newCode", "newDescription"));
         HealthData healthData = new HealthData("newId", "Female", 45, LocalDate.now(), medicalExaminations);
-        HealthDataDto newHealthData = new HealthDataDto("Female", 45, healthData.firstAdmissionDate(), medicalExaminations);
+        HealthDataDto newHealthData = new HealthDataDto("Female", 45, healthData.firstAdmissionDate(),
+                medicalExaminations);
 
         when(mockHealthDataRepository.save(any(HealthData.class))).thenReturn(healthData);
 
         HealthData result = healthDataService.createHealthData(newHealthData);
 
         assertEquals("newId", result.id());
-        assertEquals(List.of(new IcdCode("newCode", "newDescription")), result.medicalExaminations().getLast().icdCodes());
+        assertEquals(List.of(new IcdCode("newCode", "newDescription")), result.medicalExaminations().getFirst().icdCodes());
         verify(mockHealthDataRepository).save(any(HealthData.class));
     }
 
@@ -221,6 +213,4 @@ class HealthDataServiceTest {
         verify(mockHealthDataRepository).save(any(HealthData.class));
     }
 
-
 }
-

@@ -11,8 +11,8 @@ export type HealthDataToAdd = {
     medicalExaminations: MedicalExamination[],
 }
 
-type MedicalExamination = {
-    examinationDate: number,
+export type MedicalExamination = {
+    examinationDate: string,
     icdCodes: IcdCode[],
     symptoms: string,
     diagnosis: string,
@@ -22,17 +22,17 @@ type MedicalExamination = {
     additionalNotes: string,
 }
 
-type IcdCode = {
+export type IcdCode = {
     code: string,
     description: string,
 }
 
-type Treatment = {
+export type Treatment = {
     type: string,
     description: string
 }
 
-type VitalSigns = {
+export type VitalSigns = {
     temperature: number,
     heartRate: number,
     bloodPressureSystolic: number,
