@@ -15,7 +15,7 @@ export default function IcdECTWrapper(props: Readonly<IcdECTWrapperProps>) {
 
     return (
         <div>
-            <IcdECT onEntitySelect={handleSelectedEntity}/>
+            <IcdECT onEntitySelect={handleSelectedEntity} mode="add"/>
         </div>
     );
 }

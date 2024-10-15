@@ -7,8 +7,7 @@ import PatientList from "./routes/PatientList.tsx";
 import PatientDetail from "./routes/PatientDetail.tsx";
 import ProtectedRoute from "./routes/routeSec/ProtectedRoute.tsx";
 import useGlobalStore from "./stores/useGloblaStore.ts";
-import HealthDataForm from "./components/health-data/HealthDataForm.tsx";
-import {IcdECT} from "./components/icd_api/IcdECT.tsx";
+import IcdECTInfo from "./components/icd_api/IcdECTInfo.tsx";
 
 function App() {
 
@@ -55,14 +54,7 @@ function App() {
                     {
                         path: '/icd',
                         element: <ProtectedRoute role={userRole} allowedRoles={["nurse", "doctor"]}>
-                            <IcdECT/>
-                        </ProtectedRoute>,
-                    },
-
-                    {
-                        path: '/health_data/:healthDataId/add-icd-details',
-                        element: <ProtectedRoute role={userRole} allowedRoles={["doctor"]}>
-                            <HealthDataForm/>
+                            <IcdECTInfo/>
                         </ProtectedRoute>,
                     },
 

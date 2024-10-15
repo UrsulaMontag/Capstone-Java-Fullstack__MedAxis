@@ -8,12 +8,15 @@ import {useEffect} from "react";
 
 type IcdECTProps = {
     onEntitySelect: (entity: ISelectedEntity) => void;
+    mode: "add" | "view";
 }
 
 export default function IcdECT(props: Readonly<IcdECTProps>) {
     const iNo: number = 1;
     const handleSelection = (selectedEntity: ISelectedEntity) => {
-        props.onEntitySelect(selectedEntity);
+        props.mode === "add"
+            ? props.onEntitySelect(selectedEntity)
+            : alert(`Code: ${selectedEntity.code}\nDescription: ${selectedEntity.selectedText}`);
     };
 
 
@@ -21,7 +24,6 @@ export default function IcdECT(props: Readonly<IcdECTProps>) {
         const fetchTokenAndConfigure = async () => {
             try {
                 const token = await getAuthToken();
-
                 const settings = {
                     apiServerUrl: 'http://localhost:8088/api/icd/entity',
                     icdMinorVersion: 'v2',
