@@ -4,33 +4,19 @@ import '../../styles/IcdECT.styled.css'
 import {ISelectedEntity} from "../../models/icd_api/icdECTSelectedEntity.ts";
 import Typography from "../../styles/Typography.tsx";
 import {getAuthToken, searchIcd} from "../../services/IcdEctDataService.ts";
-import {useParams} from "react-router-dom";
-import {FC, useEffect} from "react";
-import useHealthDataStore from "../../stores/useHealthDataStore.ts";
+import {useEffect} from "react";
 
-interface IcdECTProps {
-    healthDataId?: string;
+type IcdECTProps = {
+    onEntitySelect: (entity: ISelectedEntity) => void;
+    mode: "add" | "view";
 }
 
-const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
+export default function IcdECT(props: Readonly<IcdECTProps>) {
     const iNo: number = 1;
-    const addIcdCodeToPatient: (id: string, icdCode: string) => void = useHealthDataStore(state => state.addIcdCodeToPatientHealthData)
-
-    const handleSelectedEntity = (selectedEntity: ISelectedEntity) => {
-        console.log("Selected Entity: ", selectedEntity);
-        const code = selectedEntity.code;
-        const title = selectedEntity.selectedText;
-
-        if (healthDataId) {
-            try {
-                addIcdCodeToPatient(healthDataId, `${code}: ${title}`);
-                alert('ICD-11 code selected and saved: ' + code);
-            } catch (error) {
-                alert("Failed to save ICD-11 code. Please try again.");
-            }
-        } else {
-            alert('ICD-11 code selected: ' + code);
-        }
+    const handleSelection = (selectedEntity: ISelectedEntity) => {
+        props.mode === "add"
+            ? props.onEntitySelect(selectedEntity)
+            : alert(`Code: ${selectedEntity.code}\nDescription: ${selectedEntity.selectedText}`);
     };
 
 
@@ -38,8 +24,6 @@ const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
         const fetchTokenAndConfigure = async () => {
             try {
                 const token = await getAuthToken();
-                console.log("Token fetched:", token);
-
                 const settings = {
                     apiServerUrl: 'http://localhost:8088/api/icd/entity',
                     icdMinorVersion: 'v2',
@@ -57,7 +41,7 @@ const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
                     }
                 };
                 const myCallbacks = {
-                    selectedEntityFunction: handleSelectedEntity,
+                    selectedEntityFunction: handleSelection,
                     getNewTokenFunction: async () => {
                         await getAuthToken();
                     },
@@ -68,9 +52,7 @@ const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
                         console.log("Search result received:", searchResult);
                         if (searchResult && searchResult.searchResult) {
                             const words = searchResult.searchResult.words || [];
-                            console.log("Words extracted:", words);
                             for (const word of words) {
-                                console.log("Processing word:", word);
                                 await searchIcd(word);  // Jedes Wort einzeln an searchIcd übergeben
                             }
                         } else {
@@ -107,11 +89,4 @@ const IcdECT: FC<IcdECTProps> = ({healthDataId}) => {
             <div className="ctw-window" data-ctw-ino={iNo}></div>
         </div>
     );
-};
-
-const IcdECTWrapper: FC = () => {
-    const {healthDataId} = useParams();
-    return <IcdECT healthDataId={healthDataId}/>;
-};
-
-export {IcdECT, IcdECTWrapper};
+}

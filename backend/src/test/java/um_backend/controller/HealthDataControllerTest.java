@@ -12,10 +12,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import um_backend.exeptions.InvalidIdException;
-import um_backend.models.HealthData;
+import um_backend.models.*;
 import um_backend.models.dto.HealthDataDto;
 import um_backend.services.HealthDataService;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,41 +39,57 @@ class HealthDataControllerTest {
         registry.add("ENCRYPTION_SALT", () -> "4f6a8b2d5c3e7a1d9e8f4c2a0b1d6f5e");
     }
 
+    LocalDateTime testDate = LocalDateTime.of(2024, 8, 30, 14, 57, 52, 353442000);
+
     @Test
-    void testAddIcdCodeToPatient() throws Exception {
+    void testAddExaminationWithIcdCodes() throws Exception {
         String dataId = "newId";
-        String icdCode = "ICD-10";
-        List<String> icdCodes = new ArrayList<>() {{
-            add(icdCode);
-        }};
-        HealthData healthData = new HealthData(dataId, icdCodes);
+        IcdCode icdCode = new IcdCode("ICD-10", "test-description");
+        MedicalExamination newExamination = new MedicalExamination(testDate, List.of(icdCode), "", "",
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), "");
+        List<MedicalExamination> medicalExaminations = new ArrayList<>() {
+            {
+                add(newExamination);
+            }
+        };
+        HealthData healthData = new HealthData(dataId, "Female", 45, LocalDate.now(), medicalExaminations);
+        when(mockHealthDataService.addExaminationWithIcdCodes(dataId, newExamination)).thenReturn(healthData);
 
-        when(mockHealthDataService.addOrUpdateIcdCodes(dataId, icdCode)).thenReturn(healthData);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data/" + "/" + dataId + "/add-icd-code")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(icdCode))
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data/" + dataId + "/add-examination")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "examinationDate": "2024-08-30T14:57:52.353442",
+                            "icdCodes": [
+                                {
+                                    "code": "ICD-10",
+                                    "description": "test-description"
+                                }
+                            ],
+                            "symptoms": "",
+                            "diagnosis": "",
+                            "medications": [],
+                            "treatments": [],
+                            "vitalSigns": [],
+                            "additionalNotes": ""
+                        }
+                        """))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value("ICD-10"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.medicalExaminations[0].icdCodes[0].code").value("ICD-10"));
     }
-
 
     @Test
     void testGetHealthDataById() throws Exception {
         String dataId = "oldId";
-        String icdCode = "ICD-10";
-
-
-        HealthData healthData = new HealthData(dataId, List.of(icdCode));
+        HealthData healthData = new HealthData(dataId, "Female", 45, LocalDate.now(), new ArrayList<>());
 
         when(mockHealthDataService.getHealthDataById(dataId)).thenReturn(healthData);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/health_data/{dataId}", dataId)
-                        .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value(icdCode));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId));
     }
 
     @Test
@@ -82,26 +100,53 @@ class HealthDataControllerTest {
                 .thenThrow(new InvalidIdException("Data with id " + dataId + " not found!"));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/health_data/{dataId}", dataId)
-                        .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    // Test für das Erstellen von HealthData
     @Test
     void testCreateHealthData() throws Exception {
         String dataId = "newDataId";
-        List<String> icdCodes = List.of("ICD-10");
-        HealthData healthData = new HealthData(dataId, icdCodes);
-
+        IcdCode icdCode = new IcdCode("ICD-10", "test-description");
+        List<MedicalExamination> medicalExaminations = new ArrayList<>() {
+            {
+                add(new MedicalExamination(testDate, List.of(icdCode), "", "", new ArrayList<>(), new ArrayList<>(),
+                        new ArrayList<>(), ""));
+            }
+        };
+        HealthData healthData = new HealthData(dataId, "Female", 45, LocalDate.now(), medicalExaminations);
 
         when(mockHealthDataService.createHealthData(any(HealthDataDto.class))).thenReturn(healthData);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\":\"" + dataId + "\", \"icdCodes\":[\"ICD-10\"]}"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "gender": "Female",
+                            "ageAtFirstAdmission": 45,
+                            "firstAdmissionDate": "2024-08-30",
+                            "medicalExaminations": [
+                                {
+                                    "examinationDate": "2024-08-30T14:57:52.353442",
+                                    "icdCodes": [
+                                        {
+                                            "code": "ICD-10",
+                                            "description": "test-description"
+                                        }
+                                    ],
+                                    "symptoms": "",
+                                    "diagnosis": "",
+                                    "medications": [],
+                                    "treatments": [],
+                                    "vitalSigns": [],
+                                    "additionalNotes": ""
+                                }
+                            ]
+                        }
+                        """))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(dataId))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.icdCodes[0]").value("ICD-10"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.medicalExaminations[0].icdCodes[0].code").value("ICD-10"));
     }
 
     @Test
@@ -112,9 +157,9 @@ class HealthDataControllerTest {
                 .thenThrow(new IllegalArgumentException("Failed creating health data."));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/health_data")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content("{\"id\":\"" + dataId + "\", \"icdCodes\":[\"ICD-10\"]}"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content("{\"id\":\"" + dataId + "\", \"icdCodes\":[\"ICD-10\"]}"))
                 .andExpect(MockMvcResultMatchers.status().is5xxServerError());
     }
 }

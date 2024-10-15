@@ -12,6 +12,12 @@ public record Patient(
         String firstname,
         String lastname,
         String dateOfBirth,
+        String gender,
+        EmergencyContact emergencyContact,
+        String nationality,
+        String maritalStatus,
+        String primaryLanguage,
+        String occupation,
         String insuranceNr,
         ContactInformation contactInformation,
         String healthDataId

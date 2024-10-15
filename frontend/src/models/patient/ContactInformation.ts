@@ -4,3 +4,9 @@ export type ContactInformation = {
     address: string,
     town: string,
 }
+
+export type EmergencyContact = {
+    name: string,
+    relationship: string,
+    phoneNumber: string,
+}
