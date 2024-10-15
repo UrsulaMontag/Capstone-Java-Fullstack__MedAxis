@@ -1,14 +1,14 @@
 import usePatientStore from "../../stores/usePatientStore.ts";
-import {Patient, PatientToAdd} from "../../models/patient/Patient.ts";
-import {ChangeEvent, FormEvent, useState} from "react";
-import FormStyled from "../../styles/Form.styled.tsx";
+import { Patient, PatientToAdd } from "../../models/patient/Patient.ts";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { StyledForm, FormGroup, FormLabel, FormInput, FormHeading, ErrorInfo } from "../../styles/Form.styled.tsx";
 import Button from "../../styles/Button.styled.tsx";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import validation from "../../utils/dataValidation.ts";
-import Typography from "../../styles/Typography.tsx";
+
 
 export default function PatientForm() {
-    const {createPatient, updatePatient} = usePatientStore((state) => ({
+    const { createPatient, updatePatient } = usePatientStore((state) => ({
         createPatient: state.createPatient,
         updatePatient: state.updatePatient,
     }));
@@ -166,14 +166,14 @@ export default function PatientForm() {
     }
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
+        const { name, value } = event.target;
         setPatientInput((prevState) => ({
             ...prevState,
             [name]: value
         }));
     };
     const handleContactInformationChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
+        const { name, value } = event.target;
         setPatientInput((prevState) => ({
             ...prevState,
             contactInformation: {
@@ -184,7 +184,7 @@ export default function PatientForm() {
     };
 
     const handleEmergencyContactChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
+        const { name, value } = event.target;
         setPatientInput((prevState) => ({
             ...prevState,
             emergencyContact: {
@@ -194,7 +194,7 @@ export default function PatientForm() {
         }));
     };
     const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        const {name, value} = event.target;
+        const { name, value } = event.target;
         setPatientInput((prevState) => ({
             ...prevState,
             [name]: value,
@@ -202,163 +202,207 @@ export default function PatientForm() {
     };
 
     return (
-        <FormStyled onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
-            <label>Firstname:</label>
-            <input required type="text" value={patientInput.firstname}
-                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                       setPatientInput({...patientInput, firstname: event.target.value});
-                   }}/>
-            <br/>
-            {errors.firstname && <Typography variant="error-info">{errors.firstname}</Typography>}
+        <StyledForm onSubmit={(event: FormEvent<HTMLFormElement>) => handleSubmit(event)}>
+            <FormGroup>
+                <FormLabel>Firstname:</FormLabel>
+                <FormInput
+                    required
+                    type="text"
+                    value={patientInput.firstname}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setPatientInput({ ...patientInput, firstname: event.target.value });
+                    }}
+                />
+            </FormGroup>
+            {errors.firstname && <ErrorInfo>{errors.firstname}</ErrorInfo>}
 
-            <label>Lastname:</label>
-            <input required type="text" value={patientInput.lastname}
-                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                       setPatientInput({...patientInput, lastname: event.target.value});
-                   }}/>
-            <br/>
-            {errors.lastname && <Typography variant="error-info">{errors.lastname}</Typography>}
+            <FormGroup>
+                <FormLabel>Lastname:</FormLabel>
+                <FormInput
+                    required
+                    type="text"
+                    value={patientInput.lastname}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setPatientInput({ ...patientInput, lastname: event.target.value });
+                    }}
+                />
+            </FormGroup>
+            {errors.lastname && <ErrorInfo>{errors.lastname}</ErrorInfo>}
 
-            <label>Birthdate:</label>
-            <input required type="date" value={patientInput.dateOfBirth} min="1900-01-01"
-                   max={Date.now()}
-                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                       setPatientInput({...patientInput, dateOfBirth: event.target.value});
-                   }}/>
-            <br/>
-            {errors.dateOfBirth && <Typography variant="error-info">{errors.dateOfBirth}</Typography>}
+            <FormGroup>
+                <FormLabel>Birthdate:</FormLabel>
+                <FormInput
+                    required
+                    type="date"
+                    value={patientInput.dateOfBirth}
+                    min="1900-01-01"
+                    max={Date.now()}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setPatientInput({ ...patientInput, dateOfBirth: event.target.value });
+                    }}
+                />
+            </FormGroup>
+            {errors.dateOfBirth && <ErrorInfo>{errors.dateOfBirth}</ErrorInfo>}
 
-            <label>Gender:</label>
-            <select name="gender" id="gender-select" value={patientInput.gender} onChange={handleSelectChange}>
-                <option value="">--Please choose gender--</option>
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-                <option value="other">Other</option>
-            </select>
-            <br/>
-            {errors.gender && <Typography variant="error-info">{errors.gender}</Typography>}
+            <FormGroup>
+                <FormLabel>Gender:</FormLabel>
+                <FormInput
+                    as="select"
+                    name="gender"
+                    id="gender-select"
+                    value={patientInput.gender}
+                    onChange={handleSelectChange}
+                >
+                    <option value="">--Please choose gender--</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="other">Other</option>
+                </FormInput>
+            </FormGroup>
+            {errors.gender && <ErrorInfo>{errors.gender}</ErrorInfo>}
 
-            <label>Insurance Nr:</label>
-            <input required type="text" value={patientInput.insuranceNr}
-                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                       setPatientInput({...patientInput, insuranceNr: event.target.value});
-                   }}/>
-            <br/>
-            {errors.insuranceNr && <Typography variant="error-info">{errors.insuranceNr}</Typography>}
+            <FormGroup>
+                <FormLabel>Insurance Nr:</FormLabel>
+                <FormInput
+                    required
+                    type="text"
+                    value={patientInput.insuranceNr}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setPatientInput({ ...patientInput, insuranceNr: event.target.value });
+                    }}
+                />
+            </FormGroup>
+            {errors.insuranceNr && <ErrorInfo>{errors.insuranceNr}</ErrorInfo>}
 
-            <label>Phone:</label>
-            <input
-                type="text"
-                name="phoneNr"
-                value={patientInput.contactInformation.phoneNr}
-                onChange={handleContactInformationChange}
-            />
-            <br/>
-            {errors.phone && <Typography variant="error-info">{errors.phone}</Typography>}
+            <FormGroup>
+                <FormLabel>Phone:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="phoneNr"
+                    value={patientInput.contactInformation.phoneNr}
+                    onChange={handleContactInformationChange}
+                />
+            </FormGroup>
+            {errors.phone && <ErrorInfo>{errors.phone}</ErrorInfo>}
 
-            <label>Email:</label>
-            <input
-                type="email"
-                name="email"
-                value={patientInput.contactInformation.email}
-                onChange={handleContactInformationChange}
-            />
-            <br/>
-            {errors.email && <Typography variant="error-info">{errors.email}</Typography>}
+            <FormGroup>
+                <FormLabel>Email:</FormLabel>
+                <FormInput
+                    type="email"
+                    name="email"
+                    value={patientInput.contactInformation.email}
+                    onChange={handleContactInformationChange}
+                />
+            </FormGroup>
+            {errors.email && <ErrorInfo>{errors.email}</ErrorInfo>}
 
-            <label>Address:</label>
-            <input
-                type="text"
-                name="address"
-                value={patientInput.contactInformation.address}
-                onChange={handleContactInformationChange}
-            />
+            <FormGroup>
+                <FormLabel>Address:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="address"
+                    value={patientInput.contactInformation.address}
+                    onChange={handleContactInformationChange}
+                />
+            </FormGroup>
 
-            <label>Town:</label>
-            <input
-                type="text"
-                name="town"
-                value={patientInput.contactInformation.town}
-                onChange={handleContactInformationChange}
-            />
+            <FormGroup>
+                <FormLabel>Town:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="town"
+                    value={patientInput.contactInformation.town}
+                    onChange={handleContactInformationChange}
+                />
+            </FormGroup>
 
-            <label>Emergency Contact:</label>
-            <br/>
-            <label>Name:</label>
-            <input
-                type="text"
-                name="name"
-                value={patientInput.emergencyContact.name}
-                onChange={handleEmergencyContactChange}
-            />
+            <FormHeading>Emergency Contact:</FormHeading>
+            <FormGroup>
+                <FormLabel>Name:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="name"
+                    value={patientInput.emergencyContact.name}
+                    onChange={handleEmergencyContactChange}
+                />
+            </FormGroup>
 
-            <label>Relationship:</label>
-            <input
-                type="text"
-                name="relationship"
-                value={patientInput.emergencyContact.relationship}
-                onChange={handleEmergencyContactChange}
-            />
-            <label>Phone:</label>
-            <input
-                type="text"
-                name="phoneNumber"
-                value={patientInput.emergencyContact.phoneNumber}
-                onChange={handleEmergencyContactChange}
-            />
-            <br/>
-            {errors.emergencyContact && <Typography variant="error-info">{errors.emergencyContact}</Typography>}
+            <FormGroup>
+                <FormLabel>Relationship:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="relationship"
+                    value={patientInput.emergencyContact.relationship}
+                    onChange={handleEmergencyContactChange}
+                />
+            </FormGroup>
 
-            <label>Nationality:</label>
-            <input
-                type="text"
-                name="nationality"
-                value={patientInput.nationality}
-                onChange={handleInputChange}
-            />
-            <br/>
-            {errors.nationality && <Typography variant="error-info">{errors.nationality}</Typography>}
+            <FormGroup>
+                <FormLabel>Phone:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="phoneNumber"
+                    value={patientInput.emergencyContact.phoneNumber}
+                    onChange={handleEmergencyContactChange}
+                />
+            </FormGroup>
+            {errors.emergencyContact && <ErrorInfo>{errors.emergencyContact}</ErrorInfo>}
 
-            <label>Marital Status:</label>
-            <select name="maritalStatus" id="marital-status-select" value={patientInput.maritalStatus}
-                    onChange={handleSelectChange}>
-                <option value="">--Please choose marital status--</option>
-                <option value="single">Single</option>
-                <option value="married">Married</option>
-                <option value="divorced">Divorced</option>
-                <option value="widowed">Widowed</option>
-            </select>
-            <br/>
-            {errors.maritalStatus && <Typography variant="error-info">{errors.maritalStatus}</Typography>}
+            <FormGroup>
+                <FormLabel>Nationality:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="nationality"
+                    value={patientInput.nationality}
+                    onChange={handleInputChange}
+                />
+            </FormGroup>
+            {errors.nationality && <ErrorInfo>{errors.nationality}</ErrorInfo>}
 
-            <label>Primary Language:</label>
-            <input
-                type="text"
-                name="primaryLanguage"
-                value={patientInput.primaryLanguage}
-                onChange={handleInputChange}
-            />
-            <br/>
-            {errors.primaryLanguage && <Typography variant="error-info">{errors.primaryLanguage}</Typography>}
+            <FormGroup>
+                <FormLabel>Marital Status:</FormLabel>
+                <FormInput
+                    as="select"
+                    name="maritalStatus"
+                    id="marital-status-select"
+                    value={patientInput.maritalStatus}
+                    onChange={handleSelectChange}
+                >
+                    <option value="">--Please choose marital status--</option>
+                    <option value="single">Single</option>
+                    <option value="married">Married</option>
+                    <option value="divorced">Divorced</option>
+                    <option value="widowed">Widowed</option>
+                </FormInput>
+            </FormGroup>
+            {errors.maritalStatus && <ErrorInfo>{errors.maritalStatus}</ErrorInfo>}
 
-            <label>Occupation:</label>
-            <input
-                type="text"
-                name="occupation"
-                value={patientInput.occupation}
-                onChange={handleInputChange}
-            />
-            <br/>
-            {errors.primaryLanguage && <Typography variant="error-info">{errors.primaryLanguage}</Typography>}
+            <FormGroup>
+                <FormLabel>Primary Language:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="primaryLanguage"
+                    value={patientInput.primaryLanguage}
+                    onChange={handleInputChange}
+                />
+            </FormGroup>
+            {errors.primaryLanguage && <ErrorInfo>{errors.primaryLanguage}</ErrorInfo>}
+
+            <FormGroup>
+                <FormLabel>Occupation:</FormLabel>
+                <FormInput
+                    type="text"
+                    name="occupation"
+                    value={patientInput.occupation}
+                    onChange={handleInputChange}
+                />
+            </FormGroup>
+            {errors.occupation && <ErrorInfo>{errors.occupation}</ErrorInfo>}
 
             <div>
-                <Button variant="ok"><img alt="ok-button save"
-                                          src={"/ok.png"}
-                                          title="Enter edit"/></Button>
-                <Button variant="normal" onClick={handleCancel}><img alt="cancel-button"
-                                                                     src={"/cancel.png"}
-                                                                     title="Cancel"/></Button>
+                <Button variant="ok"><img alt="ok-button save" src={"/ok.png"} title="Enter edit" /></Button>
+                <Button variant="normal" onClick={handleCancel}><img alt="cancel-button" src={"/cancel.png"} title="Cancel" /></Button>
             </div>
-        </FormStyled>
+        </StyledForm>
     )
 }

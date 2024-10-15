@@ -1,81 +1,78 @@
-import {Patient} from "../../models/patient/Patient.ts";
-import {HealthData} from "../../models/healt-data/HealthData.ts";
+import { Patient } from "../../models/patient/Patient.ts";
+import { HealthData } from "../../models/healt-data/HealthData.ts";
 import Typography from "../../styles/Typography.tsx";
-import {formatDate} from "../../utils/formatDateView.ts";
+import { formatDate } from "../../utils/formatDateView.ts";
 import useHealthDataStore from "../../stores/useHealthDataStore.ts";
-import {useEffect, useState} from "react";
+import { useState } from "react";
+import { MedicalExamination } from "../../models/healt-data/HealthData.ts";
+import ExaminationDetails from "../../models/healt-data/ExaminationDetails.tsx";
+import HealthDataForm from "./HealthDataForm.tsx";
+
 
 type PatientHealthCardProps = {
     patient: Patient;
 }
 
 export default function PatientHealthCard(props: Readonly<PatientHealthCardProps>) {
-    const patient = props.patient;
-    const healthData: HealthData = useHealthDataStore(state => state.healthData)
-    const getPatientsHealthData = useHealthDataStore(state => state.getHealthDataById);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const healthData: HealthData = useHealthDataStore(state => state.healthData);
+    const getHealthDataById = useHealthDataStore(state => state.getHealthDataById);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                getPatientsHealthData(patient.healthDataId);
-                setLoading(false);
-            } catch (err) {
-                console.error("Error fetching health data:", err);
-                setError("Failed to load health data.");
-                setLoading(false);
-            }
-        };
+    const [selectedExamination, setSelectedExamination] = useState<MedicalExamination | null>(null);
+    const [isAddingNewExamination, setIsAddingNewExamination] = useState(false);
 
-        fetchData();
-    }, [patient.healthDataId]);
+    const sortedExaminations = [...healthData.medicalExaminations].sort((a, b) => new Date(b.examinationDate).getTime() - new Date(a.examinationDate).getTime());
+    const latestExamination = sortedExaminations[0];
 
-    if (loading) {
-        return <Typography variant="base">Loading health data...</Typography>;
-    }
+    const handleAddNewExamination = () => {
+        setIsAddingNewExamination(true);
+    };
 
-    if (error) {
-        return <Typography variant="base">{error}</Typography>;
-    }
+    const handleFormComplete = () => {
+        setIsAddingNewExamination(false);
+        getHealthDataById(props.patient.healthDataId); // Fetch updated health data
+    };
 
-    if (!healthData) {
-        return <Typography variant="base">Health data not found.</Typography>;
-    }
-
-    const icdCodesArray: string[] = healthData.icdCodes;
-    const extractIcdCodesFromResponse = (response: string): { code: string, description: string }[] => {
-        const jsonLikeObjects = response.split('},{').map((item, index, array) => {
-            if (index !== 0) item = '{' + item;
-            if (index !== array.length - 1) item = item + '}';
-            return item;
-        });
-
-        return jsonLikeObjects.map(jsonString => {
-            const parsedObject = JSON.parse(jsonString);
-            const [code, ...descriptionParts] = parsedObject.icdCode.split(":");
-            const description = descriptionParts.join(":").trim(); // Handle cases where the description might contain ':'
-
-            return {
-                code: code.trim(),
-                description
-            }
-        });
-    }
-
+    const handleExaminationClick = (examination: MedicalExamination) => {
+        setSelectedExamination(examination);
+    };
 
     return (
 
-        <>
-            <Typography variant="h3">Name: </Typography>
-            <Typography variant="base">{patient.lastname} {patient.firstname}</Typography>
-            <Typography variant="h3">Birthdate: </Typography>
-            <Typography variant="base">{formatDate(patient.dateOfBirth)}</Typography>
-            <Typography variant="h3">Health Data:</Typography>
-            {icdCodesArray.map(icdCode => (<><Typography
-                variant="base">{extractIcdCodesFromResponse(icdCode)[0].code}:</Typography><br/><Typography
-                variant="info">{extractIcdCodesFromResponse(icdCode)[0].description}</Typography><br/></>))}
+        <div>
+            <Typography variant="h2">Patient Health Card</Typography>
+            <Typography variant="h3">Name: {props.patient.lastname} {props.patient.firstname}</Typography>
+            <Typography variant="h3">Birthdate: {formatDate(props.patient.dateOfBirth)}</Typography>
 
-        </>
+            {latestExamination && (
+                <div>
+                    <Typography variant="h3">Latest Examination</Typography>
+                    <ExaminationDetails examination={latestExamination} />
+                </div>
+            )}
+
+            <button onClick={handleAddNewExamination}>Add New Examination</button>
+
+            {isAddingNewExamination ? (
+                <HealthDataForm
+                    patientId={props.patient.id}
+                    onComplete={handleFormComplete}
+                />
+            ) : (
+                <div>
+                    <Typography variant="h3">Examination History</Typography>
+                    <ul>
+                        {sortedExaminations.map((examination) => (
+                            <li key={examination.examinationDate} onClick={() => handleExaminationClick(examination)}>
+                                {formatDate(examination.examinationDate.toString())} - {examination.diagnosis}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
+            {selectedExamination && (
+                <ExaminationDetails examination={selectedExamination} />
+            )}
+        </div>
     );
 }
