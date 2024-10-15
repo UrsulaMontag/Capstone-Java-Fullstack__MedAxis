@@ -1,10 +1,10 @@
-import { Patient } from "../../models/patient/Patient.ts";
-import { HealthData } from "../../models/healt-data/HealthData.ts";
+import {Patient} from "../../models/patient/Patient.ts";
+import {HealthData} from "../../models/healt-data/HealthData.ts";
 import Typography from "../../styles/Typography.tsx";
-import { formatDate } from "../../utils/formatDateView.ts";
+import {formatDate} from "../../utils/formatDateView.ts";
 import useHealthDataStore from "../../stores/useHealthDataStore.ts";
-import { useState } from "react";
-import { MedicalExamination } from "../../models/healt-data/HealthData.ts";
+import {useState} from "react";
+import {MedicalExamination} from "../../models/healt-data/HealthData.ts";
 import ExaminationDetails from "../../models/healt-data/ExaminationDetails.tsx";
 import HealthDataForm from "./HealthDataForm.tsx";
 
@@ -46,7 +46,7 @@ export default function PatientHealthCard(props: Readonly<PatientHealthCardProps
             {latestExamination && (
                 <div>
                     <Typography variant="h3">Latest Examination</Typography>
-                    <ExaminationDetails examination={latestExamination} />
+                    <ExaminationDetails examination={latestExamination}/>
                 </div>
             )}
 
@@ -62,7 +62,8 @@ export default function PatientHealthCard(props: Readonly<PatientHealthCardProps
                     <Typography variant="h3">Examination History</Typography>
                     <ul>
                         {sortedExaminations.map((examination) => (
-                            <li key={examination.examinationDate} onClick={() => handleExaminationClick(examination)}>
+                            <li key={examination.examinationDate} onClick={() => handleExaminationClick(examination)}
+                                onKeyDown={() => handleExaminationClick(examination)}>
                                 {formatDate(examination.examinationDate.toString())} - {examination.diagnosis}
                             </li>
                         ))}
@@ -71,7 +72,7 @@ export default function PatientHealthCard(props: Readonly<PatientHealthCardProps
             )}
 
             {selectedExamination && (
-                <ExaminationDetails examination={selectedExamination} />
+                <ExaminationDetails examination={selectedExamination}/>
             )}
         </div>
     );
