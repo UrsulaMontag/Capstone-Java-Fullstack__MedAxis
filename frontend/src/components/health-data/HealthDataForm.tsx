@@ -1,7 +1,7 @@
 import {Patient} from "../../models/patient/Patient.ts";
 import usePatientStore from "../../stores/usePatientStore.ts";
 import {FormEvent, useState} from "react";
-import {StyledForm, FormGroup, FormLabel, FormInput, FormTextarea} from "../../styles/Form.styled.tsx";
+import {StyledForm, FormGroup, FormLabel, FormInput, FormTextarea, ErrorInfo} from "../../styles/Form.styled.tsx";
 import Typography from "../../styles/Typography.tsx";
 import {CardContainer} from "../../styles/PatientCard.styled.ts";
 import {MedicalExamination, Treatment} from "../../models/healt-data/HealthData.ts";
@@ -40,6 +40,19 @@ export default function HealthDataForm({patientId, onComplete}: Readonly<HealthD
     const [isIcdInputClicked, setIsIcdInputClicked] = useState(false);
     const [newMedication, setNewMedication] = useState("");
     const [newTreatment, setNewTreatment] = useState<Treatment>({type: "", description: ""});
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+    const validateForm = () => {
+        const newErrors: { [key: string]: string } = {};
+        if (!examinationInput.symptoms.trim()) {
+            newErrors.symptoms = "Symptoms are required.";
+        }
+        if (examinationInput.treatments.length === 0) {
+            newErrors.treatments = "At least one treatment is required.";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleIcdInputClick = () => {
         setIsIcdInputClicked(true);
@@ -54,6 +67,10 @@ export default function HealthDataForm({patientId, onComplete}: Readonly<HealthD
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        if (!validateForm()) {
+            alert("Please fill out all required fields.");
+            return
+        }
         if (currentPatient) {
             try {
                 const formattedExamination = {
@@ -67,6 +84,8 @@ export default function HealthDataForm({patientId, onComplete}: Readonly<HealthD
                 alert("Failed to update health data. Please try again.");
             }
         }
+        alert("Select patient first.");
+        return;
     };
 
     const handleCancel = () => {
@@ -105,6 +124,8 @@ export default function HealthDataForm({patientId, onComplete}: Readonly<HealthD
                                 onChange={(e) => setExaminationInput({...examinationInput, symptoms: e.target.value})}
                                 placeholder="Symptoms"
                             />
+                            {errors.symptoms && <ErrorInfo>{errors.symptoms}</ErrorInfo>}
+
                         </FormGroup>
                         <FormGroup>
                             <FormLabel>Diagnosis:</FormLabel>
@@ -148,6 +169,7 @@ export default function HealthDataForm({patientId, onComplete}: Readonly<HealthD
                             placeholder="Treatment description"
                         />
                         <button type="button" onClick={handleAddTreatment}>Add Treatment</button>
+                        {errors.treatments && <ErrorInfo>{errors.treatments}</ErrorInfo>}
 
                         <Typography variant="h4">Vital Signs</Typography>
                         <input
