@@ -85,5 +85,18 @@ public class DataValidationService {
                 emergencyContact.relationship() != null && !emergencyContact.relationship().trim().isEmpty();
     }
 
+    public boolean isValidRole(String role) {
+        // Check for valid role (doctor, nurse, admin, other)
+        return role != null && (role.equalsIgnoreCase("doctor") ||
+                role.equalsIgnoreCase("nurse") ||
+                role.equalsIgnoreCase("admin") ||
+                role.equalsIgnoreCase("other"));
+    }
+
+    public boolean isValidSpecialty(String specialty) {
+        // Specialty should be a non-empty string
+        return specialty != null && !specialty.trim().isEmpty();
+    }
+
 }
 
